@@ -1,0 +1,1222 @@
+
+  
+```{r setup_module2, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+data_path <- "data/"
+pic_path <- "figures/2_images/"
+```
+
+# Working with Data Frames
+
+This module focuses on working with data frames, covering the installation and loading of data into the R environment, and basic data wrangling methods. Also included in Module 2 is a thorough introduction into data visualisation methods, key foundational knowledge that will be utilised in future modules.
+
+
+## Importing and exporting data in and from R
+### Installing and loading packages
+R uses packages (libraries) to store different functions, and has thousands (16,000) of these packages. The "official" packages for R can be found on [CRAN](https://cran.r-project.org/), but there are many other useful packages available on [GitHub](https://github.com/).
+
+Packages are a collection of R functions, code, and occasionally data that enables efficient work in R without the need to write complicated code. 
+
+Examples of common R packages include:
+  
+- **tidyverse**: a collection of R packages designed for data manipulation and visualisation, including the following packages
+- **ggplot2**: designed for elegant data visualisation and graphics
+- **dplyr**: designed for data manipulation and cleaning
+- **tidyr**: designed for reshaping and cleaning data
+- **readr**: designed for reading and writing delimited files
+- **purrr**: designed for functional programming in R
+- **tibble**: designed to be a modern reimplementation of data frames 
+- **stringr**: designed for working with strings
+- **lubridate**: designed for working with dates and times
+- **forcats**: designed for working with categorical variables
+- **sf**: designed for working with spatial vector data
+- **rstan** or **INLA**: designed for use with Bayesian statistics
+
+To utilise the packages in R, it is required to install and load the packages into the session. Some packages are already installed and loaded as part of the `base` R package, however, for those which are not the functions `install.packages()` can be used to install packages, ensuring that the name of any packages included are enclosed by either `'` or `"` and `library()` can be used to load the package from the library.
+
+
+```{r install and load r packages, eval=FALSE}
+#install ggplot2 package 
+install.packages("ggplot2")
+#load the ggplot2 package
+library(ggplot2)
+```
+
+Alternatively, available packages can be accessed from the "Packages" window in Pane 3 (bottom-right pane) of the RStudio GUI. In this window, you can either search for the package directly, or scroll through the list and check the tick box of the desired package to load it into R. 
+
+### Reading data into the R environment
+Different data formats require different functions in R for importation into R, with some formats requiring additional packages to allow installation. From `base` R, the function `read.table()` reads the chosen `.txt` file included as an argument. However, this function does not 'read' the file into the R environment, only prints the file in the console. To import the file into the R environment, you must assign the results to a variable. The other key functions for importing data into R are given in the table below with example code on how to use the functions provided also. 
+
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++-------------------+------------------+------------------+
++-------------------+------------------+------------------+
+| Data type         | Function         | Package required |
++===================+==================+==================+
+| `.csv`            | `read.csv()`     | none (in `base`) | 
++-------------------+------------------+------------------+
+| `.txt`, text files| `read.table()`   | none (in `base`) | 
++-------------------+------------------+------------------+
+| `.xslx`, excel    | `read.excel()`   | `readxl`         | 
+| workbook          |                  |                  | 
++-------------------+------------------+------------------+
+| `.dta`, STATA     | `read.dta()`     | `foreign`        | 
+| files             |                  |                  | 
++-------------------+------------------+------------------+
+| `.sav`, SPSS      | `read.spss()`    | `foreign`        | 
+| files             |                  |                  | 
++-------------------+------------------+------------------+ 
++-------------------+------------------+------------------+ 
+</div>
+  
+```{r import data, eval=FALSE}
+#import a text or .txt file 
+text_data<-read.table(file = paste0(data_path,"sample_data.txt")) 
+
+#import a .csv file 
+csv_data1 <-read.table(file = paste0(data_path,"sample_data.csv"), 
+                       sep = ",",
+                       header = TRUE) 
+csv_data2 <-read.csv(file = paste0(data_path,"sample_data.csv"))
+
+#import an Excel Workbook file 
+install.packages("readxl") 
+library(readxl) 
+excel_data<-read_excel(file = paste0(data_path,"sample_data.xlsx")) 
+
+#import a STATA file 
+install.packages("foreign") 
+library(foreign) 
+stata_data<-read.dta(file = paste0(data_path,"sample_data.dta"))
+```
+
+Alternatively to pasting the data path, the function `file.choose()` can be used, which opens a window on the computer for you to select the file you wish to import. 
+
+```{r file.choose, eval=FALSE}
+#import a text or .txt file 
+text_data2<-read.table(file = file.choose()) 
+```
+
+Another option for loading data in R is to use the menus in the main toolbar following **File > Import Dataset > From [data format of choice] > [browse for file on the pop-up window]** or in the Environment pane following **Import Dataset > From [data format of choice] > [browse for file on the pop-up window]**. Both menus are shown in Figures 1 and 2 respectively. This practice is *not* encouraged however, given that it is not hard-coded in the script, it is better practice to use the functions above in the script to import your chosen dataset.
+
+<!-- ![Import data via Toolbar](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/import data toolbar.png) -->
+
+<!-- ![Import data via Toolbar](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/import data toolbar.png) -->
+  
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Import table via Toolbar"}
+knitr::include_graphics("figures/2_images/import data toolbar.png")
+```  
+  
+  
+<!-- ![Import data via Environment](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/import data environment.png) -->
+
+<!-- ![Import data via Environment](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/import data environment.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Import data via Environment"}
+knitr::include_graphics("figures/2_images/import data environment.png")
+```
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** What are the defaults for the header argument in the functions `read.table()` and `read.csv()`?
+  
+  1. `header = T` in `read.table()` and `header = T` in `read.csv()`
+
+  2. `header = T` in `read.table()` and `header = F` in `read.csv()`
+
+  3. `header = F` in `read.table()` and `header = T` in `read.csv()`
+
+  4. `header = F` in `read.table()` and `header = F` in `read.csv()`
+
+</div>
+  
+### Creating work paths
+
+Setting the working directory to a single folder means that R can only access files within that folder and cannot open any folders within a folder. 
+
+If you have several folders within a folder that need accessing, or need your input and output files and immediate and final results stored in different folders. In these instances, rather than setting a working directory it can be better to store the path to folder as a string, setting a 'parent directory'. Then use the function `read.table()` to import the data, which can read both standard `.txt` and `.csv` data 
+
+setting a work path allows for you to set a 'parent directory' which solves this problem. 
+
+This can be created through setting a path to the parent directory.
+
+```{r work paths, eval=FALSE}
+#parent directory
+path <- "C:Users/YOUR_NAME" 
+
+#save in a folder called "training"
+out_path <- paste0(path, "/training") 
+if(!file.exists(out_path))
+{
+  dir.create(file.path(out_path))
+}
+```
+
+You can also create a work path using the current working directory as the parent directory.
+```{r wd as parent directory, eval=FALSE }
+#working directory as parent directory
+out_path <- paste0(getwd(), "/training")
+if(!file.exists(out_path))
+{
+  dir.create(file.path(out_path))
+}
+```
+You can set your parent directory to be your working directory as follows.
+```{r parent directory as wd, eval=FALSE}
+#set parent directory to working directory
+if(file.exists(out_path)){ setwd(file.path(out_path))
+}else{
+  dir.create(file.path(out_path))
+  setwd(file.path(out_path))
+}
+```
+
+
+<!-- input.path <- "C:/Local/WorldPop_TNSO_UNFPA/introToR/Data/"  -->
+<!-- output.dir <- "C:/Local/WorldPop_TNSO_UNFPA /introToR/Results/" -->
+  
+### Exploring data attributes
+  
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++------------------+------------------+
++------------------+------------------+
+| Function         | Description      |
++==================+==================+
+| `class()`        | class of the     |
+|                  | variable         |
++------------------+------------------+
+| `colnames()`     | gives the column |
+|                  | names            |
++------------------+------------------+
+| `describe()`     | summary of data -|
+|                  | requires `psych` |
+|                  | package          |
++------------------+------------------+
+| `dim()`          | gives dimensions |
+|                  | of the data      |
++------------------+------------------+
+| `factor()`       | change to a      |
+|                  | factor           |
++------------------+------------------+
+| `glimpse()`      | view data        | 
+|                  | structure        |
++------------------+------------------+
+| `head()`         | gives first six  |
+|                  | (6) rows of data |
++------------------+------------------+
+| `head(mydata, n)`| gives first `n`  | 
+|                  | (6) rows of data |
+|                  | called `mydata`  |
++------------------+------------------+
+| `headtail()`     | first and last   |
+|                  | rows of data -   |
+|                  | requires `psych` |
+|                  | package          |
++------------------+------------------+
+| `length()`       | length of a      |
+|                  | vector           |
++------------------+------------------+
+| `ls()`           | lists all items  |
+|                  | available in the |
+|                  | R environment    |
++------------------+------------------+
+| `names()`        | gives column or  |
+|                  | variable names   |
++------------------+------------------+
+| `ncol()`         | number of columns|
++------------------+------------------+
+| `nrow()`         | number of rows   |
++------------------+------------------+
+| `row()`          | gives the row    |
+|                  | names            |
++------------------+------------------+
+| `rm()`           | removes selected |
+|                  | items from the  R|
+|                  | environment      |
++------------------+------------------+
+| `str()`          | gives full       | 
+|                  | structure of data| 
++------------------+------------------+
+| `summary()`      | summary of a     |
+|                  | vector           |
++------------------+------------------+
+| `table()`        | frequency table  |
+|                  | of a vector      |
++------------------+------------------+
+| `tail()`         | gives last six   |
+|                  | (6) rows of data |
++------------------+------------------+
+| `unique()`       | unique values of |
+|                  | a vector         |
++------------------+------------------+
+| `View()`         | view data        |
++------------------+------------------+
++------------------+------------------+
+</div>
+  
+```{r exploring cars}
+#'mtcars' is a dataset available in the 'datasets' package with data on 
+#11 different aspects of auto mobiles for 32 auto mobiles from the 1974 Motor 
+#Trend US magazine
+library(datasets)
+#information on the dataset in the 'Help' pane
+?mtcars
+#load data and assign to 'cars_data'
+cars_data <- mtcars
+
+#dimension of data
+dim(cars_data)
+#variable names of data
+names(cars_data)
+#first 6 rows of data
+head(cars_data)
+#last 6 rows of data
+tail(cars_data)
+```
+
+```{r intall psych, eval=FALSE}
+#install psych package
+install.packages("psych") 
+```
+
+```{r load psych}
+#load psych package
+library(psych)
+```
+
+```{r exploring cars with psych}
+#psych package provides more flexible alternatives to functions in base R
+describe(cars_data)
+```
+
+### Viewing data
+Data imported into R can be viewed in the Environment pane, with the column/variable names given, the data type of each variable and the first 10 observations (provided the observations do not go 'off' the display due to length) for each variable given as a summary of the data structure. If the summary is not given, ensure that the display of the Environment is set to 'list' and click the arrow to the left of the dataset name.
+
+
+<!-- ![View data in Environment](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/view data environment.png) -->
+
+<!-- ![View data in Environment](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/view data environment.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "View data in Environment"}
+knitr::include_graphics("figures/2_images/view data environment.png")
+```  
+  
+  
+Alternatively, the function `View()` can be used to display the full data in a new tab in the first (1st) pane, adjacent to the script.
+
+<!-- ![View data in new tab](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/view data tab.png) -->
+
+<!-- ![View data in new tab](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/view data tab.png) -->
+
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "View data in new tab"}
+knitr::include_graphics("figures/2_images/view data tab.png")
+```  
+  
+  
+### Extracting data
+As with the different data structures in R such as vectors and data frames, data can be extracted from a dataset using square brackets, `[]`, known as **sub-setting** or **slicing**. Additionally, the dollar sign, `$` can be used to extract variables/access columns from a dataset. 
+
+```{r sub-setting}
+#subset the data to only show the rows which have mpg greater than 25
+cars_data[cars_data$mpg>25,]
+```
+
+Data can also be sliced by a given index using a colon, `:`, to represent a given range.
+
+```{r slicing with colon}
+#return the fifth (5th) to the tenth (10th) rows of the data
+cars_data[5:10, ]
+```
+Through extracting variables from the datasets, the summary statistic functions for vectors can be used. 
+
+```{r summary stats}
+#quantiles for the hp variable
+quantile(cars_data$hp)
+
+#median value of cyl
+median(cars_data$cyl)
+```
+
+The dollar sign doesn't just extract variables from the data, but can be used to create new variables as with data frames.
+
+```{r adding variables}
+#create a variable for miles per litre by multiplying mpg by 0.22 (1 litre is 
+#approximately 0.22 gallons)
+cars_data$mpl <- cars_data$mpg*0.22
+```
+
+### Attaching data
+
+When working with variables from one dataset in R, it can become tedious to always require the dollar sign, `$`, to access the variables. The function `attach()` in R stops the need for this through essentially copying each of the variables from the dataset into the Environment to be used freely, without needing to quote the dataset each time. 
+
+```{r attaching data, error = TRUE}
+#cannot compute the mean of mpg from cars_data without extracting it first
+mean(mpg)#returns error
+mean(cars_data$mpg)#works
+
+#attach the dataset to the Environment
+attach(cars_data) 
+
+mean(mpg) #now works
+```
+If you want to detach the data for any reason, for example if you want to attach another dataset, you can use the `detach()` function in R. 
+
+```{r detach data, error = TRUE}
+#detach data
+detach(cars_data)
+
+mean(mpg) #now does not work again
+```
+
+
+### Writing data to external repositories
+
+Different data formats require different functions in R for exporting from R, with some formats requiring additional packages to allow for exportation. Since the data visible in the Environment (pane 4) is stored in the RAM, and not in the physical memory, it is important that any data you wish to save is written to an external repository, such as writing the data to a `.csv` file, otherwise it is erased when the R session ends. The key functions used to write the data as the different (common) data types are given in the table below with examples in the code that follows.
+
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++-------------------+------------------+------------------+
++-------------------+------------------+------------------+
+| Data type         | Function         | Package required |
++===================+==================+==================+
+| `.csv`            | `write.csv()`    | none (in `base`) | 
++-------------------+------------------+------------------+
+| `.txt`, text files| `write.table()`  | none (in `base`) | 
++-------------------+------------------+------------------+
+| `.xslx`, excel    | `write.xlsx()`   | `writexl`        | 
+| workbook          |                  |                  | 
++-------------------+------------------+------------------+
+| `.dta`, STATA     | `write.dta()`    | `foreign`        | 
+| files             |                  |                  | 
++-------------------+------------------+------------------+
++-------------------+------------------+------------------+
+</div>
+
+```{r exporting data, eval=FALSE}
+#export a .csv file 
+write.csv(sample_data, "exported_data.csv")
+
+#export a text or .txt file 
+write.table(sample_data, "exported_data.txt")
+
+#export an Excel file 
+install.packages("writexl") 
+library(writexl)
+write_xlsx(sample_data, "exported_data.xlsx")
+
+#export a STATA file 
+install.packages("foreign") 
+library(foreign) 
+write.dta(sample_data, "exported_data.dta")
+
+```
+
+Note: The entire R Environment can be saved using the `save.image()` function or by clicking on the "save icon" (floppy disk icon) on the toolbar of the Environment window (pane 4) and selecting where you wish to save the `.Rdata` in the pop-up window.
+
+## Basic data wrangling methods for data preparation and handling in R
+### Dealing with NA ('Not Available') values
+`NA` is typically used to represent for missing ('Not Available') values in R, and is an important concept, particularly as R replaces missing values with `NA` (and replaces impossible values, such as when dividing by zero, with `NaN`).
+
+
+```{r missing data}
+#import population data
+Pop_data <- read.csv(file = paste0(data_path, "sim_population.csv"), 
+                     header = TRUE)
+#variable for gdp contains missing values, first 50 values
+Pop_data$gdp[1:50]
+
+#trying to sum the elements of the variable does not work as R cannot deal with
+#the missing value
+sum(Pop_data$gdp)
+```
+
+If there is missing data in the variable/vector that you are trying to work with, the function `na.rm = TRUE` can be applied, which removes the missing data from the variable/vector you are working with.
+
+```{r na.rm 2}
+#remove NA values for sum
+sum(Pop_data$gdp, na.rm = TRUE)
+```
+
+To identify which elements are missing from an R object, the function `is.na()` can be used, where the argument is chosen to be the object of interest. If you would like to know how many missing values there are, you can use the `sum()` function in addition to the `is.na()` function as shown below.
+
+```{r identify missing values}
+#identify the missing values in the gdp variable (first 50 values)
+is.na(Pop_data$gdp[1:50])
+
+#how many missing values in first 50 values?
+sum(is.na(Pop_data$gdp[1:50]))
+```
+
+Alternatively, if you would like to know which of the values are complete (not missing), the function `complete.cases()` can be used in the same way, but returns a logical vector indicating which of the elements which are complete. 
+
+```{r identify complete values}
+#identify the missing values in the gdp variable (first 50 values)
+complete.cases(Pop_data$gdp[1:50])
+
+#how many missing values in first 50 values?
+sum(complete.cases(Pop_data$gdp[1:50]))
+```
+
+Another useful function is the `na.omit()` function, which instead of returning a logical vector identifying which values are complete or missing, it returns the object with the missing values removed. 
+
+```{r na.omit}
+#remove the missing values
+gdp_na_omit <- na.omit(Pop_data$gdp[1:50])
+gdp_na_omit
+```
+
+To quickly identify if there are missing values in your data frame/object, the `na.fail()` function can be used. With this function, if the object included as the argument contains any missing values, it will signal an error, however, if there are no missing values, the object is returned. 
+```{r na.fail}
+#check for missing values
+#na.fail(Pop_data$gdp[1:50]) #returns an error
+na.fail(gdp_na_omit) #returns an error
+```
+
+### Key data wrangling methods
+Some key data manipulation can be done using the following functions in `base`, `stats`, `dplyr` and `tidyr` packages.
+
+```{r install dplyr and tidyr, eval=FALSE}
+#install dplyr and tidyr packages 
+install.packages("dplyr")
+install.packages("tidyr")
+```
+
+```{r load dplyr, message=FALSE}
+#load the dplyr and tidyr packages
+library(dplyr)
+library(tidyr)
+```
+
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++------------------+-------------------+----------------+
++------------------+-------------------+----------------+
+| Function         |  Description      | Package        |
++==================+===================+================+
+| `aggregate()`    | obtain summary    | `stats`        |
+|                  | statistics by     |                |
+|                  | group             |                |
++------------------+-------------------+----------------+
+| `arrange()`      | duplicate existing| `dplyr`        |
+|                  | variable in the   |                |
+|                  | data with new name|                |
++------------------+-------------------+----------------+
+| `drop_na()`      | remove all columns| `tidyr`        |
+|                  | with NA           |                |
++------------------+-------------------+----------------+
+| `filter()`       | Select rows based | `dplyr`        |
+|                  | on certain        |                |
+|                  | conditions        |                |
++------------------+-------------------+----------------+
+| `gather()`       | convert to long   | `tidyr`        |
+|                  | format            |                |
++------------------+-------------------+----------------+
+| `group_by()`     | group the rows of | `dplyr`        |
+|                  | a data frame by   |                |
+|                  | one or more       |                |
+|                  | variables         |                |
++------------------+-------------------+----------------+
+| `merge()`        | join two datasets | `base`         |
++------------------+-------------------+----------------+
+| `mutate()`       | add new columns   | `dplyr`        |
+|                  | to a data frame   |                |
+|                  | based on existing |                |
+|                  | columns           |                |
++------------------+-------------------+----------------+
+| `select()`       | choose specific   | `dplyr`        |
+|                  | columns to work   |                |
+|                  | with              |                |
++------------------+-------------------+----------------+
+| `spread()`       | convert to wide   | `tidyr`        |
+|                  | format            |                |
++------------------+-------------------+----------------+
+| `subset()`       | subset data by    | `base`         |
+|                  | given             |                |
+|                  | specifications    |                |
++------------------+-------------------+----------------+
+| `summarise()`/   | compute summary   | `dplyr`        |
+| `summarize()`    | statistics for    |                |
+|                  | each group created|                |
+|                  | by `group_by()`   |                |
++------------------+-------------------+----------------+
+| `rename()`       | change the names  | `dplyr`        |
+|                  | of columns in a   |                |
+|                  | data frame        |                |
++------------------+-------------------+----------------+
++------------------+-------------------+----------------+
+</div>
+  
+The **pipe** operator, `%>%`, from the `magritr` package allows for a sequence of operations to be carried out simultaneously. R offers a built in native pipe, `|>`, which works in a similar way and can be faster for longer computations. The main difference between the functions is that `%>%` does not require parentheses (brackets) when calling functions, whereas for `|>`, the parentheses are always necessary. The `with()` function in `base` R performs similar actions.
+```{r pipe operator}
+#rename dataset and remove NA values
+Pop_data_pipe <- Pop_data %>% 
+  drop_na() 
+head(Pop_data_pipe)
+```
+
+
+Subset rows based on certain conditions.
+
+```{r filtering observations}
+#subset observations with a population of more than 10 million people
+Pop_data %>% filter(pop>=2000)
+```
+
+Select certain variables.
+
+```{r selecting observatons}
+#select the variables state and total
+head(Pop_data %>% select(region, pop))
+```
+
+Group observations by variable and summarise by property.
+```{r grouping and summarising}
+#group the observations by region and summarise their population per region
+Pop_data%>%
+  group_by(region) %>%  
+  summarise(regional_population = sum(pop))
+```
+
+Adding another variable.
+```{r adding variables dplyr}
+#add another variable called density = total/buildings
+Pop_data <- Pop_data %>% 
+  mutate(density = pop/buildings)
+```
+
+Renaming variables.
+```{r renaming variables dplyr}
+#rename density to population_density
+Pop_data<- Pop_data %>%  
+  rename(Pop_density = density)
+```
+
+Sort data into ascending or descending order.
+```{r arrange}
+#sort data by ascending order of ID
+Pop_data_arranged_asc <- arrange(Pop_data, ID)
+
+#sort data by descending order of ID
+Pop_data_arranged_desc <- arrange(Pop_data, desc(ID))
+```
+
+
+
+## Data visualisation
+Data visualisation is important as it forms part of the exploratory data analyses, enabling a quick and easy understanding of the dataset. It also enables for patterns to be detected and can be a useful tool for communicating results to non-experts. Data visualisation is also crucial to data exploration.
+
+For using `base` R data visualisation functions, with functions such as `plot()`, `boxplot()`, and `hist()`, the following arguments are useful for customisation of the plots, often making the plots easier to understand.
+
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++------------------+------------------+
++------------------+------------------+
+| Argument         | Description      |
++==================+==================+
+| `main`           | an overall title |
++------------------+------------------+
+| `xlab`           | a title for the  | 
+|                  | $x$-axis         |
++------------------+------------------+
+| `ylab`           | a title for the  | 
+|                  | $y$-axis         |
++------------------+------------------+
+| `sub`            | a sub-title      |
++------------------+------------------+
+| `type`           | determines the   |
+|                  | type of plot     |
+|                  | e.g. "`p`" for   |
+|                  | points, "`l`" for|
+|                  | lines            |
++------------------+------------------+
+| `pch`            | determines type  |
+|                  | of symbol to be  |
+|                  | used for points  |
++------------------+------------------+
+| `col`            | colour of plot   |
++------------------+------------------+
+| `lty`            | determines the   |
+|                  | type of line e.g.|
+|                  | "`1`" for solid, |
+|                  | "`2`" for dashed |
++------------------+------------------+
+| `lwd`            | determines width |
+|                  | of the line      |
++------------------+------------------+
++------------------+------------------+
+</div>
+  
+Further arguments for graphical parameters can be found by going to the help file for `par` (`?par`).
+
+
+
+The `ggplot2` and `ggpubr` packages can be used instead of `base` R to create more elegant plots.
+
+```{r install ggplot2 and ggpubr, eval=FALSE}
+#install ggplot2 and ggpubr packages
+install.packages("ggplot2")
+install.packages("ggpubr")
+```
+
+```{r load ggplot2 and ggpubr, message=FALSE}
+#load the ggplot2 and ggpubr packages
+library(ggplot2)
+library(ggpubr)
+```
+
+
+```{r colour palette, echo=FALSE}
+#colour-blind friendly colour palette
+cbPalette <- c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7", "#999999")
+```
+
+### Bar plots
+
+A bar plot can be useful for discrete data.
+```{r barplot discrete}
+#create a vector which has the values of total population by region
+regional_population <- c()
+for(r in 1:5){
+  regional_population[r] <- sum(Pop_data$pop[Pop_data$region == r])
+}
+
+#plot the bar plot using base R
+barplot(regional_population,
+        ylab = "Population Total", 
+        xlab = "Region",
+        col = "#004C92",
+        main = "Bar Plot of Population by Region",
+        names.arg = c(1:5))
+mtext(side = 3, "Using base R")
+```
+
+Using the function `ggplot()` with the argument `geom_bar()` creates a bar plot. The following example is the same plot as above, but with the depicted information easier to understand.
+
+```{r barplots ggplot}
+#bar plot of population by region
+barplot1 <- ggplot(Pop_data, aes(x = region, y = pop, fill = pop)) +
+  geom_bar(stat = "identity") +
+  scale_fill_gradient(low = "yellow", high = "red") +
+  labs(x = "States", y = "Population Total", fill = "Total", subtitle = "Using ggplot2") +
+  ggtitle("Bar Plot of Population by Region")
+
+#use the ggpar function to customise plot 
+ggpar(barplot1, xlab = "Region", ylab = "Population Total",
+      legend = "right", legend.title = "Total",
+      font.x = c(16),
+      font.y = c(16),
+      subtitle = "Using ggplot2 and ggpubr")
+```
+
+```{r create dataset for barplots}
+#import the age dataset
+Age_data <- read.csv(file = paste0(data_path, "Age_data.csv"), header = TRUE)
+
+#convert the age groups variable into a factor
+Age_data$age_groups <- factor(Age_data$age_groups,
+                              levels = c("0-4", "5 - 12", "13 - 18", 
+                                         "19 - 24", "25 - 34", "35 - 44", 
+                                         "45 - 54", "55 - 64", "65 - 74",
+                                         "75 - 84", "85 - 94", "95+"))
+
+#convert data into long format
+age_long <- gather(Age_data, Sex, Pop,females : males)
+age_long$ID <- paste0("ID", 1:nrow(age_long))
+
+```
+
+A type of bar plots are descending and ascending bar plots, displaying the data in order of descending or ascending order of the $y$ variable rather than the given order of the $x$ variable.
+
+```{r descending and ascending bar plots}
+#making descending and ascending bar plots
+
+#descending order
+barplot_descending <- ggbarplot(age_long, x = "ID", y = "Pop",
+                                fill = "Sex", 
+                                color = "white",
+                                palette = "jco",
+                                sort.val = "desc",        
+                                sort.by.groups = FALSE, 
+                                x.text.angle = 90,
+                                main = "Descending Bar Plot of Population by Sex",
+                                subtitle = "Using ggpubr"
+)
+
+#use the ggpar function to customise plot 
+barplot_descending2 <- ggpar(barplot_descending, 
+                             xlab = "Subject ID", 
+                             ylab = "Population Count",
+                             legend = "right", legend.title = "Gender",
+                             font.label = list(size = 15, face = "bold", 
+                                               color = "red"),
+                             font.x = c(16),
+                             font.y = c(16))
+barplot_descending2
+
+#ascending order
+barplot_ascending <- ggbarplot(age_long, x = "ID", y = "Pop",
+                               fill = "Sex",              
+                               color = "white",        
+                               palette = "jco",         
+                               sort.val = "asc",        
+                               sort.by.groups = FALSE,  
+                               x.text.angle = 90,      
+                               main = "Ascending Bar Plot of Population by Sex",
+                               subtitle = "Using ggpubr"
+)
+
+#use the ggpar function to customise plot 
+barplot_ascending2 <- ggpar(barplot_ascending, 
+                            xlab = "Subject ID", 
+                            ylab = "Population Count",
+                            legend = "right", legend.title = "Gender",
+                            font.label = list(size = 15, face = "bold", 
+                                              color = "red"),
+                            font.x = c(16),
+                            font.y = c(16))
+
+barplot_ascending2
+
+
+#rotate plots
+ggbarplot(age_long, x = "ID", y = "Pop",
+          fill = "Sex",           # change fill colour by mpg_level
+          color = "white",            # Set bar border colours to white
+          palette = "jco",            # jco journal colour palette. see ?ggpar
+          sort.val = "desc",          # Sort the value in descending order
+          sort.by.groups = FALSE,     # Don't sort inside each group
+          x.text.angle = 90,          # Rotate vertically x axis texts
+          ylab = "Population Count",
+          legend.title = "Sex",
+          rotate = TRUE,
+          ggtheme = theme_minimal(),
+          main = "Ascending Bar Plot of Population by Sex",
+          subtitle = "Using ggpubr"
+)
+
+```
+
+### Box plots 
+A box plot is the simplest plot for displaying continuous (numerical) data and can show the numerical data by category (for example, separate box plots for male vs female).
+
+```{r box plots}
+#plot the box plot using base R
+boxplot(Pop_data$pop~Pop_data$region,
+        ylab = "Population",
+        xlab = "Region",
+        main = "Box Plot of Population")
+mtext(side = 3, "Using base R")
+
+#plot the box plot using ggplot
+ggplot(Pop_data, aes(x = region, y = pop, group = region, fill = region)) +
+  geom_boxplot(fill = c("#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2"), 
+               alpha = 0.75) +
+  labs(x = "Region", y = "Population", subtitle = "Using ggplot2") +
+  ggtitle("Box Plot of Population")
+
+```
+
+
+### Histograms
+Alternatively, a histogram can be utilised, displaying the frequency distribution of a variable.
+
+```{r histogram}
+#plot the histogram using base R, adding titles in the same way as for bar plots, 
+#and changing the width of the bars.
+hist(Pop_data$pop,
+     main = "Histogram of Population", 
+     xlab = "Population")
+mtext(side = 3, "Using base R")
+
+
+#plot the histogram using ggplot
+ggplot(Pop_data, aes(x = pop)) +
+  geom_histogram(bins = 10, color = "white", fill = "#004C92") +
+  scale_fill_manual(values = "#004C92") +
+  labs(x = "Population", y = "Frequency", subtitle = "Using ggplot2") +
+  ggtitle("Histogram of Population")
+
+```
+
+The $x$-axis is split into 'bins' (or 'cells') and R counts the amount of times the variable is in each bin, with the width of each bar on the histogram changing depending on how many 'bins' there are. Some 'bins' are not visible due to being empty, for example, on the `ggplot2` histogram above, there are 10 'bins' but 2 are empty so only 8 are visible.
+Sometimes, the width of each of the bars is too wide or too narrow to be able to interpret the results effectively. In these instances, you can use the arguments `breaks =` for plotting with `base` R, and `bins =` for plotting with `ggplot2`.
+
+```{r histogram 2}
+#plot the histogram using base R, changing the width of the bars.
+hist(Pop_data$pop, 
+     breaks = 20, 
+     main = "Histogram of Population", 
+     xlab = "Population")
+mtext(side = 3, "Using base R")
+
+
+#plot the histogram using ggplot
+ggplot(Pop_data, aes(x = pop)) +
+  geom_histogram(bins = 20, color = "white", fill = "#004C92") +
+  scale_fill_manual(values = "#004C92") +
+  labs(x = "Population", y = "Frequency", subtitle = "Using ggplot2") +
+  ggtitle("Histogram of Population")
+
+
+```
+
+The histograms do not just have to display the frequency of the variable of interest. By adding the argument `freq = FALSE` to the `hist` function, the density of the variable of interest is plotted instead.
+
+```{r histogram density}
+#plot the histogram using base R for density
+hist(Pop_data$pop, 
+     freq = FALSE,
+     breaks = 20, 
+     main = "Histogram of Population", 
+     xlab = "Population")
+mtext(side = 3, "Using base R")
+
+```
+
+
+
+```{r histogram ggpubr}
+#import height dataset
+Height_data <- read.csv(file = paste0(data_path, "Height_data.csv"),
+                        header = TRUE)
+# Make histogram plot 
+hist1 <- gghistogram(Height_data, x = "Height",                  
+                     add = "mean", rug = TRUE,                  
+                     color = "Sex", fill = "Sex",                  
+                     palette = c("#FF0000", "#FFC600"),
+                     bins = 15,
+                     xlab = "Height (cm)",
+                     ylab = "Frequency",
+                     main = "Histogram of Height by Sex",
+                     subtitle = "Using ggpubr") 
+hist1
+
+```
+
+### Density plots
+Density plots are smoothed histograms. 
+In `base` R, the function `density()` can be used to find the density of the variable of interest and be inserted straight into the `plot()` function.
+```{r density plots}
+#plot the density plot using base R
+plot(density(Pop_data$pop), 
+     main = "Density plot of Population",
+     xlab = "Population",
+     ylab = "Density")
+mtext(side = 3, "Using base R")
+
+
+#plot the density plot using ggplot
+ggplot(Pop_data, aes(x = pop)) +
+  geom_density(fill = "#004C92", alpha = 0.2, color = "#004C92") +
+  scale_color_manual(values = "#004C92") +
+  labs(x = "Population", color = "Density", subtitle = "Using ggplot2") +
+  ggtitle("Density Plot of Population")
+
+```
+
+
+The function `ggdensity` within `ggpubr` can also be used for plotting the density of a variable, including plotting the density categorised by another variable, for example plotting the density of a population by 'Sex'.
+
+```{r density plot ggpubr}
+#make density plot 
+density1 <- ggdensity(Height_data, x = "Height", 
+                      add = "mean", rug = TRUE, 
+                      color = "Sex", 
+                      fill = "Sex",          
+                      palette = c("#FF0000", "#FFC600"),
+                      xlab = "Height (cm)",
+                      ylab = "Density",
+                      main = "Density Plot of Height by Sex",
+                      subtitle = "Using ggpubr")
+density1
+```
+
+### Scatter plots
+Scatter plots are useful for showing multivariate data, for investigating the relationship between two continuous variables.
+
+A line of best fit can be added to the scatter plot, aiding in the visualisation of the relationship through using the functions `lm()` to model the relationship and `abline()` to add the line to the plot in `base` R. Alternatively, the function `geom_smooth()` can be used with argument `method = "lm"` for plotting with `ggplot2`.
+
+Modelling the relationship between variables is discussed further and in more detail in Module 4. 
+
+```{r scatter plots}
+#scatter plot of temperature and rainfall
+plot(Pop_data$temperature_mean, Pop_data$precipitation_mean,
+     xlab = "Temperature",
+     ylab = "Rainfall",
+     main = "Scatter Plot of Temperature and Rainfall",
+     pch = 20)
+mtext(side = 3, "Using base R")
+abline(lm(precipitation_mean ~ temperature_mean, data = Pop_data))
+
+#plot the scatter plot and fit a line using ggplot
+ggplot(Pop_data, aes(x = temperature_mean, y = precipitation_mean)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(x = "Temperature", y = "Rainfall", subtitle = "Using ggplot2") +
+  ggtitle("Scatter Plot of Temperature and Rainfall")
+```
+
+```{r additional scatterplot}
+#points with regression line
+ggplot(data = Pop_data, aes(x = elevation,  y = precipitation_mean))+
+  geom_point(col = "red")+
+  geom_smooth(method = "lm")+
+  theme_bw()+
+  labs(x = "Elevation", y = "Mean Precipitation", 
+       subtitle = "Using ggplot2")+
+  ggtitle("Scatter Plot of Elevation and Mean Precipitation")
+```
+
+### Violin plots
+
+Violin plots are similar to box plots and are useful for the comparison of probability distributions through showing the different probability densities at different values
+
+```{r violin plot}
+#violin plot
+ggplot(data = Height_data, aes(x = Sex,  y = Height))+  
+  geom_violin(aes(fill =  Sex), alpha = 0.75)+  
+  fill_palette(c("#FF0000", "#FFC600")) +  
+  labs(y = "Height (cm)", subtitle = "Using ggplot2")+
+  ggtitle("Violin Plot of Height by Sex")+
+  theme_bw() 
+```
+
+### Line graphs
+```{r line graph}
+#points connected with line
+ggplot(data = Pop_data, aes(x = elevation, y = precipitation_mean))+
+  geom_point(col = "red")+
+  geom_line()+
+  theme(axis.text.x = element_text(size = 15),
+        axis.text.y = element_text(size = 15),
+        axis.line = element_line(color = "black"))+
+  labs(x = "Elevation", y = "Mean Precipitation", subtitle = "Using ggplot2")+
+  ggtitle("Line Graph of Elevation and Mean Precipitation")
+
+```
+
+### Population pyramids
+
+Population pyramids are an effective plot for comparing the structures of different populations, for example, age structure by gender.
+
+```{r population pyramids}
+#create population pyramid for age by sex
+pyramid1 <- ggplot(Age_data) +
+  geom_col(aes(x = age_groups, y = females, fill = "red")) +
+  geom_col(aes(x = age_groups, y = -males, fill = "blue")) + 
+  scale_y_continuous(breaks = seq(-200000, 200000, 50000), 
+                     labels = paste0(as.character(c(seq(200, 0, -50), 
+                                                    seq(50, 200, 50))))) + 
+  coord_flip() + 
+  scale_fill_discrete(name = "Gender", labels = c("Female", "Male"))+
+  labs(x = "Age groups", y = "Population (in 1000s)", subtitle = "Using ggplot2")+
+  ggtitle("Population Pyramid for Age by Sex")+
+  theme_minimal()
+
+#use the ggpar function to customise plot 
+pyramid2 <- ggpar(pyramid1, legend = "right", legend.title = "Gender",
+                  font.label = list(size = 16, face = "bold", color ="red"),
+                  font.x = c(16),
+                  font.y = c(16),
+                  subtitle = "Using ggplot2 and ggpubr",
+                  xtickslab.rt = 45, ytickslab.rt = 45)
+
+pyramid2
+```
+
+
+### Lollipop plots
+
+A lollipop plot is a subset of bar plots where instead of bars, the data is represented by a line and a dot.
+
+```{r lollipop}
+#create lollipop plot for population
+lollipop1 <- ggdotchart(age_long, x = "ID", y = "Pop",
+                        color = "age_groups",             
+                        #palette = c("#00AFBB", "#E7B800"),
+                        sorting = "ascending",            
+                        add = "segments",                
+                        dot.size = 10,                      #large dot size
+                        label = round(age_long$Pop/10000),   
+                        font.label = list(color = "white", size = 12,
+                                          vjust = 0.5),     
+                        ggtheme = theme_pubr(),             
+                        subtitle = "Using ggpubr",
+                        main = "Lollipop Plot for Population"
+)
+
+#adjust lollipop plot with ggpar
+lollipop2 <- ggpar(lollipop1, xlab = "Subject ID", ylab = "Population Count",
+                   legend = "right", legend.title = "Age groups",
+                   font.label = list(size = 15, face = "bold", color ="red"),
+                   font.x = c(16),
+                   font.y = c(16),
+                   xtickslab.rt = 45, ytickslab.rt = 45)
+
+#change size of legend points and axis text to fit in plot
+lollipop2 + guides(color = guide_legend(override.aes = list(size = 1.5))) +
+  theme(axis.text = element_text(size = 6))
+```
+
+### Plots with an image background
+
+```{r plots with an image background}
+#create a plot with an image background
+img1 <- png::readPNG(paste0(pic_path,"worldpoplogo.png"))
+ggplot(Pop_data, aes(x = pop)) +
+  background_image(img1)+
+  geom_histogram(bins = 20, color = "white", fill = "black", alpha = 0.75) +
+  scale_fill_manual(values = "black") +
+  labs(x = "Population", y = "Frequency", subtitle = "Using ggplot2") +
+  ggtitle("Histogram of Population")
+
+```
+
+
+### Viewing and saving plots
+
+You can view current and previous plots by looking to pane 3 on RStudio, navigating to the **Plots** tab and using the arrows to flip between plots.
+
+<!-- ![View plots](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/annotated view plots.png) -->
+
+<!-- ![View plots](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/annotated view plots.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "View plots"}
+knitr::include_graphics("figures/2_images/annotated view plots.png")
+```  
+  
+  
+You can also view multiple plots on one window/page by using the function `par()` with argument `mfrow` which divides the plot window into rows and columns. 
+
+```{r par}
+#have a window with 4 plots, 2 in each row and 2 in each column
+par(mfrow = c(2,2))
+
+boxplot(Pop_data$pop~Pop_data$region,
+        ylab = "Population",
+        xlab = "Region",
+        main = "Box Plot of Population by Region")
+
+hist(Pop_data$pop, 
+     breaks = 20, 
+     main = "Histogram of Population", 
+     xlab = "Population")
+
+barplot(regional_population, 
+        ylab = "Population Total", 
+        xlab = "Region",
+        col = "#004C92",
+        main = "Bar Plot of Population by Region",
+        names.arg = c(1:5))
+
+plot(Pop_data$temperature_mean, Pop_data$precipitation_mean,
+     xlab = "Temperature",
+     ylab = "Rainfall",
+     main = "Scatter Plot of Temperature and Rainfall",
+     pch = 1)
+```
+
+Also using the function `par()`, the size of the margins of the plots can be changed, using the argument `mar = c(bottom, left, top, right)`, giving the argument a numerical vector with one number for each side of the plot.
+
+```{r mar}
+#adjust margins of plots
+par(mfrow = c(2,2), mar = c(2,3,3,2))
+
+boxplot(Pop_data$pop~Pop_data$region,
+        ylab = "Population",
+        xlab = "Region",
+        main = "Box Plot of Population by Region")
+
+hist(Pop_data$pop, 
+     breaks = 20, 
+     main = "Histogram of Population", 
+     xlab = "Population")
+
+barplot(regional_population, 
+        ylab = "Population Total", 
+        xlab = "Region",
+        col = "#004C92",
+        main = "Bar Plot of Population by Region",
+        names.arg = c(1:5))
+
+plot(Pop_data$temperature_mean, Pop_data$precipitation_mean,
+     xlab = "Temperature",
+     ylab = "Rainfall",
+     main = "Scatter Plot of Temperature and Rainfall",
+     pch = 1)
+```
+
+Similarly, the function `ggarrange` from `ggpubr` can also be used to display multiple plots on one window/page.
+
+```{r multiple plots}
+#arrange multiple plots on one page
+ggarrange(hist1, density1 + rremove("x.text"), 
+          labels = c("A", "B"),
+          ncol = 1, nrow = 2)
+```
+
+To return the plot window back to its default settings of margins and number of plots per window, use the function `dev.off()` with no arguments. 
+
+To save plots as either an image or as a PDF, on pane 3 follow **Plots > Export > Save as [Image or PDF]**.
+
+<!-- ![Save plots](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/export plots.png) -->
+
+<!-- ![Save plots](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module2/images/export plots.png) -->
+  
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Save plots"}
+knitr::include_graphics("figures/2_images/export plots.png")
+```  
+  
+  
+## End of module exercises
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **1.**  How many cars have a  miles per gallon (`mpg`) of less than 15 in the `mtcars` data?
+</div>
+
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **2.** How many cars have exactly 4 cylinders (`cyl`) in the `mtcars` data?
+</div>
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **3.**  What is the mean value of horsepower (`hp`) to 2 decimal places in the `mtcars` data?
+</div>
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **4.**  What car has the lowest miles per gallon (`mpg`) in the `mtcars` data?
+</div>
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **5.**  What is the median miles per gallon (`mpg`) value for cars with 8 cylinders (`cyl`) in the `mtcars` data?
+</div>
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **6.**  What car has the highest weight (`wt`) for each amount of cylinders (`cyl`) in the `mtcars` data?
+</div>
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **7.**  Create a bar plot that shows the number of cars with each gear type (`gear`) in the `mtcars` data.
+</div>  
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **8.**  Create a bar plot that shows the number of cars with each gear type (`gear`) with the distribution of cylinders (`cyl`) for each type in the `mtcars` data.  Add a legend for the cylinders.
+</div>
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **9.**  Create a scatter plot to show the relationship between weight (`wt`) and miles per gallon (`mpg`) in the `mtcars` data.
+</div>
+
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **10.**  Create a scatter plot to show the relationship between weight (`wt`) and miles per gallon (`mpg`) by cylinder (`cyl`) in the `mtcars` data.
+</div>
+
+## Useful resources
+
+  - R packages: [datacamp](https://datacamp.com/tutorial/r-packages-guide)
+  - Importing data: [intro2r](https://intro2r.com/importing-data.html)
+  - Basic data wrangling: [Data Science in R: A Gentle Introduction](https://bookdown.org/jgscott/DSGI/)
+  - Data visualisation: [R for Data Science](https://r4ds.had.co.nz/data-visualisation.html)
+  - Data visualisation: [The R Graph Gallery](https://r-graph-gallery.com/ggplot2-package.html)

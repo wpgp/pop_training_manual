@@ -1,0 +1,1580 @@
+
+```{r setup_module9, include=FALSE}
+#data path
+data_path <- "data/CMR/"
+
+```
+
+# Model Fit Checks and Cross-Validation
+
+This module expands on the methods discussed in earlier modules, detailing the model assumption checking methods, and different techniques for model selection. Additionally, this module covers cross-validation methods in more detail than in Module 4.
+
+```{r load sf, tidyverse and dplyr, message=FALSE, warning=FALSE, include=FALSE}
+#load the sf and tidyverse packages
+library(sf)
+library(tidyverse)
+library(dplyr)
+library(sp)
+```
+
+```{r input data, include=FALSE}
+#input the data
+Data_CMR <- read.csv(paste0(data_path,"Pop_Data_Complete.csv"))
+ea_shp <- st_read(paste0(data_path,"Pop_Data_Complete.gpkg")) 
+shp <- as(st_geometry(ea_shp), "Spatial") #convert to spatial object
+
+
+Data_CMR <- Data_CMR %>% 
+  mutate(HHsize = Total_Pop/Total_Building_Count)%>% 
+  mutate(Density = HHsize/Total_Building_Count) 
+
+#create the log transformed Density variable
+Data_CMR <- Data_CMR %>% 
+  mutate(LDensity = log(Density),
+         y = LDensity) #this will be the response for the density models
+
+#add the lon-lat to the demographic data
+Data_CMR$long <- coordinates(shp)[,1] #extract and add the longitude to the data
+Data_CMR$lat <- coordinates(shp)[,2] #extract and add the latitude to the data
+
+#standardisation of model covariates
+stdise <- function(x){
+  stds <- (x - mean(x, na.rm = TRUE))/sd(x, na.rm = TRUE)
+  return(stds)
+}
+
+#apply the function to standardize the covariates 
+cov_vars <- paste0("x", 1:41) 
+Data_CMR_std <- Data_CMR
+#standardize the covariates only
+Data_CMR_std[, cov_vars] <- apply(Data_CMR[, cov_vars], 2, stdise)
+#obtain subset of the data with only the covariates and the response variable
+mod_covs <- Data_CMR_std[,c("y", cov_vars)]
+
+#remove all NA values
+mod_covs <- mod_covs %>% tidyr::drop_na()
+
+#fit the glm
+fdens4 <-  glm(formula = y ~ x2 + x16 + x20 + x24 + x31 + x36 + x40,
+               family = gaussian, data = mod_covs)
+summary(fdens4)
+```
+
+## Model assumption checking
+
+For this section, the data and model used follow on from Module 8, where the Cameroon data is explored and modelled. The resulting best model has covariates: $x2, x16, x20, x24, x31, x36, x40$, which are used in the model `fdens4`. For more clarification, check the model set-up section of Module 8.
+
+Once the chosen model is fitted, as mentioned in Module 4, it is important to check the validity of the model assumptions.
+
+One method of doing this is to obtain the model residuals and plot a histogram of the residuals to test for normality. In the histogram below, there is evidence that the normality assumption is upheld with an approximate bell-curve shape to the histogram that is roughly symmetric.
+
+```{r normality of residuals}
+#get the model residuals
+model_residuals = fdens4$residuals
+
+#plot the histogram of the  residuals to test for the normality of the residuals
+hist(model_residuals, col = "#004C92", breaks = 20, 
+     main = "Histogram of model residuals", xlab = "Model residuals")
+```
+
+Alternatively, a quantile-quantile, or Q-Q, plot can be used to test for the normality of the residuals with the functions `qqnorm()` and `qqline()`.
+
+```{r qqplot}
+#plot the Q-Q plot of the residuals to test for the normality of the residuals
+qqnorm(model_residuals)
+
+#plot the Q-Q line
+qqline(model_residuals)
+```
+
+The homoscedasticity assumption, or the constant variance assumption, can be checked by plotting the residuals with the basic `plot()` function, adding a horizontal line to the plot with the `abline()` function to aid in the interpretation of results.
+
+```{r constant variance plot}
+#check for constant variance assumption (homoscedasticity)
+plot(model_residuals) 
+abline(h = 0, col = 2, lwd = 3) 
+```
+
+It is important that this assumption is met, as if not, the resulting standard errors may be biased leading to unreliable inferences from the coefficients. If the assumption of homoscedasticity is not met (the case of heteroscedasticity, the variance is not constant), robust standard errors can be computed, or the dependent variable can be transformed using weighted least squares (WLS) regression. For information on these methods, see [Andrew Heiss](https://evalf21.classes.andrewheiss.com/example/standard-errors/) and [R-bloggers](https://www.r-bloggers.com/2023/12/conquering-unequal-variance-with-weighted-least-squares-in-r-a-practical-guide/).
+
+To further demonstrate that this model is the preferred model, the generalised linear model with the selected significant covariates can be fitted against a nested (reduced) model. In the below code, a nested model is compared to the best model using the AIC where it can be seen that the AIC value for the model with the significant covariates found from the above workings is lower than for the nested model.
+
+```{r model fit checking}
+#fit the glm 
+fit1 <-  glm(formula = y ~ x2 + x16 + x20 + x24, family = gaussian, 
+             data = Data_CMR_std)
+summary(fit1)
+
+#best model
+fit2 <-  glm(formula = y ~ x2 + x16 + x20 + x24 + x31 + x36 + x40, 
+             family = gaussian, data = Data_CMR_std)
+summary(fit2)
+
+```
+
+## Model selection
+
+When selecting the *best* model (out of the competing models), it is important to select the model with the highest predictive ability.
+
+Model selection is introduced in Module 4, where methods such as the AIC, BIC and LRT are used. For example, the AIC can be used with the generalised linear models fitted in the previous section as follows.
+
+```{r AIC of glm}
+#compute the AIC statistics 
+AIC(fit1)
+AIC(fit2)
+```
+
+It can be seen that `fit2` has a notably smaller AIC value and therefore, that is the model which should be selected.
+
+However, these are not the only approaches that are available, with other methods more commonly used for Bayesian model selection.
+
+### Watanabe-Akaike Information Criterion (WAIC)
+
+The WAIC (also known as the Widely Applicable information criterion) is a generalised version of the AIC that is commonly used for Bayesian model selection. This approach is often preferred when comparing Bayesian and complex models as instead of averaging over a point estimate (like the AIC and BIC), it averages over the posterior distribution, returning more robust and accurate results.
+
+A value that can be used to compare the competing models is constructed through combining a penalty term derived from the estimated effective number of parameters with the expected log predictive densities for all the data points. When the data is not correlated, this method can be used as an alternative to cross-validation, and the method is only appropriate if there is no spatial or temporal auto-correlation. See [Nature](https://www.nature.com/articles/s41598-024-66643-4#:~:text=One%20common%20method%20used%20for%20Bayesian%20model%20selection,value%20that%20can%20be%20compared%20between%20alternative%20models.) or [Columbia](http://www.stat.columbia.edu/~gelman/research/unpublished/loo_stan.pdf) for more information.
+
+When fitting a model with the `inla()` function, the argument `control.compute` can be included with a list of variables you wish to compute and return with the model. This is demonstrated in Module 6, wherein the argument is specified as `control.compute = list(waic = TRUE))`.
+
+This is seen in Module 6 with the following code.
+
+```{r load INLA package, message=FALSE, warning=FALSE, include=FALSE}
+#load the INLA package
+library(INLA)
+```
+
+```{r waic example mod 6}
+#fit the chosen model and set WAIC to be computed
+form_pop1a <- log(Total_Pop) ~ x2 + x16 + x20 + x24 + +x31 + x36 + x40 
+mod1 <- inla(form_pop1a,
+              data = data.frame(Data_CMR_std), # Data_CMR
+              family = "normal",
+              control.predictor = list(compute = TRUE),
+              control.compute = list(dic = TRUE, waic = TRUE, cpo = TRUE, 
+                                     config = TRUE) 
+)
+```
+
+To extract just the WAIC statistic from the model, either `$waic[1]` can be used after giving the model name, or the function `summary()` with the model of interest as the argument can be used to return the WAIC statistic alongside other potentially of interest information. Both of these options are given below. As with the standard AIC (and BIC), the WAIC is used for comparing nested models, where the model with the lower WAIC value is the better fitting model.
+
+```{r waic results}
+#extracting WAIC
+mod1$waic[1]
+
+#using summary function 
+summary(mod1)
+```
+
+### Deviance Information Criterion (DIC)
+
+Similarly to the WAIC, the DIC is commonly used for comparison of Bayesian models for model selection. This criterion is a hierarchical modelling generalisation of the AIC and is particularly useful in cases where the Markov chain Monte Carlo (MCMC) methods have been used for obtaining the posterior distributions of the models. The main difference from the AIC is that instead of the maximised log-likelihood value used, the DIC uses the log-likelihood evaluated at the Bayes estimate of $\hat{\theta}$. Additionally, the penalty term in the AIC is replaced with the estimated effective number of parameters.
+
+As with the WAIC, the DIC can be computed within the `inla()` function by including the argument `control.compute` specified as `control.compute = list(dic = TRUE))`. This is also shown in Module 6 with the following code.
+
+```{r dic example mod 6, eval=FALSE}
+#fit the chosen model and set DIC to be computed
+form_pop1a <- log(Total_Pop) ~ x2 + x16 + x20 + x24 + x31 + x36 + x40
+mod1 <- inla(form_pop1a,
+              data = data.frame(Data_CMR_std),
+              family = "normal",
+              control.predictor = list(compute = TRUE),
+              control.compute = list(dic = TRUE, waic = TRUE, cpo = TRUE, 
+                                     config = TRUE) 
+)
+```
+
+The methods to extract the WAIC from the model are similar to those for extracting the DIC, for example, `$dic[1]` can be used following the model name or the `summary()` function with the model of interest as the argument. As an example, the former method is given below for the above model. Similarly to the WAIC statistic, DIC is used for comparing the fit of nested models and the model with the lowest DIC value is the better fitting model.
+
+```{r dic example}
+#compute the DIC
+mod1$dic[1]
+```
+
+For more information and a manual implementation in R, see [Dean Markwick](https://dm13450.github.io/2018/01/18/DIC.html).
+
+### Conditional predictive ordinate (CPO)
+
+The conditional predictive ordinate is the leave-one-out cross-validation predictive density (also described as a cross-validatory criterion), conducting an observation-specific measure of the fit of the model. The CPO is computed for each observation, where when the model is fitted using all data but $y_i$ (leave-one-out cross-validation), the CPO value is given as the posterior probability of observing that observation. The CPO allows for detection of unexpected or unusual observations, where whilst large CPO values correspond to the model fitting the observation well, a small CPO value indicates that the model fits that observation poorly, possibly indicating an outlier.
+
+This approach requires some MCMC simulation to sample from the posterior simulation, however, this is the only simulation required unlike with other cross-validation and posterior-predictive approaches, making it a more computationally efficient and attractive approach to use.
+
+As with both the WAIC and DIC, Module 6 provides an example of this being computed within the `inla()` function through using the argument `control.compute = list(cpo = TRUE)`, where the example code is as follows.
+
+```{r cpo example mod 6, eval=FALSE}
+#fit the chosen model and set CPO to be computed
+form_pop1a <- log(Total_Pop) ~ x2 + x16 + x20 + x24 + x31 + x36 + x40
+mod1 <- inla(form_pop1a,
+              data = data.frame(Data_CMR_std),
+              family = "normal", 
+              control.predictor = list(compute = TRUE),
+              control.compute = list(dic = TRUE, waic = TRUE, cpo = TRUE, 
+                                     config = TRUE)
+)
+```
+
+Similarly to the other model selection methods, the CPO can be extracted through using `$cpo[1]` or `$cpo$cpo` following the name of the chosen model.
+
+To identify any potential outlier observations, the CPO values can be plotted, with each value numbered to the corresponding observation index number for ease of identification.
+
+```{r CPO plot}
+#set n to be the total number of observations
+n <- nrow(Data_CMR)
+
+#extract the CPO values
+cpo_values <- mod1$cpo$cpo
+
+#plot the CPO values
+plot(1:n, cpo_values, ylab = "CPO", type = "n")
+text(1:n, cpo_values, 1:n)
+```
+
+Given the large number of observations, the potential outlier observations cannot be easily detected from the resulting plot, to simplify this, the $y$-axis can be limited to only show the very small CPO values as follows.
+
+```{r CPO outliers}
+#plot the CPO values
+plot(1:n, cpo_values, ylab = "CPO", type = "n", ylim = c(0, 0.01))
+text(1:n, cpo_values, 1:n)
+```
+
+The very small observations can then be extracted through selecting the 'threshold' for which values will be classified as outliers, and using the `which()` function to select the indices of each outlier value.
+
+```{r cpo outlier extraction}
+#extract outliers
+which(cpo_values < 0.005)
+```
+
+For more information on CPO, see [Posterior Predictive Bayesian Phylogenetic Model Selection](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3985471/).
+
+### Probability Integral Transform (PIT)
+
+The probability integral transform (or predictive integral transform, PIT) is another criterion that can be used for model selection. For each observation, the PIT measures the probability of a new response value being lower than the observed response value using a model that uses the rest of the data (also a leave-one-out approach). In the case where the model represents the observations well, the resulting (ordered) PIT values should approximately follow a uniform distribution.
+
+The PIT is computed as part of the CPO within the `inla()` function, where it is confirmed whether or not the PIT is computed in the model in the `sumamry()` function, as seen below for the model given as an example in Module 6.
+
+```{r pit example mod 6}
+#summary of chosen model for PIT
+summary(mod1)
+```
+
+The PIT values can be extracted from the model through using `$cpo[2]` or `$cpo$pit` following from the name of the chosen model, demonstrated in the below code, where the PIT values are plotted to test the fit of the model.
+
+```{r PIT uniform}
+#extract PIT values 
+pit_values <- mod1$cpo$pit
+
+#compute uniform quantiles
+uniform_quant <- (1:n)/(n+1)
+
+#plot the PIT values
+plot(uniform_quant, sort(pit_values), xlab = "Uniform quantiles", 
+     ylab = "Ordered PIT values")
+abline(0,1)
+```
+
+It can be seen that the model fits the data reasonably well, given that the resulting plot of the PIT values is approximately uniformly distributed with no obvious outlier values.
+
+For more information, see [Bayesian inference with INLA](https://becarioprecario.bitbucket.io/inla-gitbook/ch-INLA.html).
+
+## Cross-validation
+
+An introduction to cross-validation methods is given in Module 4, where a frequentist approach is taken. This section will cover basic cross-validation methods, in addition to the k-fold and leave-one-out cross-validation methods previously covered, however, with the application being to geospatial data (the Cameroon dataset following on from Module 8), INLA models and a Bayesian approach.
+
+### Basic cross-validation
+
+To begin with the basic cross-validation process, the data first needs to be randomly split into two, a training set and a test set. In this case, the training dataset contains 80% of the data and the test set contains the remaining 20% of the data.
+
+```{r split into training and test}
+#set the seed for reproducibility
+set.seed(100)
+
+#find how large 80% of the data is
+n_train <- ceiling(0.8 * nrow(Data_CMR_std))
+
+#sample the indices for the training data
+train_sample <- sample(c(1:nrow(Data_CMR_std)), n_train)
+
+#sample the training data
+train_data <- Data_CMR_std[train_sample, ]
+
+#sample the test data
+test_data <- Data_CMR_std[-train_sample, ]
+```
+
+Once the data has been split, the preferred model from above can be fitted on the training data (to 'train' the model). This can be done with the `glm()` as above.
+
+```{r fit training model}
+#fit the training model
+train_model <-  glm(formula = y ~ x2 + x16 + x20 + x24 + x31 + x36 + x40, 
+             family = gaussian, data = train_data)
+```
+
+As discussed in Module 4, predicted values can be computed using two methods. The simplest way is to use the `predict()` function, including the training model and test dataset as arguments. Alternatively, the prediction can be done manually through finding the coefficients for the best model and then manually multiplying the model coefficients to the corresponding covariates from the test data. To demonstrate that both methods produce the comparable results, a data frame can be created to compare the predicted values from each method side-by-side.
+
+```{r model predictions}
+#predictions with function
+pred_w_func <- predict(train_model, test_data)
+
+#predictions manually
+coeffs <- coefficients(train_model)
+pred_manual <-  coeffs[1] + coeffs[2]*test_data$x2 + coeffs[3]*test_data$x16 +
+  coeffs[4]*test_data$x20 + coeffs[5]*test_data$x24 + coeffs[6]*test_data$x31 +
+  coeffs[7]*test_data$x36 + coeffs[8]*test_data$x40
+
+#compare the predictions found using the two methods
+compare_preds <- data.frame(Manual = pred_manual, 
+                  Automatic = pred_w_func)
+head(compare_preds)
+```
+
+To further compare the results, a scatter plot and a box plot can be produced.
+
+```{r comparison plots}
+#put the plots side-by-side
+par(mfrow = c(1,2))
+
+#scatter plot
+plot(pred_manual, pred_w_func,
+     col = c("blue", "red"),
+     xlab = "Manual", ylab = "Automatic")
+
+#box plot
+boxplot(pred_manual, pred_w_func,
+     col = c("blue", "red"))
+```
+
+Model fit metrics such as Mean Absolute Error (MAE), Root Mean Square Error (RMSE), bias and correlation can all be computed to help understand how well the chosen model works. To make it simpler to compare the different metrics, the below function created computes each of the aforementioned metrics through including the observed values and the predicted values as arguments.
+
+```{r model fit metrics funcition}
+#create model metrics function
+mod_metrics <- function(obs, pred){
+  residual = pred - obs
+  MAE = mean(abs(residual), na.rm = TRUE) #Mean Absolute Error
+  MSE = mean(residual^2, na.rm = TRUE) #Mean Square Error
+  RMSE = sqrt(MSE) #Root Mean Square Error 
+  BIAS = mean(residual, na.rm = TRUE) #Bias
+  CORR = cor(obs[!is.na(obs)], pred[!is.na(obs)]) #Correlation
+  output <- list(MAE  = MAE ,
+                 RMSE = RMSE,
+                 BIAS = abs(BIAS),
+                 CORR = CORR)
+  return(output)
+}
+```
+
+To begin with, the log-density can be included as the observed values with the manually predicted values from the chosen model also included as an argument.
+
+```{r metrics for chosen model}
+#compute the model metrics
+metrics <- mod_metrics(test_data$LDensity, pred_manual)
+
+#remove the list structure and round the results to 4 d.p.
+met <- round(unlist(metrics), 4) 
+met 
+```
+
+The metrics results indicate the model works well. For example, the range of MAE is from 0 to $\infty$, where a score of 0 would indicate that the resulting predictions are perfect, therefore a low value of 1.0116 is good. Similarly, the rest of the metrics are also small, particularly the bias and correlation, two values that you want to be as small as possible for a better fitting model.
+
+Repeated cross-validation can be used to better assess the model metrics through obtaining average values for the metrics. This is done in the code below where the start values are set to be 0, following the same process as before through randomly splitting the data, modelling the training data and predicting with the test data followed by computing the metrics. The mean value can then be computed for each of the metrics and compared to the results obtained above for when the process is only completed once. The results from the repeated CV support the prior conclusions that the model chosen works well in the case of this data.
+
+```{r CV metrics}
+#run the cross validation multiple number of times and average the values
+MAE <- 0
+RMSE <- 0
+BIAS <- 0
+CORR <- 0
+
+#choosing here to run the validation 20 times
+for(i in 1:20){
+  #select the number of training samples to take to be 80% of the observations
+  n_train <- ceiling(0.8 * nrow(Data_CMR_std))
+  #sample the the indices for the training data
+  train_sample <- sample(c(1:nrow(Data_CMR_std)), n_train)
+  #create the training dataset
+  train_data <- Data_CMR_std[train_sample, ]
+  #create the test dataset to contain the remaining observations (20%)
+  test_data <- Data_CMR_std[-train_sample, ]
+  
+  #fit the training model using the previously selected covariates
+  train_model <-  glm(formula = y ~ x2 + x16 + x20 + x24 + x31 + x36 + x40, 
+             family = gaussian, data = train_data)
+  
+  #save the coefficients from the training model
+  coeffs <- coefficients(train_model)
+  #manually predict using the model coefficients
+  pred_manual <-  coeffs[1] + coeffs[2]*test_data$x2 + coeffs[3]*test_data$x16 +
+    coeffs[4]*test_data$x20 + coeffs[5]*test_data$x24 +
+    coeffs[6]*test_data$x31 + coeffs[7]*test_data$x36 + coeffs[8]*test_data$x40
+
+  #obtain the metrics for the model using the model metrics function
+  metrics <- round(unlist(mod_metrics(test_data$LDensity, pred_manual)),4)
+
+  #extract each of the metrics for the model and sum to result from 
+  #previous iteration to find mean metric value later
+  MAE  <- MAE + metrics[1]
+  RMSE <- RMSE + metrics[2]
+  MAE <- MAE + metrics[3]
+  CORR <- CORR + metrics[4]
+}
+#create a data frame for the model metrics, averaged across the 20 iterations
+av_metrics <- data.frame(MAE = MAE/20,
+                RMSE = RMSE/20,
+                BIAS = BIAS/20,
+                CORR = CORR/20)
+
+#print the result
+(met_all <- rbind(met, av_metrics)) #include in brackets to print result
+```
+
+### K-Fold Cross-Validation
+
+K-fold cross-validation is a common choice of method for cross-validation for multiple reasons. Firstly, it is particularly useful in the case where the number of samples available is small given that this approach does not waste much data. Additionally, in comparison to alternative cross-validation approaches, k-fold cross-validation often results in models with less bias as it ensures that each data point is used for both training and validation. Therefore, this approach ensures that each of the observations from the original dataset are able to appear in both the training and test datasets. In this section, to demonstrate the process of k-fold cross-validation, both **in-sample** (data from the sample is used to develop the model that is used for the predictions) and **out-of-sample** (data that wasn't used in the development of the model is used for the predictions), a function is created which allows for an automated process of the cross-validation. 
+
+Firstly, a function to compute the model metrics must be created, this takes the observed and predicted values and computes the mean absolute error, mean square error, root mean square error, bias and the correlation coefficient. This function will aid in streamlining the cross-validation function.
+
+```{r read in the R data, echo=FALSE}
+load("data/CMR_CV.rdata")
+```
+```{r model metrics function}
+#create model metrics function
+model_metrics <- function(obs, pred){
+  residual = pred - obs
+  MAE = mean(abs(residual), na.rm = TRUE) #Mean Absolute Error
+  MSE = mean(residual^2, na.rm = TRUE) #Mean Square Error
+  RMSE = sqrt(MSE) #Root Mean Square Error
+  BIAS = mean(residual, na.rm = TRUE) #Bias
+  CORR = cor(obs[!is.na(obs)], pred[!is.na(obs)]) #Correlation Coefficient
+  output <- list(MAE  = MAE,
+                 RMSE = RMSE,
+                 BIAS = abs(BIAS),
+                 CC = CORR)
+  return(output)
+}
+```
+
+<!-- Then, a function to extract the different settlement types from the data is created. These two functions allow for the cross-validation function to be more streamlined. -->
+
+<!-- ```{r settlement types function} -->
+<!-- #extract settlement types function -->
+<!-- settle_type <- function(dat, st) -->
+<!-- { -->
+<!--   uniq <- unique(dat$set_typ) -->
+<!--   uniq[1] -->
+<!--   for(i in  1:nrow(dat)) -->
+<!--   { -->
+
+<!--     for(j in 1:3) -->
+<!--     { -->
+<!--       if(dat$set_typ[i]==uniq[j]) dat$set_typ2[i] = st[j] -->
+<!--     } -->
+
+<!--   } -->
+<!--   dat$set_typ2 -->
+<!-- } -->
+<!-- ``` -->
+
+Then, the function for the k-fold cross-validation can be created. For alternative datasets, the selected covariates should be changed to suit your data.
+
+The arguments needed for the function are as follows.
+
+  - `dat`: the input survey data containing all the variables
+  - `n.folds`: the number of test (k) folds to use
+  - `mod`: the best model of the full or reference data
+  - `A`: the projection matrix used in training the full data model
+  - `cov`: the fixed covariates from the selected model
+  - `cov2`: additional covariates to use in the out-of-sample training stack
+  - `seed`: a random sample seed used to make the results reproducible
+
+```{r k-fold cross-validation}
+cross_validate <- function(dat, n.folds, mod, form, A, cov, cov2, seed){
+
+  #set the seed for reproducibility
+  set.seed(seed) 
+  #number of rows in the dataset
+  N <- nrow(dat) 
+  
+  #sample IDs for the training data
+  table(ind_train <- factor(sample(x = rep(1:n.folds, 
+                                           each = floor(N / n.folds)),  
+                                   size = N)))
+  
+  #create a table for the training IDs
+  table(as.numeric(ind_train)) 
+  dat$k_fold <- as.numeric(ind_train)
+  
+  #vector for the longitude and latitude coordinates
+  coords <- cbind(dat$lon, dat$lat)
+  #sort the unique folds
+  k_uniq <-sort(unique(dat$k_fold))
+  
+  
+  #--------------------------------------------------------------------------#
+  #                                 In-Sample                                #
+  #--------------------------------------------------------------------------#
+  
+  #create variables for the metrics and predictions
+  met_list_in <- list()
+  pred_list_in <- list()
+  
+  for(i in 1:length(k_uniq)){ #cycle through each of the unique folds
+    #keep track the current fold
+    print(paste0("in-sample cross-validation using fold ", i, sep = ""))
+    #select the test data for fold i
+    test_ind <- which(dat$k_fold == k_uniq[i])
+    dim(test <- dat[test_ind, ])
+    #train and test data coordinates
+    train_coords <- coords
+    test_coords <- coords[test_ind,]
+    
+    #spatial random effects based on the full data best model
+    sfield_nodes_mean <- mod$summary.random$spatial.field['mean']
+    field_mean <- (A%*% as.data.frame(sfield_nodes_mean)[, 1])
+    
+    #list of selected covariates
+    fixed <- mod$summary.fixed['Intercept', 'mean'] #fixed effects
+    for(covariate in cov){
+      fixed <- fixed + mod$summary.fixed[paste0(covariate), 'mean'] *
+        test[,paste0(covariate)]
+    }
+    #add settlement type and region nested effects
+    fixed = fixed + rnorm(nrow(test), 0, 1/mod$summary.hyperpar$mean[2]) +
+    #add settlement type random effect
+      rnorm(nrow(test), 0, 1/mod$summary.hyperpar$mean[5]) + 
+      #add uncorrelated spatial random effects
+      mod$summary.random$IDsr['mean'][test_ind,1] + field_mean[test_ind,1]
+    
+    dens_ht <- exp(fixed)
+    sum(pop_ht <- dens_ht*test$bld)
+    
+    #scatter plots for each fold, uncomment for plots to show
+    # par(mfrow = c(1,1))
+    # plot(test$obs, pop_ht, xlab = "Observed", 
+    #      ylab = "Predicted", col = c('blue','orange'),
+    #      pch = c(16,16), cex.axis = 1.5)
+    # abline(0,1)
+    # legend("topleft", c("Observed", "Predicted"), col = c("blue", "orange"), 
+    #        pch = c(16,16), bty = "n", cex = 1.5) 
+    
+    #calculate fit metrics
+    met_in <- model_metrics(test$pop, pop_ht)
+    
+    met_list_in[[i]]<- unlist(met_in)
+    pred_list_in[[i]] <- data.frame(obs = test$obs, pred = pop_ht,
+                                    fold = rep(i, length(test$obs)),
+                                    data = rep("insample", length(test$obs)))
+  }
+  
+  met_list_in_dat <- do.call(rbind,met_list_in)
+  
+  #fit metrics
+  metrics_in <- apply(met_list_in_dat, 2, mean)
+  
+  #predictions
+  pred_list_in_dat <- do.call(rbind,pred_list_in)
+  
+  #--------------------------------------------------------------------------#
+  #                               Out-of-Sample                              #
+  #--------------------------------------------------------------------------#
+  
+  #create variables for the model metrics and predictions
+  met_list_out <- list()
+  pred_list_out <- list()
+  
+  for(i in 1:length(k_uniq)){#cycle through each of the unique folds
+    #keep track of current fold
+    print(paste0("out-of-sample cross-validation using fold ", i, sep = ""))
+    #select the train and test data for fold i
+    train_ind <- which(dat$k_fold != k_uniq[i])
+    test_ind <- which(dat$k_fold == k_uniq[i])
+    dim(train <- dat[train_ind, ])
+    dim(test <- dat[test_ind, ])
+    #train and test data coordinates
+    train_coords <- coords[train_ind,]
+    test_coords <- coords[test_ind,]
+    
+    #create a projection matrix for training data
+    Ae<-inla.spde.make.A(mesh = mesh,loc = as.matrix(train_coords)); dim(Ae) 
+    covars_train <- train[,c(cov, cov2)]
+    stk_train <- inla.stack(data = list(y = train$dens), #the response
+                            A = list(Ae,1),  #the A matrix
+                            effects = list(c(list(Intercept = 1), #the Intercept
+                                           iset),  #the spatial index
+                                         list(covars_train)), #the covariates
+                            tag = 'train')
+    
+    
+    model <-inla(form, #the formula
+                 data = inla.stack.data(stk_train,spde = spde),  
+                 family = 'gamma',   
+                 control.predictor = list(A = inla.stack.A(stk_train),
+                                        compute = TRUE), 
+                 control.compute = list(dic = TRUE, waic = TRUE, cpo = TRUE, 
+                                        config = TRUE),
+                 verbose = FALSE) 
+    summary(model)
+    
+    #extract spatial random effects from the full data best model
+    sfield_nodes_mean <- mod$summary.random$spatial.field['mean']
+    field_mean <- (A%*% as.data.frame(sfield_nodes_mean)[, 1])
+    
+    fixed <- model$summary.fixed['Intercept', 'mean'] #fixed effects
+    for(covariate in cov){
+      fixed <- fixed + model$summary.fixed[paste0(covariate), 'mean'] *
+        test[,paste0(covariate)]
+      }
+    #add settlement type and region nested effects
+    fixed = fixed + rnorm(nrow(test), 0, 1/model$summary.hyperpar$mean[2]) +
+      #add settlement type random effect
+      rnorm(nrow(test), 0, 1/model$summary.hyperpar$mean[5]) + 
+      #add uncorrelated spatial random effects
+      mod$summary.random$IDsr['mean'][test_ind,1] + field_mean[test_ind,1]
+
+    dens_ht <- exp(fixed)
+    sum(pop_ht <- dens_ht*test$bld)
+   
+    #scatter plots for each fold, uncomment for plots to show
+    # par(mfrow = c(1,1))
+    # plot(test$obs, pop_ht, xlab = "Observed",
+    #      ylab = "Predicted", col = c('blue','orange'),
+    #      pch = c(16,16), cex.axis = 1.5)
+    # abline(0,1)
+    # legend("topleft", c("Observed", "Predicted"), col = c("blue", "orange"),
+    #        pch = c(16,16), bty = "n", cex = 1.5)
+    
+    #calculate fit metrics
+    met_out <- model_metrics(test$pop, pop_ht)
+    
+    met_list_out[[i]]<- unlist(met_out)
+    pred_list_out[[i]] <- data.frame(obs = test$obs, pred = pop_ht,
+                                     fold = rep(i, length(test$obs)),
+                                     data = rep("outsample", length(test$obs)))
+  }
+  met_list_out_dat <- do.call(rbind,met_list_out)
+  
+  #fit metrics
+  metrics_out <- apply(met_list_out_dat, 2, mean)
+  
+  #predictions
+  pred_list_out_dat <- do.call(rbind,pred_list_out)
+  
+  cv_mets <- rbind(metrics_in, metrics_out)
+  output <- list( met_list_in_dat = met_list_in_dat,
+                  met_list_out_dat = met_list_out_dat,
+                  pred_dat = rbind(pred_list_in_dat, pred_list_out_dat),
+                  cv_metrics = rbind(metrics_in, metrics_out))
+}
+```
+
+To apply this function, the data from Cameroon is used as an example. In this example, the dataset is called `dat`, the number of folds utilised is `5`, the chosen model is called `mod4` with corresponding formula in the `INLA` model `form4`, projection matrix `A` and seed number `13235` (for reproducibility). Additionally, the vectors containing the selected covariate information, `cov` and `cov2`, are defined prior to running the function.
+
+
+```{r apply function, warning=FALSE}
+#results from k-fold cross validation
+cov <- c('x2', 'x3', 'x17', 'x21', 'x32', 'x34', 'x40', 'x42')
+cov2 <- c("set_reg", "set_typ", "region", "IDsr")
+cross_val <- cross_validate(dat = dat,
+                             n.folds = 5, 
+                             mod = mod4, 
+                             form = form4,
+                             A = A, 
+                             cov = cov,
+                             cov2 = cov2,
+                             seed = 13235)
+
+#in-sample metrics per fold 
+cross_val$met_list_in_dat  
+#out-of-sample metrics per fold
+cross_val$met_list_out_dat 
+#combined averaged metrics
+cross_val$cv_metrics    
+#combined prediction data
+head(cross_val$pred_dat)
+tail(cross_val$pred_dat)
+```
+
+### Useful resources
+
+  - WAIC: [Nature](https://www.nature.com/articles/s41598-024-66643-4#:~:text=One%20common%20method%20used%20for%20Bayesian%20model%20selection,value%20that%20can%20be%20compared%20between%20alternative%20models.)
+  - WAIC: [Columbia](https://sites.stat.columbia.edu/gelman/research/unpublished/loo_stan.pdf)
+  - DIC: [Dean Marwick](https://dm13450.github.io/2018/01/18/DIC.html)
+  - CPO: [Posterior Predictive Bayesian Phulogenetic Model Selection](https://pmc.ncbi.nlm.nih.gov/articles/PMC3985471/)
+  - PIT: [Bayesian inference with INLA](https://becarioprecario.bitbucket.io/inla-gitbook/ch-INLA.html)
+  - INLA-SPDE approach: [datascience+](https://datascienceplus.com/spatial-regression-in-r-part-2-inla/)
+
+
+<!-- A brief breakdown of the methods utilised within the cross-validation is given, with a more in-depth explanation of the methods given in Module 10. -->
+
+<!-- Firstly, for the pre-processing, the number of folds needs to be chosen, for this example, there will be `k = 10` folds. -->
+
+<!-- ```{r choose number of folds} -->
+<!-- #choose the number of folds -->
+<!-- k=10 -->
+<!-- ``` -->
+
+<!-- Additionally, the number of observations needs to be defined as the number of rows in the dataset. -->
+
+<!-- ```{r number of observations} -->
+<!-- #define the number of observations -->
+<!-- n <- nrow(Data_CMR_std) -->
+<!-- ``` -->
+
+<!-- Once the number of observations and desired number of folds have been defined, the folds themselves can be defined. To do this, the size of each fold is found through dividing the number of observations by the number of folds, and selecting the nearest integer. For this operation, the integer division operator $%/%$ can be used. The folds themselves can then be sampled. -->
+
+<!-- ```{define the folds} -->
+<!-- #define the folds -->
+<!-- fold_size <- n %/% k -->
+<!-- folds <- sample(rep(1:k, each = fold_size, length.out = n)) -->
+<!-- ``` -->
+
+<!-- A data frame containing the names of the test values and predictions is then created outside of the loop. Each iteration of the cross-validation will add the corresponding values to the results data frame. -->
+
+<!-- ```{r create data frames} -->
+<!-- #create a data frame to store the test values and predictions outside of loop -->
+<!-- results_df <- data.frame(EA_ID = numeric(), -->
+<!--                          Total_Building_Count = numeric(),  -->
+<!--                          folds = numeric(),  -->
+<!--                          observed_density = numeric(),  -->
+<!--                          predicted_density = numeric(),  -->
+<!--                          observed_population = numeric(),  -->
+<!--                          predicted_population =numeric()) -->
+
+<!-- ``` -->
+
+<!-- The last part of the pre-processing is to set the start values for the model metrics to zero, for each of the density and population, test and training data metrics. -->
+
+<!-- ```{r start values for model metrics} -->
+<!-- #set start value for model metrics -->
+
+<!-- #density training data metrics -->
+<!-- dens_train_MAE = dens_train_RMSE = dens_train_BIAS = -->
+<!--   dens_train_CORR = 0 -->
+<!-- #population training data metrics -->
+<!-- pop_train_MAE = pop_train_RMSE = pop_train_BIAS =  -->
+<!--   pop_train_CORR = 0 -->
+<!-- #density test data metrics -->
+<!-- dens_test_MAE = dens_test_RMSE = dens_test_BIAS = -->
+<!--   dens_test_CORR = 0 -->
+<!-- #population test data metrics -->
+<!-- pop_test_MAE = pop_test_RMSE = pop_test_BIAS = -->
+<!--   pop_test_CORR = 0 -->
+<!-- ``` -->
+
+<!-- The next step is the cross-validation itself. As mentioned earlier, the prediction methods used within the cross-validation are given in more detail in Module 10, but the basic breakdown of the steps are given below. -->
+
+<!-- -   Create a for loop to conduct the cross-validation for each of the number of folds. -->
+
+<!--     -   Split the data into the test data and the training data. -->
+<!--     -   Define the coordinates of the centroids and construct the mesh for the training data. -->
+<!--     -   Follow the INLA-SPDE approach in Module 8 (building a projection matrix, creating the SPDE, specifying the observation indices for estimation, selecting the covariates, stacking the data for estimation, specifying and fitting the model). -->
+<!--     -   Extract the in-sample predictions. -->
+<!--     -   Obtain the observed population and density to use in the training model metric assessment. -->
+<!--     -   Obtain the predicted population and rename the variables to be in a proper format. -->
+<!--     -   Compute the training data metrics. -->
+<!--     -   Make predictions for the test data by sampling from the posteriors for the test predictions and sampling from the posteriors in the model. -->
+<!--     -   Assign the posteriors to the settlement classes. -->
+<!--     -   Get the spatial effect parameter in the SPDE and estimate the values for the spatial component in the test data. -->
+<!--     -   Extract the test covariates and covert to a matrix. -->
+<!--     -   Predict the fixed effect covariates. -->
+<!--     -   Predict the posterior density estimates and summarise values. -->
+<!--     -   Compute both the test data and training data metrics. -->
+<!--     -   Return a list of the density and population metrics. -->
+
+<!--     ```{r k-fold cv, eval=FALSE} -->
+<!--     #implementation of the loop for k-fold CV -->
+<!--     for (i in 1:k){ -->
+
+<!--       #define the test and train indices -->
+<!--       train_indices <- which(folds == i) -->
+<!--       test_indices <- which(folds != i) -->
+
+<!--       #obtain the test and train data -->
+<!--       train_data <- Data_CMR_std[train_indices, ] -->
+<!--       test_data <- Data_CMR_std[test_indices, ] -->
+
+<!--       #print text to give progress of loop -->
+<!--       print(paste("Processing fold", i, "out of", k)) -->
+
+<!--       #define the coordinates of the centroids -->
+<!--       coords <- cbind(train_data$long, train_data$lat) -->
+
+<!--       #construct the training data mesh -->
+<!--       bnd <- inla.nonconvex.hull(coords, -0.03, -0.05, resolution = c(100, 100)) -->
+<!--       train_mesh <- inla.mesh.2d(boundary = bnd, -->
+<!--                                  max.edge = c(0.1, 1), -->
+<!--                                  offset = c(0.05, 1),  -->
+<!--                                  cutoff = 0.003)  -->
+<!--       #plot the resulting mesh -->
+<!--       plot(train_mesh) -->
+
+<!--       #build a projection matrix -->
+<!--       A <- inla.spde.make.A(mesh = train_mesh, loc = as.matrix(coords)) -->
+
+<!--       #create the SPDE -->
+<!--       train_spde <- inla.spde2.matern(train_mesh, alpha = 2) -->
+
+<!--       #specify the observation indices for estimation -->
+<!--       indexs <- inla.spde.make.index(name = "spatial.field", train_spde$n.spde) -->
+
+<!--       #select the best covariates -->
+<!--       train_covs <- train_data %>% -->
+<!--         dplyr::select(x3, x4, x7, x16, x20, x31, x37, x40, Settlement_Type) -->
+
+<!--       #stack the data for model fitting -->
+<!--       stk.e <- inla.stack(data = list(y = train_data$Density), -->
+<!--                           A = list(A,1), -->
+<!--                           effects = list(c(list(Intercept=1), -->
+<!--                                          indexs),  -->
+<!--                                        list(train_covs)  -->
+<!--                           ), -->
+<!--                           tag = 'est')  -->
+
+<!--       #specify the chosen model -->
+<!--       formula2 <- y ~ -1 + Intercept + x3 + x4 + x7 + x16 + x20 + x31 + x37 +x40 + -->
+<!--         f(spatial.field, model = train_spde)+ -->
+<!--         f(Settlement_Type, model = "iid") -->
+
+<!--       #fit model using a gamma distribution -->
+<!--       mod2 <- inla(formula2,  -->
+<!--                    data = inla.stack.data(stk.e,spde=train_spde),   -->
+<!--                    family = 'gamma',   -->
+<!--                    control.predictor=list(A=inla.stack.A(stk.e),compute = TRUE),  -->
+<!--                    control.compute = list(dic = TRUE, waic = TRUE, cpo = TRUE, -->
+<!--                                           config = TRUE, config = T),  -->
+<!--                    verbose = FALSE,  -->
+<!--                    control.inla=list(int.strategy = "grid", diff.logdens = 4, -->
+<!--                                      strategy = "laplace", npoints = 21)) -->
+
+<!--       #extract the in-sample predictions -->
+<!--       index <- inla.stack.index(stk.e, "est")$data -->
+<!--       density_predict <- data.frame(predicted_density = -->
+<!--                                       exp(mod2$summary.linear.predictor[index, -->
+<!--                                                                         "mean"])) -->
+
+<!--       #obtain the observed population and density from the training data to use for  -->
+<!--       #training model metric assessment -->
+<!--       train_predict <- train_data %>%  -->
+<!--         dplyr::select(Total_Pop, Density, Total_Building_Count) %>%  -->
+<!--         cbind(density_predict) -->
+
+<!--       #obtain the predicted population -->
+<!--       train_predict <- train_predict %>%  -->
+<!--         mutate(predicted_population = predicted_density * Total_Building_Count) -->
+
+<!--       #rename the variables to be in the proper format -->
+<!--       train_predict <- train_predict %>%  -->
+<!--         dplyr::rename(observed_population = Total_Pop, observed_density = Density) -->
+
+<!--       #obtain the training data metrics for the density -->
+<!--       dens_train_metrics <- round(unlist(mod_metrics(train_predict$observed_density,  -->
+<!--                                                   train_predict$predicted_density)), -->
+<!--                                   4) -->
+<!--       dens_train_MAE <- dens_train_MAE + dens_train_metrics[1] -->
+<!--       dens_train_RMSE <- dens_train_RMSE + dens_train_metrics[2] -->
+<!--       dens_train_BIAS <- dens_train_BIAS + dens_train_metrics[3] -->
+<!--       dens_train_CORR <- dens_train_CORR + dens_train_metrics[4] -->
+
+<!--       #obtain the training data metrics for the population -->
+<!--       pop_train_metrics <- round(unlist(mod_metrics(train_predict$observed_population, -->
+<!--                                               train_predict$predicted_population)), -->
+<!--                            4) -->
+<!--       pop_train_MAE <- pop_train_MAE + pop_train_metrics[1] -->
+<!--       pop_train_RMSE <- pop_train_RMSE + pop_train_metrics[2] -->
+<!--       pop_train_BIAS <- pop_train_BIAS + pop_train_metrics[3] -->
+<!--       pop_train_CORR <- pop_train_CORR + pop_train_metrics[4] -->
+
+<!--       #make predictions for the test data -->
+<!--       #take samples from the posteriors for the test predictions -->
+<!--       samples <- inla.posterior.sample(n = 100, result = mod2,  -->
+<!--                                        num.threads = "1:1") -->
+
+<!--       #sample from the posterior in the model -->
+<!--       sample_extract <- inla.posterior.sample.eval( -->
+<!--         (function(...){ -->
+<!--           beta.1 <- get("x3") -->
+<!--           beta.2 <- get("x4") -->
+<!--           beta.3 <- get("x7") -->
+<!--           beta.4 <- get("x16") -->
+<!--           beta.5 <- get("x20") -->
+<!--           beta.6 <- get("x31") -->
+<!--           beta.7 <- get("x37") -->
+<!--           beta.8 <- get("x40") -->
+<!--           prec.1 <- get("Settlement_Type") -->
+<!--           return(c(Intercept, beta.1, beta.2,beta.3, beta.4, beta.5, beta.6, -->
+<!--                    beta.7, beta.8, prec.1)) -->
+<!--         }), samples) -->
+
+<!--       #save the posteriors in a new object to make them easy to identify -->
+<!--       Intercept <- sample_extract[1,] -->
+<!--       betas <- sample_extract[2:9,] -->
+<!--       alpha_settlement_type <- sample_extract[10:13,] #random effect for  -->
+<!--                                                       #settlement type -->
+<!--       alpha_settlement_type <- alpha_settlement_type %>% -->
+<!--         as_tibble() %>% -->
+<!--         mutate(Settlement_Type = c(1, 2, 3, 4)) -->
+
+<!--       #assign posteriors to the settlement classes -->
+<!--       predict_settlement_type <- test_data %>% -->
+<!--         dplyr::select(Settlement_Type) %>% -->
+<!--         left_join(alpha_settlement_type, -->
+<!--                   by = c("Settlement_Type" = "Settlement_Type")) %>% -->
+<!--         dplyr::select(-Settlement_Type) -->
+
+<!--       #get the spacial effect parameter in the SPDE, first by getting the -->
+<!--       #xy coordinate of the predictions -->
+<!--       coord1 <- cbind(test_data$long, test_data$lat) -->
+
+<!--       #then remake the A matrix for the prediction -->
+<!--       A_prediction <- inla.spde.make.A(mesh = train_mesh, loc = as.matrix(coord1)) -->
+
+<!--       #get the spatial effect parameter from the model -->
+<!--       spatial_field_nodes <- mod2$summary.random$spatial.field['mean'] -->
+
+<!--       #estimate the values for the spatial component in the test data -->
+<!--       spatial_field <- (A_prediction %*% as.data.frame(spatial_field_nodes)[,1]) -->
+
+<!--       #extract the test covariates and convert them to matrix form -->
+<!--       cov_fixed <- test_data %>% -->
+<!--         dplyr::select(x3, x4, x7, x16, x20, x31, x37, x40) %>% -->
+<!--         #avoid numerical issues with the following line -->
+<!--         mutate_at(vars(starts_with("x")), ~replace(., is.na(.), 0)) %>% -->
+<!--         as.matrix() -->
+
+<!--       #predict for covariates by multiplying the betas by the corresponding  -->
+<!--       #(fixed) covariate values -->
+<!--       cov_fixed <- cov_fixed %*% betas  -->
+<!--       cov_fixed <- as_tibble(cov_fixed) #convert to a data frame   -->
+
+<!--       #predicted posterior density estimates -->
+<!--       mu <- exp(Intercept + cov_fixed + predict_settlement_type + spatial_field[,1]) -->
+<!--       #summarise the density mu -->
+<!--       predicted_density <- rowMeans(mu, na.rm = TRUE) -->
+<!--       #add building count to mu -->
+<!--       mu <- mu %>%  -->
+<!--         mutate(building_count = test_data$Total_Building_Count) -->
+
+<!--       #estimate predicted population -->
+<!--       predicted_pop <- mu %>% -->
+<!--         mutate_at(vars(starts_with("sample")), ~ . * building_count) %>%  -->
+<!--         select(-building_count) -->
+
+<!--       #summarise the predictions -->
+<!--       predicted_population <- rowMeans(predicted_pop, na.rm = TRUE) -->
+<!--       test_predict <- test_data %>%  -->
+<!--         select(Total_Pop, Total_Building_Count, Density, EA_ID) %>%  -->
+<!--         cbind(predicted_density, predicted_population) -->
+<!--       #rename variables to be in proper format  -->
+<!--       test_predict <- test_predict %>% -->
+<!--         rename(observed_population = Total_Pop, observed_density = Density) -->
+
+<!--       #obtain the test data metrics for the density -->
+<!--       dens_test_metrics <- round(unlist(mod_metrics(test_predict$observed_density, -->
+<!--                                                     test_predict$predicted_density)), -->
+<!--                                   4) -->
+<!--       dens_test_MAE <- dens_test_MAE + dens_test_metrics[1] -->
+<!--       dens_test_RMSE <- dens_test_RMSE + dens_test_metrics[2] -->
+<!--       dens_test_BIAS <- dens_test_BIAS + dens_test_metrics[3] -->
+<!--       dens_test_CORR <- dens_test_CORR + dens_test_metrics[4] -->
+
+<!--       #obtain the test data metrics for the population -->
+<!--       pop_test_metrics <- round(unlist(mod_metrics(test_predict$observed_population, -->
+<!--                                                    test_predict$predicted_population)), -->
+<!--                                  4) -->
+<!--       pop_test_MAE <- pop_test_MAE + pop_test_metrics[1] -->
+<!--       pop_test_RMSE <- pop_test_RMSE + pop_test_metrics[2] -->
+<!--       pop_test_BIAS <- pop_test_BIAS + pop_test_metrics[3] -->
+<!--       pop_test_CORR <- pop_test_CORR + pop_test_metrics[4] -->
+
+<!--       #append observed and predictions to results_df with fold information -->
+<!--       fold_results <- data.frame(EA_ID = test_predict$EA_ID,  -->
+<!--                                  Total_Building_Count = test_predict$Total_Building_Count, -->
+<!--                                  folds = i, observed_density = test_predict$observed_density,  -->
+<!--                                  predicted_density = test_predict$predicted_density,  -->
+<!--                                  observed_population = test_predict$observed_population,  -->
+<!--                                  predicted_population = test_predict$predicted_population) -->
+
+<!--       results_df <- rbind(results_df, fold_results) -->
+<!--     } -->
+
+<!--     ``` -->
+
+<!--     Once the cross-validation has been conducted, the train and test metrics can be found through averaging the output across each of the folds. The final results can then be displayed in a table using the `kable()` function from the `knitr` package. -->
+
+<!--     ```{r train and test metrics, eval=FALSE} -->
+<!--     #train metrics averaged across all of the folds -->
+<!--     train_metrics <- data.frame( -->
+<!--       dens_train_MAE = dens_train_MAE/k, -->
+<!--       dens_train_RMSE = dens_train_RMSE/k, -->
+<!--       dens_train_BIAS = dens_train_BIAS/k, -->
+<!--       dens_train_CORR = dens_train_CORR/k, -->
+<!--       pop_train_MAE = pop_train_MAE/k, -->
+<!--       pop_train_RMSE = pop_train_RMSE/k, -->
+<!--       pop_train_BIAS = pop_train_BIAS/k, -->
+<!--       pop_train_CORR = pop_train_CORR/k) -->
+
+<!--     #test metrics averaged across all of the results -->
+<!--     test_metrics <- data.frame( -->
+<!--      dens_test_MAE = dens_test_MAE/k, -->
+<!--      dens_test_RMSE = dens_test_RMSE/k, -->
+<!--      dens_test_BIAS = dens_test_BIAS/k, -->
+<!--      dens_test_CORR = dens_test_CORR/k, -->
+<!--      pop_test_MAE = pop_test_MAE/k, -->
+<!--      pop_test_RMSE = pop_test_RMSE/k, -->
+<!--      pop_test_BIAS = pop_test_BIAS/k, -->
+<!--      pop_test_CORR = pop_test_CORR/k) -->
+
+<!--     #print results -->
+<!--     train_metrics%>% -->
+<!--       knitr::kable() -->
+<!--     test_metrics%>% -->
+<!--       kable() -->
+
+<!--     ``` -->
+
+<!-- ## Leave-One-Out Cross-Validation (LOOCV) -->
+
+<!-- Leave-one-out cross-validation takes a long time to perform with large datasets, given that the number of folds (iterations) is equal to the number of observations in the available dataset. As a result of this, k-fold cross-validation is the favoured approach to utilise. However, if using leave-one-out cross-validation is desired, the above k-fold cross-validation code can be utilised, but changing the number of folds, `k`, to be equal to the number of rows in the data (`nrow(Data_CMR_std)`). -->
+
+<!-- Leave-one-out cross validation typically takes a long time to perform with large datasets, so for demonstrative purposes, only 12 of the observations here will be sampled.  -->
+
+<!-- ```{r sample observations} -->
+
+<!-- #create sampled dataset -->
+
+<!-- sampled_data <- Data_CMR_std %>%  -->
+
+<!--   #group by settlement type to ensure samples are taken from the distinct  -->
+
+<!--   #settlement types  -->
+
+<!--   group_by(Settlement_Type) %>%  -->
+
+<!--   sample_n(size = 12) %>%  -->
+
+<!--   ungroup() -->
+
+<!-- ``` -->
+
+<!-- To conduct leave-one-out cross-validation in R, a function can be created as seen below. The following are the main steps within the function that are included.  -->
+
+<!-- - Initialise the data frames to store the results for both the training metrics, the test metrics and the general results. --> <!-- - Create placeholder variables for the key metrics, such as RMSE, pearson values, MAE and bias. These should be created for both the population and density for both the training and test data. --> <!-- - Create a for loop to conduct the cross-validation for each of the rows in the data. --> <!--   - Split the data into the test data and the training data. --> <!--   - Define the coordinates of the centroids and construct the mesh for the training data. --> <!--   - Follow the INLA-SPDE approach in Module 8 (building a projection matrix, creating the SPDE, specifying the observation indices for estimation, selecting the covariates, stacking the data for estimation, specifying and fitting the model). --> <!--   - Extract the in-sample predictions. --> <!--   - Obtain the observed population and density to use in the training model metric assessment. --> <!--   - Obtain the predicted population and rename the variables to be in a proper format. --> <!--   - Compute the training data metrics. --> <!--   - Make predictions for the test data by sampling from the posteriors for the test predictions and sampling from the posteriors in the model. --> <!--   - Assign the posteriors to the settlement classes. --> <!--   - Get the spatial effect parameter in the SPDE and estimate the values for the spatial component in the test data. --> <!--   - Extract the test covariates and covert to a matrix. --> <!--   - Predict the fixed effect covariates. --> <!--   - Predict the posterior density estimates and summarise values. --> <!--   - Compute both the test data and training data metrics. --> <!-- - Return a list of the density and population metrics. -->
+
+<!-- ```{r LOOCV function} -->
+
+<!-- #function to calculate LOOCV -->
+
+<!--   loo_cv <- function(data) { -->
+
+<!--     k <- nrow(data) -->
+
+<!--     #initialise data frames to store results -->
+
+<!--     train_metrics <- data.frame() -->
+
+<!--     test_metrics <- data.frame() -->
+
+<!--     results_df <- data.frame(EA_ID = numeric(), Total_Building_Count = numeric(), -->
+
+<!--                              folds = numeric(), observed_density = numeric(), -->
+
+<!--                              predicted_density = numeric(), observed_population = numeric(), -->
+
+<!--                              predicted_population =numeric()) -->
+
+<!--     #place holder for train metrics calculation ---------------------------- -->
+
+<!--     #density metrics -->
+
+<!--     dens_train_rmse_values <- numeric(k) # Placeholder for RMSE -->
+
+<!--     dens_train_pearson_values <- numeric(k) # Placeholder for corr -->
+
+<!--     dens_train_mae_values <- numeric(k)  # Placeholder for MAE -->
+
+<!--     dens_train_bias_values <- numeric(k)  # Placeholder for bias -->
+
+<!--     #population metrics -->
+
+<!--     pop_train_rmse_values <- numeric(k) # Placeholder for RMSE -->
+
+<!--     pop_train_pearson_values <- numeric(k) # Placeholder for corr -->
+
+<!--     pop_train_mae_values <- numeric(k)  # Placeholder for MAE -->
+
+<!--     pop_train_bias_values <- numeric(k)  # Placeholder for bias -->
+
+<!--     #place holder for test metrics calculation ------------------------- -->
+
+<!--     #density metrics -->
+
+<!--     dens_test_rmse_values <- numeric(k) # Placeholder for RMSE -->
+
+<!--     dens_test_pearson_values <- numeric(k) # Placeholder for corr -->
+
+<!--     dens_test_mae_values <- numeric(k)  # Placeholder for MAE -->
+
+<!--     dens_test_bias_values <- numeric(k)  # Placeholder for bias -->
+
+<!--     #population metrics -->
+
+<!--     pop_test_rmse_values <- numeric(k) # Placeholder for RMSE -->
+
+<!--     pop_test_pearson_values <- numeric(k) # Placeholder for corr -->
+
+<!--     pop_test_mae_values <- numeric(k)  # Placeholder for MAE -->
+
+<!--     pop_test_bias_values <- numeric(k)  # Placeholder for bias -->
+
+<!--     #for loop for implementation --------------------------------------------- -->
+
+<!--     for (i in 1:k) { -->
+
+<!--       test_index <- i -->
+
+<!--       train_indices <- c(1: (test_index - 1), (test_index + 1):nrow(data)) -->
+
+<!--       train_data <- data[train_indices, ] -->
+
+<!--       test_data <- data[test_index, ] -->
+
+<!--       print(paste("Processing fold", i, "out of", k)) -->
+
+<!--     #define the coordinates of centroids -->
+
+<!--     coords <- cbind(train_data$long, train_data$lat) -->
+
+<!--     #construct train_data mesh -->
+
+<!--     bnd <- inla.nonconvex.hull(coords, -0.03, -0.05, resolution = c(100, 100)) -->
+
+<!--     train_mesh <- inla.mesh.2d(boundary = bnd, -->
+
+<!--                                max.edge=c(0.1, 1), #adjusts the mesh nodes sizes -->
+
+<!--                                #between the inner and outer meshes -->
+
+<!--                                offset = c(0.05, 1), #adjusts the distance between  -->
+
+<!--                                #the outer and inner meshes -->
+
+<!--                                cutoff = 0.003) #controls the minimum size of  -->
+
+<!--                                   #triangles allowed -->
+
+<!--     #plot(train_mesh) -->
+
+<!--     #data stake processing --------------------------------------------------- -->
+
+<!--     #build a projector matrix -->
+
+<!--     A <- inla.spde.make.A(mesh=train_mesh, loc=as.matrix(coords)) -->
+
+<!--     #create the SPDE -->
+
+<!--     train_spde <- inla.spde2.matern(train_mesh, alpha=2) -->
+
+<!--     #specify the observation indices for estimation  -->
+
+<!--     indexs <- inla.spde.make.index(name = "spatial.field", train_spde$n.spde) -->
+
+<!--     #covariates -->
+
+<!--     train_covs <- train_data %>% -->
+
+<!--       dplyr::select(x3, x4, x7, x16, x20, x31, x37, x40, Settlement_Type) -->
+
+<!--     #stack the data for model fitting -->
+
+<!--     stk.e <- inla.stack(data=list(y = train_data$Density), #the response variable -->
+
+<!--                         A=list(A,1),  #the A matrix; the 1 is included to make -->
+
+<!--                           #the list(covariates) -->
+
+<!--                         effects=list(c(list(Intercept=1), #the Intercept -->
+
+<!--                                        indexs),  #the spatial index -->
+
+<!--                                      list(train_covs) #the covariates -->
+
+<!--                         ), -->
+
+<!--                         tag='est') #quick name to call upon easily -->
+
+<!--     #specify model  -->
+
+<!--     formula2 <- y ~ -1 + Intercept + x3 + x4 + x7 + x16 + x20 + x31 + x37 +x40 + -->
+
+<!--       f(spatial.field, model = train_spde)+ -->
+
+<!--       f(Settlement_Type, model = "iid") -->
+
+<!--     #fit model using a gamma distribution -->
+
+<!--     #can also use a lognormal distribution  -->
+
+<!--     mod2 <- inla(formula2,  -->
+
+<!--                  data=inla.stack.data(stk.e,spde=train_spde),  #the data stack -->
+
+<!--                  family= 'gamma',   -->
+
+<!--                  control.predictor=list(A=inla.stack.A(stk.e),compute=TRUE),  -->
+
+<!--                  #compute gives you the marginals of the linear predictor -->
+
+<!--                  control.compute = list(dic = TRUE, waic = TRUE, cpo=TRUE, -->
+
+<!--                                         config = TRUE, config = T),  -->
+
+<!--                  #model diagnostics and config = TRUE gives you the GMRF -->
+
+<!--                  verbose = FALSE,  -->
+
+<!--                  control.inla=list(int.strategy = "grid", diff.logdens = 4, -->
+
+<!--                                    strategy = "laplace", npoints = 21)) -->
+
+<!--     #summary(mod2) -->
+
+<!--     #extract in-sample predictions -->
+
+<!--     index <-inla.stack.index(stk.e, "est")$data  -->
+
+<!--     density_predictions <-  -->
+
+<!--       data.frame(predicted_density =  -->
+
+<!--                    exp(mod2$summary.linear.predictor[index, "mean"])) -->
+
+<!--     #get observed population and observed density from the train_data and use it  -->
+
+<!--     #for train model metric assessment -->
+
+<!--     train_predictions <- train_data %>%  -->
+
+<!--       select(Total_Pop, Density, Total_Building_Count) %>%  -->
+
+<!--       cbind(density_predictions) -->
+
+<!--     #to obtain the predicted population, multiply the predicted density by the  -->
+
+<!--     #Total_Building_Count -->
+
+<!--     train_predictions <- train_predictions %>%  -->
+
+<!--       mutate(predicted_population = predicted_density * Total_Building_Count) -->
+
+<!--     #rename variables in proper format -->
+
+<!--     train_predictions <- train_predictions %>%  -->
+
+<!--       rename(observed_population = Total_Pop, observed_density = Density) -->
+
+<!--     #train data metrics -->
+
+<!--     #density -->
+
+<!--     dens_train_rmse_values[i] <- sqrt(mean((train_predictions$observed_density - train_predictions$predicted_density)^2)) -->
+
+<!--     dens_train_pearson_values[i] <- cor(train_predictions$observed_density, train_predictions$predicted_density) -->
+
+<!--     dens_train_mae_values[i] <- mean(abs(train_predictions$observed_density - train_predictions$predicted_density)) -->
+
+<!--     dens_train_bias_values[i] <- mean(train_predictions$observed_density - train_predictions$predicted_density) -->
+
+<!--     #population -->
+
+<!--     pop_train_rmse_values[i] <- sqrt(mean((train_predictions$observed_population - train_predictions$predicted_population)^2)) -->
+
+<!--     pop_train_pearson_values[i] <- cor(train_predictions$observed_population, train_predictions$predicted_population) -->
+
+<!--     pop_train_mae_values[i] <- mean(abs(train_predictions$observed_population - train_predictions$predicted_population)) -->
+
+<!--     pop_train_bias_values[i] <- mean(train_predictions$observed_population - train_predictions$predicted_population) -->
+
+<!--     #make predictions for test data ------------------------------------------ -->
+
+<!--     #sample from posteriors for test predictions -->
+
+<!--     samples <- inla.posterior.sample(n = 1, result = mod2, num.threads = "1:1") -->
+
+<!--     #sample from posterior in model -->
+
+<!--     sam.extract <- inla.posterior.sample.eval( -->
+
+<!--       (function(...) { -->
+
+<!--         beta.1 <- get("x3") -->
+
+<!--         beta.2 <- get("x4") -->
+
+<!--         beta.3 <- get("x7") -->
+
+<!--         beta.4 <- get("x16") -->
+
+<!--         beta.5 <- get("x20") -->
+
+<!--         beta.6 <- get("x31") -->
+
+<!--         beta.7 <- get("x37") -->
+
+<!--         beta.8 <- get("x40") -->
+
+<!--         prec.1 <- get("Settlement_Type") -->
+
+<!--         return(c(Intercept, beta.1, beta.2,beta.3, beta.4, beta.5, beta.6,  -->
+
+<!--                  beta.7, beta.8, prec.1)) -->
+
+<!--       }), samples) -->
+
+<!--     #print(round(dig = 4, rowMeans(sam.extract)))  #summarised posteriors -->
+
+<!--     #save posteriors in new object to make them easier to identify -->
+
+<!--     Intercept <- sam.extract[1, ]        #Intercept -->
+
+<!--     betas <- sam.extract[2:9, ]          #betas -->
+
+<!--     alpha_settlement_type <- sam.extract[10:13, ]   #random effect for -->
+
+<!--         #settlement types -->
+
+<!--     alpha_settlement_type <- alpha_settlement_type %>%   -->
+
+<!--       as_tibble() %>%  -->
+
+<!--       mutate(Settlement_Type = c(1, 2, 3, 4)) -->
+
+<!--     #make predictions -->
+
+<!--     #assign posteriors to Settlement Classes -->
+
+<!--     predict_settlement_type <- test_data %>%  -->
+
+<!--       dplyr::select(Settlement_Type)%>%  -->
+
+<!--       left_join(alpha_settlement_type, by =  -->
+
+<!--                   c("Settlement_Type" = "Settlement_Type")) %>%  -->
+
+<!--       dplyr::select(-Settlement_Type)  -->
+
+<!--     #get the spatial effect parameter in the SPDE -->
+
+<!--     #xy coordinate of predictions -->
+
+<!--     coord1 <- cbind(test_data$long, test_data$lat)  -->
+
+<!--     #remake the A matrix for prediction -->
+
+<!--     Aprediction <- inla.spde.make.A(mesh = train_mesh, loc = as.matrix(coord1)) -->
+
+<!--     dim(Aprediction) -->
+
+<!--     #get the spatial effect parameter from the model -->
+
+<!--     sfield_nodes <- mod2$summary.random$spatial.field['mean'] -->
+
+<!--     dim(sfield_nodes) -->
+
+<!--     #estimate the values for the spatial component in the test data -->
+
+<!--     spatial_field <- (Aprediction %*% as.data.frame(sfield_nodes)[, 1]) -->
+
+<!--     #extract test covariates and convert to matrix -->
+
+<!--     cov_fixed <- test_data %>%  -->
+
+<!--       dplyr::select(x3, x4, x7, x16, x20, x31, x37, x40) %>%  -->
+
+<!--       mutate_at(vars(starts_with("x")), ~replace(., is.na(.), 0)) %>%  #this is  -->
+
+<!--           #to avoid numerical issues -->
+
+<!--       as.matrix()  -->
+
+<!--     #predict for covariates (fixed effect) -->
+
+<!--     cov_fixed <- cov_fixed %*% betas #multiply the estimated beta parameters -->
+
+<!--       #with their respective covariates -->
+
+<!--     cov_fixed <- as_tibble(cov_fixed) #convert to data frame -->
+
+<!--     #predicted posterior density estimates -->
+
+<!--     mu <- exp(Intercept + cov_fixed + predict_settlement_type +  -->
+
+<!--                 spatial_field[,1]) #model -->
+
+<!--     #summarise density mu -->
+
+<!--     predicted_density <- rowMeans(mu, na.rm = T) -->
+
+<!--     #add building count to mu -->
+
+<!--     mu <- mu %>%  -->
+
+<!--       mutate(building_count = test_data$Total_Building_Count) -->
+
+<!--     #estimate predicted population -->
+
+<!--     predicted_pop <- mu %>% -->
+
+<!--       mutate_at(vars(starts_with("sample")), ~ . * building_count) %>%  -->
+
+<!--       select(-building_count) -->
+
+<!--     #summarise predictions -->
+
+<!--     predicted_population <- rowMeans(predicted_pop, na.rm = T) -->
+
+<!--     test_predictions <- test_data %>%  -->
+
+<!--       select(Total_Pop, Total_Building_Count, Density, EA_ID) %>%  -->
+
+<!--       cbind(predicted_density, predicted_population) -->
+
+<!--     #rename variables in proper format -->
+
+<!--     test_predictions <- test_predictions %>%  -->
+
+<!--       rename(observed_population = Total_Pop, observed_density = Density) -->
+
+<!--     #test data metrics -->
+
+<!--     #density -->
+
+<!--     dens_test_rmse_values[i] <- sqrt(mean((test_predictions$observed_density - test_predictions$predicted_density)^2)) -->
+
+<!--     dens_test_pearson_values[i] <- cor(test_predictions$observed_density,  -->
+
+<!--                                        test_predictions$predicted_density) -->
+
+<!--     dens_test_mae_values[i] <- mean(abs(test_predictions$observed_density - test_predictions$predicted_density)) -->
+
+<!--     dens_test_bias_values[i] <- mean(test_predictions$observed_density -  -->
+
+<!--                                        test_predictions$predicted_density) -->
+
+<!--     #population -->
+
+<!--     pop_test_rmse_values[i] <- sqrt(mean((test_predictions$observed_population - test_predictions$predicted_population)^2)) -->
+
+<!--     pop_test_pearson_values[i] <- cor(test_predictions$observed_population, test_predictions$predicted_population) -->
+
+<!--     pop_test_mae_values[i] <- mean(abs(test_predictions$observed_population - test_predictions$predicted_population)) -->
+
+<!--     pop_test_bias_values[i] <- mean(test_predictions$observed_population - test_predictions$predicted_population) -->
+
+<!--     #append observed and predictions to results_df with fold information -->
+
+<!--     fold_results <- data.frame(EA_ID = test_predictions$EA_ID,  -->
+
+<!--                                Total_Building_Count =  -->
+
+<!--                                  test_predictions$Total_Building_Count, -->
+
+<!--                                folds = i, observed_density =  -->
+
+<!--                                  test_predictions$observed_density,  -->
+
+<!--                                predicted_density =  -->
+
+<!--                                  test_predictions$predicted_density,  -->
+
+<!--                                observed_population =  -->
+
+<!--                                  test_predictions$observed_population,  -->
+
+<!--                                predicted_population = -->
+
+<!--                                  test_predictions$predicted_population) -->
+
+<!--     results_df <- rbind(results_df, fold_results) -->
+
+<!--     #train metrics -->
+
+<!--     train_metrics <- data.frame( -->
+
+<!--       dens_train_rmse = mean(dens_train_rmse_values), -->
+
+<!--       dens_train_corr = mean(dens_train_pearson_values), -->
+
+<!--       dens_train_mae = mean(dens_train_mae_values), -->
+
+<!--       dens_train_bias = mean(dens_train_bias_values), -->
+
+<!--       pop_train_rmse = mean(pop_train_rmse_values), -->
+
+<!--       pop_train_corr = mean(pop_train_pearson_values), -->
+
+<!--       pop_train_mae = mean(pop_train_mae_values), -->
+
+<!--       pop_train_bias = mean(pop_train_bias_values) -->
+
+<!--     ) -->
+
+<!--     #test metrics -->
+
+<!--     test_metrics <- data.frame( -->
+
+<!--       dens_test_rmse = mean(dens_test_rmse_values), -->
+
+<!--       dens_test_corr = mean(dens_test_pearson_values), -->
+
+<!--       dens_test_mae = mean(dens_test_mae_values), -->
+
+<!--       dens_test_bias = mean(dens_test_bias_values), -->
+
+<!--       pop_test_rmse = mean(pop_test_rmse_values), -->
+
+<!--       pop_test_corr = mean(pop_test_pearson_values), -->
+
+<!--       pop_test_mae = mean(pop_test_mae_values), -->
+
+<!--       pop_test_bias = mean(pop_test_bias_values) -->
+
+<!--     ) -->
+
+<!--   } -->
+
+<!--   #return separate lists for density and population metrics -->
+
+<!--   list(train_metrics = train_metrics, test_metrics = test_metrics,  -->
+
+<!--        results_df = results_df) -->
+
+<!-- } -->
+
+<!-- ``` -->
+
+<!-- Once the function has been created, it can be applied to the chosen dataset, in this case, the sampled Cameroon data from above. The relevant results can then be extracted and given as tables or a data frame.  -->
+
+<!-- ```{r apply LOOCV, eval = FALSE} -->
+
+<!-- #apply function -->
+
+<!-- result2 <- loo_cv(data = sampled_data) -->
+
+<!-- #Train data results -->
+
+<!-- result2$train_metrics %>%  -->
+
+<!--   kable() -->
+
+<!-- #Test data results -->
+
+<!-- result1$test_metrics %>%  -->
+
+<!--   kable() -->
+
+<!-- #Get results as a data frame -->
+
+<!-- result_df <- result1$results_df -->
+
+<!-- ``` -->
+
+<!-- ## Check predictive ability -->
+
+<!-- # Model fit assessment checks -->

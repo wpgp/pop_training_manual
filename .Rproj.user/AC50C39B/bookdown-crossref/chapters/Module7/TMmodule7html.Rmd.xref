@@ -1,0 +1,16 @@
+h1:introduction-to-small-area-population-estimation-and-modelling-sapem Introduction to Small Area Population Estimation and Modelling (SAPEM)
+h2:small-area-population-estimation Small area population estimation
+h2:direct-estimation Direct estimation
+h2:indirect-estimation Indirect estimation
+fig:africa Map of Africa illustrating scarcity of up-to-date census data (data correct as of December 2024)
+h3:approaches-for-creating-gridded-population-datasets Approaches for creating gridded population datasets
+h4:top-down Top-down
+fig:top-down Illustration of the top-down approach process from Wardrop et al. (2018) PNAS
+fig:disaggregation Visual example of top-down dasymetric approach
+fig:mask Illustration of the mask dasymetric disaggregation process
+h5:random-forest-model Random Forest model
+h5:weighting-layer Weighting layer
+h4:bottom-up Bottom-up
+fig:bottom-up Illustration of the bottom-up approach process from Wardrop et al. (2018) PNAS
+h2:useful-resources Useful resources
+

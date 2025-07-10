@@ -1,0 +1,30 @@
+
+book_filename: "WorldPop_Training_Manual"
+output_dir: "_docs"
+
+rmd_files:
+  - index.Rmd
+  - chapters/Module1/TMmodule1html.Rmd
+  - chapters/Module2/TMmodule2html.Rmd
+  - chapters/Module3/TMmodule3html.Rmd
+  - chapters/Module4/TMmodule4html.Rmd
+  - chapters/Module5/TMmodule5html.Rmd
+  - chapters/Module6/TMmodule6html.Rmd
+  - chapters/Module7/TMmodule7html.Rmd
+  - chapters/Module8/TMmodule8html.Rmd
+  - chapters/Module9/TMmodule9html.Rmd
+  - chapters/Module10/TMmodule10html.Rmd
+  - chapters/Module11/TMmodule11html.Rmd
+  - chapters/Solutions/Solutions.Rmd
+  
+  # - chapters/Module3/TMmodule3_1.Rmd
+  # - chapters/Module3/TMmodule3_2.Rmd
+  # - chapters/Module3/TMmodule3_3.Rmd
+  # - chapters/Module3/TMmodule3_4.Rmd
+  # - chapters/Module3/TMmodule3_5.Rmd
+
+# language:
+#   ui:
+#     chapter_name: ""
+
+delete_merged_file: true

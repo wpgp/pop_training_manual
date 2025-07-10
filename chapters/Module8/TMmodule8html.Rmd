@@ -1,0 +1,1375 @@
+
+```{r setup_module8, include=FALSE}
+#data path
+data_path <- "data/CMR/"
+#output path for macOS
+output_path <- "output_data/"
+
+raster_path1 <- paste0(data_path, "Continuous Rasters/")
+raster_path2 <- paste0(data_path, "Categorical Rasters/")
+raster_path3 <- paste0(data_path, "Settlement Rasters/")
+shapefile_path <- paste0(data_path, "Shapefiles/")
+mgrid_path <- paste0(data_path, "Mastergrid/")
+```
+
+# Bayesian Hierarchical Population Modelling in R
+This module expands upon the Bayesian hierarchical population modelling covered in earlier modules, focusing instead on the methods with spatial data. It introduces the key different data sources, methods for covariate extraction, exploratory analysis, and model set up. The remainder of the module briefly covers the STAN (MCMC) approach, and goes into detail for the INLA-SPDE approach to Bayesian hierarchical modelling. 
+
+## Data sources
+### Population data
+There are three main forms of population (or demographic) data: **micro-census**, **partial census** and **pre-survey listings**. A brief description of each is given as follows.
+
+  - Micro-census: A targeted household survey that covers a fraction of the population. It is a complete enumeration of a micro-census cluster. However, there are very scarce data contexts with no data to re-purpose.
+  - Partial census: It covers only a part of the population or country. Useful when there are inaccessible areas, locations in conflict or territories controlled by anti-government groups, among other uses. 
+  - pre-survey listings: Identifying and listing all household or dwellings in the survey area. It is done through defining the survey frame and re-purposing household surveys (e.g. health, livestock, ...).
+  
+There are 4 main steps for processing data as follows.
+
+  1. Identify the spatial unit of analysis
+  2. Identify variables common in the shapefile and the survey dataset (**unique ids**)
+  3. Summarise variables of interest in the survey data
+  4. Join the summarised survey data with the shapefile using **unique ids**
+  
+  
+Each of the datasets must be summarised by summing the household size to get the total population in each **enumeration area** (EA). This can be done using the following code as a template.
+
+```{r hh size, eval = FALSE}
+#Data survey 1
+Data_survey1 <- Data_survey1 %>% 
+  group_by(EA_ID) %>% 
+  summarise(Total_Pop = sum(HH_Size)) %>% 
+  mutate(Survey = "survey1")
+
+#Data survey 2
+Data_survey2 <- Data_survey2 %>% 
+  group_by(EA_ID) %>% 
+  summarise(Total_Pop = sum(HH_Size)) %>% 
+  mutate(Survey = "survey2")
+
+#Data survey 3
+Data_survey3 <- Data_survey3 %>% 
+  group_by(EA_ID) %>% 
+  summarise(Total_Pop = sum(HH_Size)) %>% 
+  mutate(Survey = "survey3")
+
+#rbind all data as one data frame
+combined_data <- rbind(Data_survey1, Data_survey2, Data_survey3)
+```
+
+This data processing is demonstrated in the following code using the functions `group_by()`, `sumarise()` and `mutate()` with the 5 Cameroon survey datasets: 
+  
+  - `Data_CMIS` was collected in 2022
+  - `Data_EESI` was collected in 2021
+  - `Data_ECAM1` was collected in the first Quarter of 2021
+  - `Data_ECAM2` was collected in the second Quarter of 2021
+  - `Data_ECAM3` was collected in the third Quarter of 2021
+  
+```{r load sf and tidyverse, message=FALSE, warning=FALSE}
+#load the sf and tidyverse packages
+library(sf)
+library(tidyverse)
+```
+
+```{r processing cameroon survey data}
+#load datasets
+Data_ECAM1 <- read.csv(paste0(data_path, "Data_ECAM1.csv"))
+Data_ECAM2 <- read.csv(paste0(data_path, "Data_ECAM2.csv"))
+Data_ECAM3 <- read.csv(paste0(data_path, "Data_ECAM3.csv"))
+Data_EESI <- read.csv(paste0(data_path, "Data_EESI.csv"))
+Data_CMIS <- read.csv(paste0(data_path, "Data_CMIS.csv"))
+
+#Data_CMIS
+Data_CMIS <- Data_CMIS %>% 
+  group_by(EA_ID) %>% 
+  summarise(Total_Pop = sum(HH_Size)) %>% 
+  mutate(Survey = "CMIS")
+
+#Data_EESI
+Data_EESI <- Data_EESI %>% 
+  group_by(EA_ID) %>% 
+  summarise(Total_Pop = sum(HH_Size))%>% 
+  mutate(Survey = "EESI")
+
+#Data_ECAM1
+Data_ECAM1 <- Data_ECAM1 %>% 
+  group_by(EA_ID) %>% 
+  summarise(Total_Pop = sum(HH_Size))%>% 
+  mutate(Survey = "ECAM1")
+
+#Data_ECAM2
+Data_ECAM2 <- Data_ECAM2 %>% 
+  group_by(EA_ID) %>% 
+  summarise(Total_Pop = sum(HH_Size))%>% 
+  mutate(Survey = "ECAM2")
+
+#Data_ECAM3
+Data_ECAM3 <- Data_ECAM3 %>% 
+  group_by(EA_ID) %>% 
+  summarise(Total_Pop = sum(HH_Size))%>% 
+  mutate(Survey = "ECAM3")
+
+#rbind all data as one data frame
+combined_data <- rbind(Data_CMIS, Data_EESI, Data_ECAM1, Data_ECAM2, Data_ECAM3)
+```
+
+In different surveys, as with this example of the five surveys, some enumeration areas are surveyed in a different survey. In this instance, the most recent survey needs to be maintained. For example if a particular EA was surveyed in both `CMIS` (2022) and `EESI` (2021), CMIS is maintained since it is the most recent. This will be done across all surveys to ensure that there are not duplicated EAs in the dataset. 
+
+In order to do this, the data must be ordered using the function `mutate()` before removing the duplicated data in order of priority with the functions `arrange()` and `filter()`. 
+
+```{r removing duplicates}
+#order data
+combined_data <- combined_data %>% 
+  mutate(Data_Priority = case_when(Survey == "ECAM1" ~ 1,   
+                                   Survey == "ECAM2" ~ 2, 
+                                   Survey == "ECAM3" ~ 3, 
+                                   Survey == "EESI" ~ 4, 
+                                   Survey == "CMIS" ~ 5))
+
+#remove duplicated EA in order of priority
+combined_data <- combined_data %>%
+  arrange(EA_ID, -Data_Priority) %>%
+  filter(!duplicated(EA_ID)) 
+```
+
+Once the duplicates are removed, the shapefile for the enumeration area can be joined with the combined survey dataset based on on the enumeration area ID which is a unique ID to both datasets. 
+
+```{r join EA sahpefile and dataset}
+#load EA_shapefile
+EA_Shapefile <- st_read(paste0(data_path, "EA_Shapefile.shp"))
+
+#join the shapefile and data based on EA_ID (a unique id to both datasets)
+Population_data <- inner_join(EA_Shapefile, combined_data, by = "EA_ID")
+```
+
+Finally, the unwanted variables can be removed from the resulting population data with the final result outputted as a shapefile.
+
+```{r remove variables}
+#remove unwanted variables
+Population_data <- Population_data %>% 
+  dplyr::select(-Data_Priority)
+
+#write data as a shapefile 
+write_sf(Population_data, paste0(output_path, "EA_population.shp"))
+```
+### Settlement data
+There are four main sources of settlement data, detailed as follows.
+
+  - **Building footprints**: Typically given as a polygon shapefile of buildings. Sources of building footprints are:
+    - Maxar & Ecopia building footprint (with processing partner: Ecopia AI), a frequently used settlement data source for gridded population estimations.
+    - Google - Open Buildings, available from [Google](https://sites.research.google/open-buildings/).
+    - Microsoft - Building Footprints, available on [GitHub](https://github.com/microsoft/GlobalMLBuildingFootprints).
+    - World Settlement Footprint (with processing partners: A collaboration between the European Space Agency, German Aerospace Center and Google Earth Engine). This dataset is given as a raster based on Sentinel 2.
+    - OpenStreetMap
+  - **Built-up area**: Typically a raster file at 100m resolution. A source of this is:
+    - GHS-Built-Up Surface Global Human Settlement Layer (with processing partner: European Commission).
+  - **Gridded building intensity**: This is provided by [Planet](https://planetgis.org/)
+  - **NSO building datasets**: This is data on building information collected during a census or survey, the building count and/or the building classification.
+
+
+There are multiple uses of settlement data. For example, as a proxy to extrapolate population totals. In this instance, the building count or settled area is used as the input and can be used to model the population in surveyed areas, to estimate the population total in areas not surveyed and to produce high resolution estimates. Additionally, settlement data can be used as covariates to detect density variation. For this use, of interest are the different summary metrics (area, perimeter, proximity, angle, shape, ...), the different aggregation metrics at the grid cell (minimum, mean, maximum, standard deviation, ...) and the different window sizes for contextual information.
+
+### Other sources
+
+Settlement data is not the only source of geospatial data. Other sources include (but are not limited to):
+
+  - Night-time light
+  - Distance to hospitals
+  - Distance to schools
+  - Water bodies
+  - Vegetation cover
+  - Land uses 
+  - Conflict data
+  
+However, not all geospatial data sources are good to use as geospatial covariates in a model. When selecting a geospatial covariate, it needs to be considered whether or not the covariate has a significant effect on population. Additionally, the availability of the covariate data (open-source/closed) should be considered, along with the spatial and temporal resolution of the covariate.  
+
+
+## Data cleaning and covariates extraction
+
+Prior to working with the covariates and modelling the data, the data itself must be extracted. To demonstrate these methods, the Cameroon population data will be used as an example. The extraction process essentially overlays polygons onto the covariate raster data, and extracts the covariate information from each raster that is within the polygon.
+
+To begin with, the relevant data must be read into R. In this case, the population dataset must also be projected using the function `st_transform()` to be the same spatial reference as the mastergrid.
+
+```{r install raster packages, eval = FALSE}
+#install raster processing packages
+install.packages("terra")
+install.packages("tictoc")
+install.packages("exactextractr")
+```
+
+```{r raster packages, message=FALSE, warning=FALSE}
+#load raster processing packages
+library(terra) #raster analysis
+library(tictoc)  
+library(exactextractr) #covariate extraction
+library(raster)
+```
+
+```{r read in the data}
+#read combined population dataset and mastergrid
+pop_data_shp <- st_read(paste0(data_path, "Population/EA_population.shp"))
+mgrid <- rast(paste0(mgrid_path, "CMR_mastergrid_WP_ND.tif"))
+
+#project pop_data to same spatial reference as mgrid
+pop_data_shp <- st_transform(pop_data_shp, crs = st_crs(mgrid)) 
+```
+
+<!-- To process the rasters in R, the continuous and categorical rasters must be dealt with slightly differently.  -->
+
+
+
+
+### Extracting continuous rasters
+Starting with continuous rasters, first all of the continuous raster covariates must be imported. When there are multiple covariates, instead of importing each manually, the function `list.files()` can be used to list all of the relevant covariates at once. In this function, to extract the correct information, as arguments the drive path to the covariates must be specified under `path`, the file type specified under `pattern` (in this case, `.tif$`), whether you want all files (in this case `all.files = TRUE`) and whether you want full names (in this case `full.names = FALSE`).
+
+```{r import continuous raster cov}
+#import all continuous raster covariates
+raster_list <-list.files(path = raster_path1, pattern = ".tif$",
+                         all.files = TRUE, full.names = FALSE)
+#let see the rasters in the list
+raster_list
+```
+
+Once all the covariates are imported, they can be stacked using the `rast()` function as follows. This means that the data can be processed more efficiently through extracting all rasters at once rather than needing to extract each raster individually.
+
+```{r stack raster}
+#stack all covariates
+cont_raster_covariates <- rast(paste0(raster_path1, c(raster_list)))
+```
+
+For visualisation, using the `plot()` function as discussed in Module 2, the raster can be plotted.
+
+```{r plot raster}
+#plot first raster
+plot1 <- plot(cont_raster_covariates[[1]])
+plot2 <- plot(cont_raster_covariates[[2]])
+
+```
+
+The function `exact_extract()` from the `exactextractr` package can be used as follows to extract the covariate information from the stack of rasters, through including the raster stack and population shapefile as arguments in addition to specifying the function used to extract the rasters with the argument `fun = `. In this case, to use the mean the argument `fun = 'mean'` is given, which extracts the mean value of the covariate information for each polygon region.
+
+The functions `tic()` and `toc()` from the `tictoc` package can be used to compute the elapsed time required for running the function, it is not necessary to time the process but can be beneficial to know how long a section of code takes to run, for example, to know how long to expect it to take in future for time management and planning purposes. To do this, place the `tic()` function at the start of the code you wish to time and place the `toc()` function at the end. Without additional parameters, the amount of time elapsed to run the code between the two functions will be outputted at the end.
+```{r extract rasters, eval = FALSE}
+#Extract rasters using their mean values
+tic()
+cont_raster_extract <- exact_extract(cont_raster_covariates, pop_data_shp, 
+                                     fun = 'mean')
+toc()
+```
+
+Functions discussed in earlier modules can then be used to extract further information from the raster data. The function `names()` can be used to check and extract the names of the rasters, with the function `colnames()` being used to change the names to something more uniform such as `x1`, `x2`, ... in that order. Finally, the variable names can be combined with the `cbind()` function and exported as a `.csv` file with the function `write.csv()`. Each of these operations are demonstrated below. 
+
+```{r extract variable names, eval = FALSE}
+#check names of rasters
+names(cont_raster_extract)
+
+#extract variable names
+var_names <- names(cont_raster_extract)
+
+#change names to x1, x2, x3... in that order
+colnames(cont_raster_extract) <- c(paste0('x', 1:41))
+
+#extract names of raster
+var_names2<- names(cont_raster_extract)
+
+#cbind names
+var_names <- cbind(var_names, var_names2) %>% 
+  as_tibble()
+
+#export names
+write.csv(var_names, paste0(output_path, "var_names.csv"))
+
+```
+
+### Extracting categorical rasters
+Similar methods to those used for continuous rasters can be used to extract categorical rasters. The first step is to use the `list.files()` function to import the categorical raster covariates into R, then stacking all of the covariates with the `rast()` function.
+```{r import categorical raster}
+#import all categorical raster covariates 
+raster_list <-list.files(path = raster_path2, pattern = ".tif$", 
+                         all.files = TRUE, full.names = FALSE) 
+raster_list
+
+#stack all covariates
+cat_raster_covariates <- rast(paste0(raster_path2, c(raster_list)))
+```
+
+
+The following step is to extract the rasters using the `exact_extract()` function. However, instead of using the mean function, the modal value is now used to extract the rasters with the argument `fun = 'mode'`, extracting the modal value of the categorical covariate information (the category with highest frequency of occurrence) from the polygon regions. 
+
+```{r extract rasters with mode, eval=TRUE, include = FALSE}
+#extract rasters using the modal value
+cat_raster_extract <- exact_extract(cat_raster_covariates, pop_data_shp, 
+                                    fun = 'mode')
+```
+
+Finally, the variables can be renamed with the function `rename()` with arguments for the names of the individual variables using the format `new_name = old_name`. 
+
+```{r rename variables, eval=TRUE}
+#rename variables
+cat_raster_extract <- cat_raster_extract %>% 
+  rename(Regions = mode.CMR_Regions,
+         Department = mode.CMR_Department,
+         Settlement_Type = mode.CMR_Settlement_Classification)
+```
+
+
+### Extracting building count
+Another of the covariates given for this dataset is the building count, indicated by the file name `CMR_buildings_count.tif`. To load this file, the function `rast()` can be used with the mastergrid and shapefile as arguments.
+
+```{r load building count}
+#load b_count
+r1 <- rast(paste0(mgrid_path,"CMR_buildings_count.tif")) 
+```
+Once the building count has been loaded, the function `extract()` from the `terra` package can be used to extract the values with arguments for the building count and population shapefile as arguments with the function argument specified as `fun = sum` and removing NA values as `na.rm = TRUE`.
+```{r extract values}
+#extract values
+B_Count <-terra::extract(r1, pop_data_shp, fun = sum, na.rm = TRUE)
+```
+Finally, the variables can be reamed with the `select()` function from the `dplyr` package, in addition to the `rename()` function. 
+
+```{r rename variables building count}
+#rename variable
+B_Count <- B_Count %>% 
+  dplyr::select(CMR_buildings_count)%>% 
+  rename(Total_Building_Count = CMR_buildings_count)
+```
+
+### Exracting building total area
+Similar methods can be used as for extracting building count to extract the building total area, starting with using the function `rast()` to load the building total area data. 
+```{r building area load}
+#building Area
+r2 <- rast(paste0(mgrid_path,"CMR_buildings_total_area.tif")) 
+```
+Then the `extract()` function from the `terra` package can be used to extract the values. As with for the building count, the building area and shapefile is given as arguments, in addition to the function for summing the values `fun = sum` and setting `na.rm = TRUE`.
+
+```{r building area extract values, warning=FALSE}
+#extract values
+B_Area <-terra::extract(r2, pop_data_shp, fun = sum, na.rm = TRUE)
+```
+
+The last step is to then rename the variables with the `select()` and `rename()` functions as before.
+```{r rename varibale building area}
+#rename variable
+B_Area <- B_Area %>% 
+  dplyr::select(CMR_buildings_total_area)%>% 
+  rename(Total_Building_Area = CMR_buildings_total_area)
+```
+
+Once you have your variables of interest, the function `cbind()` can be used to combine the variables together into a complete population dataset.
+
+```{r cbind varibales, eval = FALSE}
+#column bind the variables together to create a dataset
+Pop_Data_Complete <- cbind(pop_data_shp, cat_raster_extract, B_Count, 
+                           B_Area,cont_raster_extract)
+```
+
+### Adding admin area names to the data
+To add admin area names to the dataset, first the relevant shapefiles need to be identified and loaded into R with the function `st_read()`. In this case, following the `shapefile_path`, the relevant shapefiles are for the region and department. 
+
+
+```{r load the shapefiles}
+#load the shapefiles for region and department
+regions <- st_read(paste0(shapefile_path, "Region_SHP.shp"))
+dept <- st_read(paste0(shapefile_path, "Departement_SHP.shp"))
+```
+
+From there, the region names and IDs can be selected using the `select()` function, in conjunction with the `rename()` function to better identify the region. 
+```{r select region and id}
+#select region names and ids
+regions <- regions %>% 
+  as_tibble() %>% 
+  dplyr::select(id, libelle) %>% 
+  rename(region_libelle = libelle)
+```
+
+To join the regions to the complete data, the function `inner_join()` introduced in an earlier module can be used, including the `regions` as an argument with specification of how to join the data with the `by = ` argument. 
+
+```{r join regions to data, eval=FALSE}
+#join regions to complete data
+Pop_Data_Complete <- Pop_Data_Complete %>% 
+  inner_join(regions, by = c("Regions"="id"))
+```
+
+Additionally, the department names can be selected and joined to the data using the same methods shown above. 
+```{r select and join department, eval=FALSE}
+#select department names 
+dept <- dept %>% 
+  as_tibble() %>% 
+  dplyr::select(id, libelle) %>% 
+  rename(dept_libelle = libelle)
+
+#join department to the complete data
+Pop_Data_Complete <- Pop_Data_Complete %>% 
+  inner_join(dept, by = c("Department"="id"))
+``` 
+
+The `select()` function can then be used to sort the data into a proper order before exporting the resulting shapefile as a geopackage file with the `write_sf()` function.
+
+```{r sort data and export to gpkg, eval=FALSE}
+#sort data in proper order
+Pop_Data_Complete <- Pop_Data_Complete %>% 
+  dplyr::select(EA_ID, Department, dept_libelle, Regions, region_libelle,
+                Total_Pop, Settlement_Type, Total_Building_Count,
+                Total_Building_Area, starts_with("x"))
+
+#export shapefile as a geopackage file
+write_sf(Pop_Data_Complete, paste0(output_path,"Pop_Data_Complete.gpkg"))
+```
+Alternatively, the shapefile can be converted to a data frame with the `as.data.frame()` function, before removing the geometry with the `select()` function to export as a `.csv` file with the `write.csv()` function. 
+
+```{r export as csv, eval=FALSE}
+#convert shapefile to data frame
+Pop_Data_Complete1 <- as.data.frame(Pop_Data_Complete)
+
+#remove Geometry
+Pop_Data_Complete1  <- Pop_Data_Complete1  %>% 
+  dplyr::select(-geometry)
+
+#export data frame as csv
+write.csv(Pop_Data_Complete1, paste0(output_path, "Pop_Data_Complete.csv"))
+```
+## Exploratory analysis 
+
+To start with, the dataset resulting from the code in the previous section `Pop_Data_Complete.csv` will be used, in addition to the variable names file created earlier.
+
+```{r read complete data}
+#input the data
+Data_CMR <- read.csv(paste0(data_path,"Pop_Data_Complete.csv"))
+
+#load the variable names file
+var_names <- read.csv(paste0(data_path,"var_names.csv")) 
+```
+
+As introduced in Module 2, the `describe()` function from the `psych` package can be used to give a summary of the data, similarly, the `str()` function can be used to display the structure of the data. 
+```{r load psyche, message=FALSE, warning=FALSE}
+#load the psych package
+library(psych)
+```
+
+```{r describe the data, results='hide'}
+#describe the data using both str() and describe()
+str(Data_CMR); 
+psych::describe(Data_CMR)
+```
+
+### Basic visualisation
+
+To visualise the data, methods discussed in Modules 2 and 3 can be used. 
+
+To examine the distribution of the data, a histogram can be plotted using the `ggplot()` function within the `ggplot2` package.
+
+```{r visualise data}
+#examine data distribution using histograms
+p1<- Data_CMR %>% 
+  ggplot(aes(x = Total_Pop/Total_Building_Count)) +
+  geom_histogram(bins = 20, color = "white", fill = "#004C92", position = "dodge")+
+  scale_fill_manual(values = "#004C92") +
+  labs(title = "Histogram of population density", x = "Population density", y = "Frequency")+
+  theme_classic()
+p1
+```
+
+Alternatively, a box plot can be used to investigate any outliers in continuous variables. This time, the function `boxplot()` from `base` R, also as seen in Module 2, to display the information from just one continuous covariate at a time and also information from multiple continuous covariates at a time.  
+
+```{r boxplots}
+#investigate outliers in continuous variables using box plots
+boxplot(Data_CMR[,"Total_Pop"])
+
+#visualise the box plots of multiple continuous covariates at a time
+boxplot(Data_CMR[,paste0("x", 1:7)], col = rainbow(7))
+```
+
+For categorical variables, bar plots can be used to examine the distribution of the data. For example, in this case, the distribution of settlement types can be visualised with a bar plot, where it can be seen that settlement type 1 has the highest frequency of occurrence, and settlement type 2 the lowest.
+
+```{r bar plot}
+#examine distribution of categorical variable using bar charts
+barplot(table(Data_CMR$Settlement_Type), col = "#004C92")
+```
+
+
+The `mutate()` function can also be used to transform data before plotting, in this instance, log-transform the population density to plot a histogram of the log-transformed population density.
+
+```{r transform the data and plot}
+#transformed data 
+p2<- Data_CMR %>% 
+  dplyr::mutate(logDensity = log(Total_Pop/Total_Building_Count)) %>%
+  ggplot(aes(x = logDensity)) +
+  geom_histogram(color = "white", fill = "#E69F00", position = "dodge")+
+  labs(title = "Histogram of log-transformed \n population density", 
+       x = "Log(Population density)", y = "Frequency")+
+  theme_classic()
+p2
+```
+
+The correlation among multiple continuous covariates can be examined through using the function `corrplot()` from the package `corrplot`. This is not something which has been previously discussed, but can be used as in the example below with the Cameroon data. To use this plot function, the covariates you wish to explore the correlation between must be specified, along with arguments for the visualisation method used (in this case, `method=square`) and the type of matrix (in this case, `type=upper` for an upper triangular matrix). For more information on the possible arguments and how to use them, look at the help file `?corrplot::corrplot`.
+```{r load corrplot, message=FALSE, warning=FALSE}
+#load the corrplot package
+library(corrplot)
+```
+
+```{r corrplot}
+#examine correlation among multiple continuous covariates using corrplot
+corrplot(
+  cor(Data_CMR[,paste0("x", 1:8)]),
+  method = 'square',
+  type = 'upper',
+  tl.col = 'black',
+  tl.cex = 1,
+  col = colorRampPalette(c('purple', 'dark green'))(200)
+)
+```
+
+Lastly, the function `ggarrange` from the package `ggpubr` can be used as discussed in Module 2 to keep the plots tidy and display them together.
+```{r load ggpubr, message=FALSE, warning=FALSE}
+#load the ggpubr package
+library(ggpubr) #used within ggplot to keep plots tidier
+```
+
+```{r arrange plots, warning=FALSE, message=FALSE}
+#arrange the plots side-by-side
+ggarrange(p1, p2, ncol = 2, nrow = 1)
+```
+
+### Geospatial visualisation
+
+To visualise the data on a map similar to as in Module 3, the following packages should be installed and loaded.
+```{r install the GIS packages, eval=FALSE}
+#install the relevant packages
+install.packages("tmap")
+install.packages("terra")
+install.packages("leaflet")
+install.packages("mapview")
+install.packages("units")
+install.packages("tidyverse")
+install.packages("RColorBrewer")
+install.packages("exactextractr")
+```
+
+```{r load GIS packages library, message=FALSE, warning=FALSE}
+#load the relevant packages
+library(tmap)
+library(terra)
+library(leaflet)
+library(mapview)
+library(units)
+library(tidyverse)
+library(RColorBrewer)
+library(exactextractr)
+# tmap_options(check.and.fix = TRUE) #fix potential issues during the processing
+```
+
+The country's (Cameroon) national boundary is can be extracted from the `World` dataset from the `tmap` package which produces a world map. Following that, using the `filter()` function, Cameroon can be subset from the world map and visualised.
+```{r extract boundary}
+#extract the boundary for the country
+data("World")
+class(World)
+names(World)
+tm_shape(World) +
+  tm_polygons(col = "name",
+              legend.show = FALSE)
+
+#subset Cameroon
+cmr_national <- World %>% filter(name == "Cameroon")
+#visualise the Cameroon boundary map
+tm_shape(cmr_national) +
+  tm_polygons(col = "gray",
+              legend.show = FALSE) +
+    tm_compass(position = c("right", "top"), text.size = 1.5) +
+    tm_scale_bar(position = c("left", "top"), text.size = 1.5, size = 1)
+```
+
+To visualise data on the map of Cameroon, starting with points data, the corresponding datasets first need to be imported into R. 
+```{r reading in data}
+#EA shapefile
+ea_shp <- st_read(paste0(data_path,"Pop_Data_Complete.gpkg")) 
+#admin 2 (departments) shapefile
+department <- st_read(paste0(data_path,"/Shapefiles/Departement_SHP.shp")) 
+```
+
+Once you have the data in the R environment, the points (centroids of the polygons) can be extracted from the files. Below, the function `as()` is used to convert the geometry obtained from the shapefiles with the function `st_geometry()` to a spatial object. 
+```{r extract points}
+#extract the points
+shp <- as(st_geometry(ea_shp), "Spatial") #convert to spatial object
+shp0 <- as(st_geometry(cmr_national), "Spatial") #convert cmr_national to spatial object
+shp2 <- as(st_geometry(department), "Spatial") #convert department to spatial object
+```
+The longitude and latitude can then be extracted and added to the main Cameroon demographic data as variables. This will enable the points to be plotted in the correct locations on the map of Cameroon. 
+```{r add long-lat}
+#add the lon-lat to the demographic data
+Data_CMR$lon <- coordinates(shp)[,1] #extract and add the longitude to the data
+Data_CMR$lat <- coordinates(shp)[,2] #extract and add the latitude to the data
+
+head(Data_CMR, 6)
+```
+Once the data is set up, the longitude and latitude coordinates can be combined and the resulting points plotted using the basic `plot()` function. However, this on its own is not very useful. For the results to be easily interpreted and better visualised, the national boarder can be plotted first with the coordinate points be plotted over the top with the `points()` function.
+
+```{r plot points}
+#display point data
+coords <- cbind(Data_CMR$lon, Data_CMR$lat)
+plot(coords, col = "red", xlab = "longitude", ylab = "latitude")
+
+#overlay points on the national boundary
+plot(shp0) 
+points(coords, col = "red")
+```
+
+<!-- Areal data can also be visualised, starting with plotting the Admin 2 level data to give the different departments within the country, then overlaying the points on the national boundary -->
+<!-- ```{r} -->
+<!-- ### Display Point data -->
+<!-- par(mfrow=c(1,2), mar=c(1,2,5,3)) -->
+<!-- plot(shp2, col=rainbow(7), -->
+<!--      main="Areal data showing \n total observations per unit")  -->
+
+<!-- points(coords_sf, col="red") -->
+<!-- ``` -->
+
+### Checking for NAs
+
+As it has been discussed in other modules, it is important to check for NA values within your dataset as missing values can greatly affect both computation and results. 
+
+To check whether there are any NA values in a chosen dataset, the function `is.na()` can be used, inputting the selected data as an argument. You can include the entire dataset in this function, or a subset of the chosen dataset. If a single covariate is included as an argument, the function outputs a logical vector the same length as its argument `x`, indicating whether the corresponding value is missing or not. If the entire dataset or a selection of covariates is used as the argument in the function, a logical matrix is returned with the same dimensions as the data frame included as the argument.
+
+The logical vector (or matrix) returned, is often not of use on its own, particularly if it is very long. What is typically more of interest is the total number of NA values in the data, found using the `sum()` function with the results from the `is.na()` function. This is useful to know as it can be used to decide whether to drop or impute the missing values. The following code demonstrates how to perform these tasks. 
+```{r check NA}
+#check for NA values
+NAvalues_x27 <- is.na(Data_CMR$x27)
+sum(NAvalues_x27)
+```
+Another figure which is often of interest is which index (or indices) of the variable(s) correspond to the missing values. This can be done through using the `which()` function, including the results from the `is.na()` function as the argument. 
+
+```{r which NA}
+#find which values are NA
+which(is.na(NAvalues_x27))
+```
+
+As mentioned, often, any NA values are simply just removed. This is demonstrated later on in the module in the **[generalised linear regression](##Generalised-linear-regression)** section, where the NA values are removed from the covariate information prior to modelling using the function `drop_na()` from the `tidyr` package. In this instance, modelling in R cannot be done when there are missing values, so it is important that the missing data is removed (if they are not removed beforehand, R can remove the observations with missing information during the modelling process). 
+
+However, removing all observations with NA values is not always the best option. In some situations, removing all observations with NA values will not leave enough information to accurately model the data from. When this occurs, the missing data can first be imputed using the remaining results. There are multiple approaches to impute the missing data, but one of the most commonly used approaches is to use the mean (or median) value of the remaining observations. 
+
+### Checking for minimum and maximum values
+
+Familiarising yourself with the dataset is crucial to be able to properly understand the data and interpret any results. One of the ways in which you can familiarise yourself with the data is to check what the minimum and maximum values are in the relevant data, for example, minimum and maximum values of elevation. This can help you to not only look out for any outlier or extreme values with predictions for example, but it can also help you to understand the scale of each data type that you are working with.
+
+The methods as to how you can check for the minimum and maximum values are discussed in Module 1, by using the `min()` and `max()` functions respectively. 
+
+```{r min max}
+#minimum total population count
+min(Data_CMR$Total_Pop)
+
+#maximum total population count
+max(Data_CMR$Total_Pop)
+```
+
+
+### Checking the distribution of categorical variables
+As with the other aspects of exploratory analysis, it is important to check the distribution of the data prior to modelling to be familiar with the data itself. The distribution of categorical variables was explored briefly **[above](##Basic-visualisation)** by demonstrating that a bar plot can be used to show the distribution of settlement types with a bar plot, however, the distribution of categorical variables can be explored using a variety of methods, including simple frequency tables using the function `table()`. The code below demonstrates this by producing a table of the frequencies of the different settlement types. 
+
+```{r freq checking}
+#produce a table for frequency checking
+table(Data_CMR$Settlement_Type)
+```
+
+It is also important to look at how many different categories there are within the variable. This can be done using the `unique()` function, which returns a vector with each of the unique categories in order of appearance in the variable. An example of this can be seen below, where the unique regions are returned, followed by the number of unique categories, found using the `length()` function
+
+```{r unique}
+#find the unique regions
+unique(Data_CMR$Regions)
+
+#find out how many different regions there are
+length(unique(Data_CMR$Regions))
+```
+
+
+
+## Model set-up
+This section repeats many of the methods discussed in Module 4 such as simple linear regression, multiple regression and GLM stepwise regression with application to the Cameroon dataset, before exploring more complex methods such as a Bayesian approach and introducing spatial covariates. 
+
+The first step is to identify the response variable (and the independent variables if necessary) of interest. In the case of the Cameroon dataset, the response variable is the population density. 
+
+
+The distribution of the response variable can be checked through plotting a histogram. In this instance, the log-transformed population density is normally distributed which can be identified through the bell-curve shape of the histogram.
+```{r check the distribution}
+#check the distribution
+Data_CMR <- Data_CMR %>% 
+  mutate(Density = Total_Pop/Total_Building_Count)
+
+hist(Data_CMR$Density, xlab = "Population density", 
+  main ="Histogram of population density", breaks = 20)
+
+hist(log(Data_CMR$Density), xlab = "log-transformed population density", 
+  main ="Histogram of log-transformed population density", breaks = 20)
+```
+
+Given that the log-transformed population density is normally distributed, a variable can be created to work with this density and model the data.
+
+```{r create variable}
+#create the log transformed Density variable
+Data_CMR <- Data_CMR %>% 
+  mutate(LDensity = log(Density),
+         y = LDensity) #this will be the response for the density models
+```
+
+### Simple linear regression
+Since the log-transformed population density is normally distributed, the `lm()` function can be used to fit a simple linear regression model. In this instance, the simplest model, the intercept-only, model is fitted first, with outputs for the model summary, coefficients, residuals and predicted values returned also, all using the functions introduced in Module 2.
+
+```{r intercept only lm}
+#intercept only 
+fit1 <- lm(y ~ 1, data = Data_CMR)
+
+#gives all the model parameters estimates
+summary(fit1)
+
+#gives only the estimates of the fixed effects parameters 
+coefficients(fit1)
+
+#gives the residuals (observed - predicted)
+head(resid(fit1)) 
+
+#gives the predicted values
+head(fitted(fit1))
+```
+### Multiple regression
+Before adding covariates into the models, since the geospatial covariates are obtained based on different scales of measurements, it is important to transform the data first to standardise the covariates. This makes the interpretation of the model estimates much easier. Here, the standardisation is done through using the Z-score with a function created below to do this standardisation.
+
+```{r standardisation of model covariates function}
+#standardisation of model covariates
+stdise <- function(x)
+{
+  stds <- (x - mean(x, na.rm = TRUE))/sd(x, na.rm = TRUE)
+  return(stds)
+}
+```
+This function created can then be applied to covariates from a given dataset using the `apply()` function for efficiency to standardise the selected covariates.
+```{r standardise covaritaes}
+#apply the function to standardise the covariates 
+cov_vars <- paste0("x", 1:41) 
+Data_CMR_std <- Data_CMR
+
+#standardise the covariates only
+Data_CMR_std[, cov_vars] <- apply(Data_CMR[, cov_vars], 2, stdise)
+
+#obtain subset of the data with only the covariates and the response variable
+mod_covs <- Data_CMR_std[,c("y", cov_vars)]
+
+#summary of covariates before and after standardisation
+head(Data_CMR[,cov_vars[1:5]])
+head(Data_CMR_std[,cov_vars[1:5]])
+```
+Using the same methods as discussed in Module 2 for simple linear and multiple regression, examples are given below with the application of the methods to the Cameroon dataset.
+```{r example models}
+#example of Simple linear regression (only one covariate)
+fit2 <- lm(y ~ x3, data = Data_CMR_std)
+summary(fit2)
+
+#example Multiple regression (more than one covariate)
+fit3 <- lm(y ~ x1 + x2 + x3 + x9, data = Data_CMR_std)
+summary(fit3)
+
+
+#multiple regression with all available covariates in the data
+fit4 <- lm(y ~ ., data = mod_covs)
+#fit4 <- lm(y ~ ., data = Data_CMR_std) #this will include everything else
+#summary(fit4)
+```
+### Generalised linear regression
+As discussed in Module 4, the main difference between the `lm()` and `glm()` functions is that `glm()` can be used for both normal and non-normal data and therefore, the distribution of the response must be specified when `glm()` is used. 
+
+To use the `glm()` function with stepwise regression to select the best fitting model with covariates, the `MASS` package must be loaded. Additionally, the `car` package can be loaded to compute the Variance Inflation Factor (VIF). 
+
+```{r install regression packages, eval = FALSE}
+#install MASS and car packages
+install.packages("MASS")
+install.packages("car")
+```
+
+```{r regression packages, message=FALSE, warning=FALSE}
+#load MASS and car packages
+library(MASS)
+library(car)  
+```
+The first step is to ensure that all of the NA values are removed, this can be done using the `drop_na()` function in the `tidyr` package. 
+```{r drop NA values}
+#remove all NA values
+mod_covs <- mod_covs %>% tidyr::drop_na()
+```
+Then the `glm()` function can be used to model the data, in this case all of the standardised covariates are used with the continuous data belonging to the Gaussian family. As discussed in Module 4, stepwise regression can be completed through using the `stepAIC()` function. Below, the stepwise regression is applied to the full GLM model with the direction of the model selection going both ways.
+
+```{r stepwise regression, results='hide'}
+#covariates selection using GLM stepwise regression
+fdens <- glm(y~., data = mod_covs, family = gaussian) #continuous data 
+summary(fdens)
+step_dens<- stepAIC(fdens, scale = 0,
+                   direction = c("both"),
+                   trace = 1, keep = NULL, steps = 1000, use.start = FALSE,
+                   k = 2)
+```
+The resulting best fitting model can then be copied and pasted from the output in order to refit the model and select only the statistically significant variables. 
+```{r refit model}
+#refit the model with selected covariates
+fdens2 <-  glm(formula = y ~ x1 + x2 + x3 + x7 + x9 + x10 + x11 + x12 + 
+    x13 + x14 + x15 + x16 + x19 + x20 + x21 + x24 + x28 + x31 + 
+    x32 + x36 + x38 + x40 + x41, family = gaussian, data = mod_covs)
+summary(fdens2)
+```
+The Variance Inflation Factors (VIF) of the covariates can then be computed with the `vif()` function, where in this case, a VIF of less than 5 is acceptable.
+```{r VIF}
+#check the VIF values for the refitted model
+vif_dens = vif(fdens2)
+
+#extract the covariates with VIF values of less than 5
+vif_dens[which(vif_dens < 5)]
+```
+
+The GLM can be refitted again, this time with only the covariates which have a VIF value of less than 5.
+
+```{r refit for VIF}
+#refit the model with covariates that have a small VIF
+fdens3 <-  glm(formula = y ~ x2 + x7 + x16 + x19 + x20 + x24 + x31 + x32 + x36 + 
+                 x38 + x40, family = gaussian, data = mod_covs)
+summary(fdens3)
+```
+The summary output of the model identifies which of the covariates are significant and which are not. Since the best model will include only covariates which are statistically significant (to the 5% level), the model should be refit with only these covariates.
+
+```{r best fit model refit}
+#do the final refit with the covariates that are significant in the summary
+fdens4 <-  glm(formula = y ~ x2 + x16 + x20 + x24 + x31 + x36 + x40,
+               family = gaussian, data = mod_covs)
+summary(fdens4)
+```
+Finally, return the VIF for the last covariates and double check that they are all below 5, then the final best covariates can be selected.
+
+```{r final check}
+#rerun VIF for the last covariates
+vif_dens4 = vif(fdens4)
+vif_dens4[which(vif_dens4 < 5)]
+
+#identify the best covariates
+best_covs <- c("x2", "x16", "x20", "x24", "x31", "x36", "x40")
+```
+### Fitting fixed effects models in `R-INLA`
+
+As seen in previous modules (see Module 4), the mathematical model specification for the fixed effects model is as follows.
+
+$$\eta_i = \log(\lambda_i) = \beta_0 + \beta_1x_1 + \beta_2x_2 + \cdots + \beta_Mx_M,$$
+which can also be written as 
+$$ \eta_i = \beta_0 + \sum_{m=1}^M \beta_mx_{im},$$
+where in this case, the covariates $x_m$ are geospatial covariates, $\lambda$ is the mean parameter and $\eta$ is the linear predictor. 
+
+In INLA, the model specification for the above model is given in the form `model <- response ~ x_1 + x_2 +... x_M`. For demonstration of simple models in `INLA`, see Module 6.
+
+
+### Fitting Bayesian hierarchical mixed effects models in `R-INLA`
+
+Similarly to with the fixed effects models, the mathematical model specification for the mixed effects model can be given as
+$$\log(\lambda_i) =  \beta_0 + \sum_{m=1}^M \beta_mx_{im} + EA_i,$$
+which in INLA is given as `model <- response ~ x_1 + x_2 +... x_M + f(EA, model = "iid")`. The way in which the `inla()` function is used for the mixed effects models is the same as for the fixed effects models with the exception of the formula specification.
+
+Applying this methodology to the Cameroon data, using settlement type as a random variable can be seen in the code below. First the variable for settlement type is converted to a factor, then the formula is specified and finally the `inla()` function is used. In this case, the family is set to `"gaussian"`. 
+```{r load INLA library, message=FALSE, warning=FALSE}
+#load the INLA package
+library(INLA)
+```
+
+```{r mixed effects model inla}
+#convert settlement type to a factor
+Data_CMR_std$set_typ <- factor(Data_CMR_std$Settlement_Type) 
+
+#specify the formula
+formula1 <- y ~ 1 + x2 + x16 + x20 + x24 + x31 + x36 + 
+  x40 + f(set_typ, model = "iid")
+
+#create the INLA model
+res1 <- inla(formula1,
+            data =  Data_CMR_std,
+            family = "gaussian",
+            control.predictor = list(compute = TRUE),
+            control.compute = list(dic = TRUE)
+)
+summary(res1)
+```
+Once you have the model output, the fixed and random effects can be extracted separately, using the `$` with the arguments `summary.fixed` for the fixed effects and `sumary.random` for the random effects. Additionally, the hyperparameters (for the EA) can be obtained through extracting the `summary.hyperpar` argument.
+
+```{r extracting summary}
+#extract the fixed effects only
+res1$summary.fixed 
+
+#extract the random effects only
+res1$summary.random 
+
+#round the values to 4 decimal places
+round(res1$summary.random$set_typ[,c(2,4,6)], 4) 
+
+#extract the hyperparameters
+res1$summary.hyperpar
+```
+
+Similarly to as in Module 6 with the fixed effects models in INLA, the predicted values for the Bayesian hierarchical mixed effects models can be obtained through extracting the `summary.fitted.values` argument, adding further specification for if you want to obtain the predicted means (`mean`), or the upper (``0.975quant``) and lower (``0.025quant``) bounds of the 95% credible intervals.
+
+
+## STAN (MCMC) approach
+
+Markov Chain Monte Carlo (MCMC) methods are a class of algorithms that are used to sample from the joint distribution, comprised of two main parts. Firstly, Monte Carlo, which is a mathematical method for drawing samples from a distribution to obtain parameter estimates. The second part is a Markov Chain which is a sequence of correlated samples in which a future value only depends on the present given the past. 
+
+The basic premise is to perform Monte Carlo simulations and estimation on Markov Chains of the posterior distribution. Alternatively, to simulate a Markov chain with the stationary distribution given by the target (posterior) distribution, and after a number of iterations, sampling from this Markov chain repeatedly, samples from the joint distribution can be obtained. For more information on Markov chains, see [Markov Chains Setosa](https://setosa.io/ev/markov-chains/) where they are explained visually.
+
+Whilst there are a number of different algorithms proposed, the Metropolis-Hastings algorithm can be used with Bayesian inference.
+
+### Metropolis-Hastings algorithm
+To obtain new values for the different parameters, the Metropolis-Hastings algorithm uses a proposal distribution. The basic steps are as follows.
+
+  1. Arbitrarily select a starting point $\boldsymbol{z}^{(0)}$.
+  2. Let $q$ be the proposal distribution and $\boldsymbol{y}$ be a candidate point. Generate $\boldsymbol{y}$ from $q(\boldsymbol{y}|\boldsymbol{z}^{(t)})$.
+  3. Calculate the acceptance probability
+  $$\alpha(\boldsymbol{z}^{(t)}, \boldsymbol{y}) = min \left\{1, \frac{p(\boldsymbol{y})q(\boldsymbol{z}^{(t)}|\boldsymbol{y})}{p(\boldsymbol{z}^{(t)})q(\boldsymbol{y}|\boldsymbol{z}^{(t)})}\right\}$$
+  4. Accept $\boldsymbol{z}^{(t+1)} =\boldsymbol{y}$ with probability $\alpha(\boldsymbol{z}^{(t)}, \boldsymbol{y})$ otherwise, set $\boldsymbol{z}^{(t+1)} = \boldsymbol{z}^{(t)}$
+  
+It is important to note the involvement of $p$, the target density, in that it is only present through the ratio $\frac{p(y)}{p(\boldsymbol{z}^{(t)})}$. Therefore, the normalising constant does not need to be known to implement the algorithm since it cancels in the ratio. 
+$\alpha (\boldsymbol{z},\boldsymbol{y}) = min \left\{1, \frac{p(\boldsymbol{y})}{p(\boldsymbol{z})} \right\}$
+There are three special cases of the Metropolis-Hastings algorithm detailed below.
+
+  1. Metropolis algorithm: $q(\boldsymbol{y}|\boldsymbol{z})=q(\boldsymbol{z}|\boldsymbol{y})$
+    - This is where the proposal density is symmetric. It has a special case called the **Random-Walk** Metropolis algorithm where $q(\boldsymbol{y}|\boldsymbol{z})=q(|\boldsymbol{y}-\boldsymbol{z}|)$ leading to $\alpha (\boldsymbol{z},\boldsymbol{y}) = min \left\{1, \frac{p(\boldsymbol{y})}{p(\boldsymbol{z})} \right\}$.
+  2. Independence sampler: $q(\boldsymbol{y}|\boldsymbol{z})=g(\boldsymbol{y})$
+    - Draw proposals from a fixed density $g$, which can be chosen as $g=p$ to get independent samples, leading to $\alpha(\boldsymbol{z},\boldsymbol{y})=1)$ and no chain will be rejected as a candidate. It is important to note that in general however, $p$ is unknown and that in order for the chain to converge to the stationary distribution, the tails of $g$ must be heavier than the tails of $p$.
+  3. Gibbs sampler: $\alpha(\boldsymbol{z},\boldsymbol{y})=1$ 
+    - This is when the acceptance probability is equal to 1.
+    
+For more information on the Metropolis-Hastings algorithm and its use in `stan`, see [here](https://www.bayesrulesbook.com/chapter-7.html). 
+
+<!-- ### Gibbs sampling algorithm -->
+<!-- For this algorithm, let $\boldsymbol{z}=(z_1,\cdots, z_k)^T$ and start the algorithm at $\boldsymbol{z}^{(0)}$ (which can be any point in the support of $p$). Then, given $\boldsymbol{z}^{(t)}$, to sample from the $k$-dimensional distribution $p(\boldsymbol{z})$, a Markov transition from $\boldsymbol{z}^{(t)}$ to $\boldsymbol{z}^{(t+1)}$ is done as follows. -->
+
+<!-- $$ -->
+<!-- \begin{aligned} -->
+<!-- &z_1^{(t+1)} \sim p(z_1 | z_2^{(t)}, z_3^{(t)}, \cdots, z_k^{(t)}) \\ -->
+<!-- &z_2^{(t+1)} \sim p(z_2 | z_1^{(t+1)}, z_3^{(t)}, \cdots, z_k^{(t)}) \\ -->
+<!-- &\vdots \\ -->
+<!-- &z_k^{(t+1)} \sim p(z_k | z_1^{(t+1)}, z_2^{(t+1)}, \cdots, z_{k-1}^{(t+1)})  -->
+<!-- \end{aligned} -->
+<!-- $$ -->
+
+<!-- where the densities on the right hand side are called the **complete conditional distributions** (or the **full conditional distributions**).  -->
+## INLA and INLA-SPDE approach
+
+To fit geostatistical models using INLA-SPDE, the following steps should be followed. 
+
+  1. Load the data
+  2. Specify the coordinates
+  3. Build the mesh
+  4. Construct the SPDE
+  5. Build projection matrix A
+  6. Define the data location indices
+  7. Stack the data
+  8. Specify and fit the appropriate model
+  9. Run posterior checks and model fit checks
+  10. Carry out model predictions
+
+### Mesh construction
+The SPDE approach approximates the continuous Gaussian field as a discrete Gaussian Markov random field by means of a finite basis function defined on a triangulated mesh of the region of study. In other words, it discretises the continuous Gaussian surface using a triangulated mesh. A triangulated mesh can be constructed to perform this approximation with the function `inla.mesh.2d()` from the `R-INLA package` which constructs a 2D mesh over a specified boundary. This mesh is important for spatial modelling as it converts the study area into smaller elements (triangles) that can be used in faster computational burdens. 
+
+The arguments of this function include:
+  
+  - `loc`: the data location coordinates that are used as initial mesh vertices.
+  - `boundary`: an object describing the boundary of the domain.
+  - `offset`: the distance that specifies the size of the inner and outer extensions around the data locations.
+    - It controls the padding around the boundary to ensure that edge effects do not influence the analysis.
+  - `cutoff`: the minimum allowed distance between points.
+    -It helps in reducing the number of mesh points by ignoring points that are too close to each other, which can improve computational efficiency. In other words, it is used to avoid building many small triangles around clustered locations. 
+  - `max.edge`: the values denoting the maximum allowed triangle edge lengths in the region and in the extension.
+    - It controls the granularity of the mesh.
+    - Smaller values lead to finer meshes with more triangles providing more resolution so more detail of the spatial variation can be captured. 
+    - It should not be too small to control the computation time to run the INLA model.
+  
+To select appropriate values of `offset`, `cutoff` and `max.edge`, as they depend on the specific range and distribution of the coordinates of the study dataset, it is typically a trail-and-error process. There are some steps which can be taken to aid in fine-tuning the parameters as follows. 
+
+  1. Start with the recommended values.
+      - `offset = c(max.edge/2, max.edge)`
+      - `cutoff = max.edge/10`
+      - `max.edge = c(max(diff(range(data$lon))), diff(range(data$lat)))/15`
+  2. Check the mesh generation time.
+      - If the process does not generate a mesh within 1 minute, terminate it and increase the value of `max.edge` by decreasing the denominator from 15 (for example, use 10).
+  3. In complex cases where the default values are not suitable, try alternative starting values.
+      - `offset = c(0.01, 0.05)`
+      - `cutoff = 0.01`
+      - `max.edge = c(0.05, 0.1)`
+  4. Use incremental adjustments. 
+      - If the mesh still does not generate within 1 minute, increase the values of all three parameters by a factor of 1 (for example, `offset = offset*10`, `cutoff cutoff*10` and `max.edge = max.edge*10`).
+  5. Assess the fit.
+      - Once a mesh is generated, check the number of vertices with `mesh$n`. Visualise the mesh by plotting the non-convex hull boundary and the coordinate points. 
+      - Make sure that the mesh triangles inside the non-convex hull boundary (study area) are smaller than those outside it. This will also reduce computational time.
+  6. Fine tuning.
+      - Adjust the size of `max.edge` to improve the fit of the mesh triangles within the boundary. Smaller `max.edge` values will result in finer mesh triangles inside the study area.
+  
+To construct the mesh, either the coordinates of the data locations or the boundary of the data locations can be used. 
+  
+Below, to construct the mesh using the coordinates of the locations, the function `inla.mesh.2d()` is called setting `loc` equal to the matrix with the coordinates of the recording stations (`coords`). The offset is then specified as `offset = c(50, 100)` to have an inner extension of size 50, and an outer extension of size 100 around the locations. Then set `cutoff = 1` to avoid building many small triangles where we have some very close points. Finally, set `max.edge = c(30, 60)` to use small triangles within the region, and larger triangles in the extension.
+
+```{r mesh construction example, eval = TRUE}
+#method 1: using coordinates of the locations
+summary(dist(coords))
+
+mesh <- inla.mesh.2d(
+  loc = coords, #coordinates of the spatial domain
+  offset = c(0.1, 1), #adjusts the distance between the outer and inner meshes
+  cutoff = 0.03, 
+  max.edge = c(0.05, 1)) #adjusts the mesh nodes sizes between the inner and 
+                        #outer meshes
+
+#plot the mesh
+plot(mesh)
+#add the points for coordinates
+points(coords, col = "red")
+#extract the number of vertices (controls the minimum size of triangles allowed)
+mesh$n 
+```
+Alternatively, the boundary of the regions can be used to construct the mesh. To do this method, first the boundary needs to be created with the function `inla.nonconvex.hull()` where the following arguments are available to be included. The `points` argument is necessary to include, but the other arguments are not necessary to include in the function if the default values are desired. 
+
+  - `points`: the 2d point coordinates.
+  - `convex`: the desired extension radius with default value `-0.05`. This parameter controls how much the hull contracts around the points (the "tightness" of the hull).
+    - A smaller (more negative) value corresponds to a tighter hull which hugs the data points closer. This is beneficial when the goal is to avoid including empty spaces within the hull.
+  - `concave`: the desired minimum concave curvature radius with default value equal to the `convex` value ( = `-0.05` if no `convex` value given). This parameter influences how much the hull expands to account for concavities (indentations in the boundary).
+    - A smaller (more negative) value corresponds with a hull that expands more to include concavities. This is beneficial when the dataset has significant indentations that need to be included within the boundary.
+  - `resolution`: the internal computation resolution with default vector `c(100,100)`. This argument indicates the grid resolution that will be used for the hull calculation.
+  
+If the default values are not used for the above arguments, then the process of selecting the appropriate `concave` and `convex` values is typically trial-and-error since they depend on the specific range and distribution of the coordinates present in the chosen dataset. However, there are some steps that can be followed to aid in the selection process.
+
+  1. Start with the default values.
+  2. Plot the hull and coordinates, typically with the following code.
+  
+```{r plotting hull and coordinates, eval=FALSE}
+#plot the hull and coordinates
+plot(non_convex_boundary1$loc)
+points(data$long, data$lati, col = "red")
+```
+
+  3. Assess the fit.
+    - Ensure that all the coordinates are included within the hull.
+    - Check that there is minimal empty space between the points and the hull boundary.
+    
+Repeat steps 2 and 3, adjusting the `convex` and `concave` values each time to improve the fit, until the optimal hull is achieved that fits the data closely and does not have excessive empty space. 
+
+```{r mesh construction m2}
+#method 2: using boundary of the regions
+bnd <- inla.nonconvex.hull(coords, -0.03, -0.05, resolution = c(100, 100))
+meshb <- inla.mesh.2d(boundary = bnd,
+                     max.edge = c(0.1, 1), #adjusts the mesh nodes sizes between
+                     #the inner and outer meshes
+                     offset = c(0.05, 1), #adjusts the distance between the outer and inner meshes
+                     cutoff = 0.003) #controls the minimum size of triangles allowed
+
+
+
+#plot the mesh
+plot(meshb)
+#add the points for coordinates
+points(coords, col = "red")
+#extract the number of vertices 
+mesh$n 
+```
+
+### Building the SPDE
+The function `inla.spde2.matern()` can be used to build the SPDE model on the mesh passing mesh and alpha as arguments. The alpha argument is related to the smoothness parameter of the process, namely $\alpha = v + d/2$. In this example, the smoothness parameter is set to be equal to 1 and in the spatial case, $d=2$ so $\alpha = 1+ 2/2 = 2$. The constraint argument is then set as `const = TRUE` to impose an integrate-to-zero constraint.
+
+```{r spde, eval = TRUE}
+#build the SPDE
+spde <- inla.spde2.matern(mesh = mesh, alpha = 2, constr = TRUE)
+```
+
+### Projection matrix 
+
+A projection matrix A needs to be constructed to project the GRF from the observations to the triangulations vertices (for the prediction). The matrix A has the number of rows equal to the number of observations, and the number of columns equal to the number of vertices of the triangulation.
+
+Row of A corresponding to an observation at location possibly has three non-zero values at the columns that correspond to the vertices of the triangle that contains the location. If is within the triangle, these values are equal to the barycentric coordinates. That is, they are proportional to the areas of each of the three sub-triangles defined by the location $s_i$ and the triangle’s vertices, and sum to 1. If $s_i$ is equal to a vertex of the triangle, row $i$ has just one non-zero value equal to 1 at the column that corresponds to the vertex. Intuitively, the value $Z(s)$ at a location that lies within one triangle is the projection of the plane formed by the triangle vertices weights at location s.
+
+An example of a projection matrix is given below. This projection matrix projects $n$ observations to G triangulation vertices. The first row of the matrix corresponds to an observation with location that coincides with vertex number 3. The second and last rows correspond to observations with locations lying within triangles.
+
+R-INLA provides the `inla.spde.make.A()` function to easily construct a projection matrix A. We create the projection matrix of our example by using `inla.spde.make.A()` passing the triangulated mesh `mesh` and the coordinates `coo`.
+
+```{r, eval = TRUE}
+#construct projection matrix
+A <- inla.spde.make.A(mesh = mesh, loc = coords)
+```
+
+We can type `dim(A)` to see if A has the number of rows equal to the number of observations (number of rows in the data), and the number of columns equal to the number of mesh nodes (`mesh$n`).
+
+### Data location indexing
+The next step is to generate the index set of the SPDE model. This is done through using the function `inla.spde.make.index()` where the name of the effect(s) and the number of vertices in the SPDE model (found using `spde$n.spde`) are specified.
+
+```{r index set, eval = TRUE}
+#generate the index set
+indexs <- inla.spde.make.index("s", spde$n.spde)
+```
+
+
+### Projection data
+
+The next step is to construct a matrix with the coordinates of the locations where the prediction for certain values (for example, rainfall) take place. To do this, firstly a grid is constructed using the function `expand.grid()`, combining the vectors `x` and `y`, then converting to a matrix using the `as.matrix()` function. In this example, the result is called `coop`, with 50×50 locations. Once the matrix is created, the function `point.in.polygon()` is used to find the indices of the points which are contained within the polygons. The matrix can then be updated to only keep the points which are in the polygons.
+
+```{r projection data, eval = TRUE}
+#import the shapefile data
+ea_don_shp <- st_read(paste0(data_path, "/Shapefiles/CMR_Boundary.shp"))
+
+#plot the data
+plot(ea_don_shp$geometry)
+
+#load the sp package
+library(sp)
+
+#convert sf object to spatial object
+sp_object <- as(ea_don_shp, "Spatial")
+
+#create the bounding box
+bb <- bbox(sp_object)
+bb
+
+#set the coordinates
+x <- seq(bb[1, "min"] - 1, bb[1, "max"] + 1, length.out = 50)
+y <- seq(bb[2, "min"] - 1, bb[2, "max"] + 1, length.out = 50)
+coop <- as.matrix(expand.grid(x, y))
+```
+
+<!-- ```{r} -->
+
+
+
+<!-- #simulate a smaller dataset for coop with 10 rows -->
+<!-- sample_coop <- coop[sample(1:2500, 10),] -->
+<!-- sample_coop <- as.data.frame(sample_coop) -->
+<!-- sample_coop <- sample_coop %>% -->
+<!--   mutate(x2 = rnorm(n=nrow(sample_coop), mean = 3, sd = 2), -->
+<!--          x16 = rnorm(n=nrow(sample_coop), mean = 2, sd = 1), -->
+<!--          x20 = rnorm(n=nrow(sample_coop), mean = 5, sd = 2), -->
+<!--          x24 = rnorm(n=nrow(sample_coop), mean = 6, sd = 4), -->
+<!--          x31 = rnorm(n=nrow(sample_coop), mean = 4, sd = 3), -->
+<!--          x36 = rnorm(n=nrow(sample_coop), mean = 4, sd = 2), -->
+<!--          x40 = rnorm(n=nrow(sample_coop), mean = 7, sd = 1), -->
+<!--          ) -->
+
+<!-- ``` -->
+<!-- ```{r select key points, eval=FALSE} -->
+
+<!-- bb <- bbox(parana$border) -->
+<!-- x <- seq(bb[1, "min"] - 1, bb[1, "max"] + 1, length.out = 50) -->
+<!-- y <- seq(bb[2, "min"] - 1, bb[2, "max"] + 1, length.out = 50) -->
+<!-- coop <- as.matrix(expand.grid(x, y)) -->
+
+<!-- #Keep only points in the polygons -->
+<!-- ##  -->
+<!-- # ind <- point.in.polygon( -->
+<!-- #   coop[, 1], coop[, 2], -->
+<!-- #   parana$border[, 1], parana$border[, 2] -->
+<!-- # ) -->
+<!-- # coop <- coop[which(ind == 1), ] -->
+<!-- plot(coop, asp = 1) -->
+<!-- ``` -->
+
+
+<!-- **Note:** we will add the simulated data to the covariates in our model -->
+<!-- ```{r} -->
+<!-- covs <- cbind(Data_CMR$lon, Data_CMR$lat,covs) -->
+<!-- colnames(covs) <- c("lon", "lat", colnames(covs[, 3:9])) -->
+<!-- colnames(sample_coop) <- c("lon", "lat", colnames(covs[, 3:9])) -->
+<!-- covs <- rbind(covs, sample_coop) -->
+<!-- ``` -->
+#Data stacking
+
+To organise the data, effects and projection matrices, the function `inla.stack()` is used with the following arguments.
+
+  - `tag`: a string for identifying the data.
+  - `data`: a list of data vectors.
+  - `A`: a list of projection matrices.
+  - `effects`: a list with fixed and random effects.
+
+A stack with data for estimation (`stk.e`) is created and is tagged with the string `"est"`. In this stack, the fixed effects are the intercept (`b0`) and the random effect is the spatial Gaussian Random Field (`s`). Therefore, in `effects` a list with a `data.frame` with the fixed effects, and a list `s` containing the indices of the SPDE object (`indexs`) is passed. `A` is set to a list where the second element is `A`, the projection matrix for the random effects, and the first element is `1` to indicate the fixed effects are mapped one-to-one to the response. In `data`, the response vector is specified.
+
+Additionally, a stack with data for prediction (`stk.p`) is created, this time it is tagged with the string `pred`. In this stack, the response vector is set to `NA` and the data is specified at the prediction locations. 
+
+Finally, a full stack (`stk.full`) is created through using the function `inla.stack()` to put the stacks for estimation and prediction together. The following code demonstrates this process. 
+
+```{r data stacking, eval = TRUE}
+#create a variable for the density
+Data_CMR_std$Density <- Data_CMR_std$Total_Pop/Data_CMR_std$Total_Building_Count
+
+#select covariates based on earlier model selection
+covs <- Data_CMR_std %>%
+  dplyr::select(x2, x16, x20, x24, x31, x36, x40)
+
+#stack the covariates
+stk.e <- inla.stack(data = list(y = Data_CMR_std$Density), #response variable
+                      A = list(A,1),  #A matrix; the 1 is included to make the 
+                                              #list(covariates)
+                      effects = list(c(list(Intercept = 1), #the Intercept
+                                     indexs),  #the spatial index
+                                   list(covs) #the covariates
+                      ),
+                      tag = 'est') #quick name to call upon easily
+
+
+
+#create a projection matrix for the prediction
+Ap <- inla.spde.make.A(mesh = mesh, loc = coop) 
+dim(Ap)
+
+#stack for prediction (stk.p)
+stk.p <- inla.stack(tag = "pred", 
+                    data = list(y = NA), 
+                    A = list(1, Ap), 
+                    effects = list(data.frame(b0 = rep(1, nrow(coop))), 
+                                   s = indexs) ) 
+
+#stk.full has both stk.e and stk.p 
+stk.full <- inla.stack(stk.e, stk.p)
+```
+
+#Model specification and fitting
+
+To specify and fit the model with spatially varying random effects in R, the code introduced in the earlier section for model set-up can be used. For convenience, this code is repeated here.
+
+```{r mod spec and fit, eval = TRUE}
+#specify the formula
+formula <- y ~ 0 + b0 + f(s, model = spde)
+
+#create the INLA model
+res <- inla(formula, 
+            data = inla.stack.data(stk.full), 
+            control.predictor = list( compute = TRUE,
+                                      A = inla.stack.A(stk.full)))
+
+#generate the index set
+index <- inla.stack.index(stk.full, tag = "pred")$data 
+
+#obtain predicted values for the mean and quantiles for 95% credible intervals
+pred_mean <- res$summary.fitted.values[index, "mean"] 
+pred_ll <- res$summary.fitted.values[index, "0.025quant"] 
+pred_ul <- res$summary.fitted.values[index, "0.975quant"]
+```
+
+#Project to new areas
+
+Vectors `res$summary.random$s$mean` and `res$summary.random$s$sd` contain the posterior mean and the posterior standard deviation, respectively, of the spatial field at the mesh nodes. These values can be projected at different locations by computing a projection matrix for the new locations, followed by multiplying the projection matrix by the spatial field values. For example, to compute the posterior mean of the spatial field at locations in the matrix `newloc`, the following code can be used. 
+
+```{r proj new area, eval = TRUE}
+#set the new locations
+newloc <- cbind(c(219, 678, 818), c(20, 20, 160))
+
+#create the projection matrix
+Aproj <- inla.spde.make.A(mesh, loc = newloc)
+
+#obtain the posterior mean
+Aproj %*% res$summary.random$s$mean
+```
+
+Additionally, the functions `inla.mesh.projector()` and `inla.mesh.project()` can be used to project the spatial field values at different locations. To do so, firstly, the `inla.mesh.projector()` function is needed to compute a projection matrix for the new locations, specifying either the locations in the argument `loc` or computing the locations on a grid by specifying the arguments `xlim`, `ylim` and `dims`. 
+
+For example, to compute a projection matrix for 300x300 locations on a grid that covers the mesh region, the following code can be used. 
+
+```{r new loc proj mat, eval = TRUE}
+#obtain the range
+rang <- apply(mesh$loc[, c(1, 2)], 2, range)
+
+#project the spatial field values
+proj <- inla.mesh.projector(mesh,
+  xlim = rang[, 1], ylim = rang[, 2],
+  dims = c(300, 300))
+```
+
+Following this, the function `inla.mesh.project()` is used to project the posterior mean and the posterior standard deviation of the spatial field calculated at the mesh nodes to the grid locations.
+
+```{r new loc project, eval = TRUE}
+#project the posterior mean
+mean_s <- inla.mesh.project(proj, res$summary.random$s$mean)
+
+#project the posterior standard deviation
+sd_s <- inla.mesh.project(proj, res$summary.random$s$sd)
+```
+
+The projected values can be plotted suing the `ggplot2` package in R. To do so, first create a data frame with the coordinates of the grid locations and the spatial field values. the coordinates of the grid locations can be obtained by combining `proj$x` and `proj$y`, done through using the function `expand.grid()`. The values of the posterior mean of the spatial field are in the matrix `mean_s` and the values of the posterior standard deviation of the spatial field are in the matrix `st_s`. 
+
+```{r load viridis and cowplot, message=FALSE, warning=FALSE}
+#load the viridis and cowplot packages
+library(viridis)
+library(cowplot)
+```
+
+```{r plot proj values, eval = TRUE}
+#prepare the data 
+df <- expand.grid(x = proj$x, y = proj$y)
+df$mean_s <- as.vector(mean_s)
+df$sd_s <- as.vector(sd_s)
+
+#plot the projected values - mean
+gmean <- ggplot(df, aes(x = x, y = y, fill = mean_s)) +
+  geom_raster() +
+  scale_fill_viridis(na.value = "transparent") +
+  coord_fixed(ratio = 1) + theme_bw()
+
+#plot the predicted values - standard deviation
+gsd <- ggplot(df, aes(x = x, y = y, fill = sd_s)) +
+  geom_raster() +
+  scale_fill_viridis(na.value = "transparent") +
+  coord_fixed(ratio = 1) + theme_bw()
+
+plot_grid(gmean, gsd)
+```
+
+Useful resources
+
+  - Open Buildings: [Google](https://sites.research.google/gr/open-buildings/)
+  - Building Footprints: [Microsoft](https://github.com/microsoft/GlobalMLBuildingFootprints)
+  - Gridded building intensity: [Planet](http://planetgis.org/)
+  - Modelling in R: [R for Data Science](https://r4ds.had.co.nz/model-basics.html)
+  - R-INLA package: [Geospatial Health Data: Modeling and Visualization with R-INLA and Shiny](https://www.paulamoraga.com/book-geospatial/sec-inla.html)
+  - Mixed-effects models with INLA: [Bayesian inference with INLA](https://becarioprecario.bitbucket.io/inla-gitbook/ch-mixed.html)
+  - Markov Chain Monte Carlo: [Setosa](https://setosa.io/ev/markov-chains/)
+  - Metropolis-Hastings algorithm: [Bayes Rules Book](https://www.bayesrulesbook.com/chapter-7.html)
+  
+<!-- ## Further analysis -->
+<!-- #  -->
+<!-- # ```{r further analysis, eval = FALSE} -->
+<!-- #  -->
+<!-- # d[, c("long", "lat")] <- coordinates(spst) -->
+<!-- # head(d) -->
+<!-- #  -->
+<!-- # library(sp) -->
+<!-- # library(rgdal) -->
+<!-- # sps <- SpatialPoints(d[, c("x", "y")], -->
+<!-- #   proj4string = CRS("+proj=utm +zone=28") -->
+<!-- # ) -->
+<!-- #  -->
+<!-- # spst <- spTransform(sps, CRS("+proj=longlat +datum=WGS84")) -->
+<!-- #  -->
+<!-- # library(leaflet) -->
+<!-- # library(viridis) -->
+<!-- #  -->
+<!-- # pal <- colorBin("viridis", bins = c(0, 0.25, 0.5, 0.75, 1)) -->
+<!-- # leaflet(d) %>% -->
+<!-- #   addProviderTiles(providers$CartoDB.Positron) %>% -->
+<!-- #   addCircles(lng = ~long, lat = ~lat, color = ~ pal(prev)) %>% -->
+<!-- #   addLegend("bottomright", -->
+<!-- #     pal = pal, values = ~prev, -->
+<!-- #     title = "Prev." -->
+<!-- #   ) %>% -->
+<!-- #  -->
+<!-- #   addScaleBar(position = c("bottomleft")) -->
+<!-- #  -->
+<!-- # library(raster) -->
+<!-- #  -->
+<!-- # r <- getData(name = "alt", country = "GMB", mask = TRUE) -->
+<!-- # pal <- colorNumeric("viridis", values(r), -->
+<!-- #   na.color = "transparent" -->
+<!-- # ) -->
+<!-- #  -->
+<!-- # leaflet() %>% -->
+<!-- #   addProviderTiles(providers$CartoDB.Positron) %>% -->
+<!-- #   addRasterImage(r, colors = pal, opacity = 0.5) %>% -->
+<!-- #   addLegend("bottomright", -->
+<!-- #     pal = pal, values = values(r), -->
+<!-- #     title = "Altitude" -->
+<!-- #   ) %>% -->
+<!-- #   addScaleBar(position = c("bottomleft")) -->
+<!-- #  -->
+<!-- # library(INLA) -->
+<!-- # coo <- cbind(d$long, d$lat) -->
+<!-- # mesh <- inla.mesh.2d( -->
+<!-- #   loc = coordinates, max.edge = c(0.1, 5), -->
+<!-- #   cutoff = 0.01 -->
+<!-- # ) -->

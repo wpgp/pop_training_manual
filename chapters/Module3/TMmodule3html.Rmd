@@ -1,0 +1,1134 @@
+
+
+
+```{r setup_module3, warning=FALSE}
+
+#drive path for windows
+data_path <- "data/"
+```
+
+# Working with Spatial Data in R
+
+This module introduces spatial data, providing fundamental knowledge on the different types of spatial data, the key data sources and how to work with them. Module 3 also includes some basic GIS/goeprocessing methods in R. The data visualisation methods explored in Module 2 are expanded upon, accounting for the spatial data. 
+
+## Spatial data: Overview and types
+
+Spatial data is a term used to describe data collected at and representative of a specific and identifiable geographic location on the surface of Earth. It is sometimes referred to as geospatial data. 
+
+The type of spatial data is dependent on the storing technique.
+
+### Points data
+One of the fundamental types of spatial data is points data, representing discrete locations or point features on the Earth’s surface, such as the locations of trees in a forest, the position of buildings in a city, or the coordinates of sampling sites in an environmental study. Points data are characterised by having precise geographic coordinates that are often expressed in terms of longitude and latitude. This data type is crucial for analysing spatial patterns, identifying spatial relationships and making informed decisions in various domains including, but not limited to, environmental science, urban planning and epidemiology. 
+
+### Areal data
+Within spatial statistics and geospatial analysis, areal (or lattice) data represent aggregated information within a predefined region, where there is only one value per region. Examples of this data include census tracts/districts, administrative regions (provinces, districts, etc.) and grid cells. This data captures the characteristics and attributes that are associated with specific geographic areas, rather than individual points, providing insight into spatial patterns and phenomena at regional and macroscopic scales. Areal data is important for understanding socio-economic disparities, environmental gradients and land-use patterns in particular, with abrupt changes between regions clearly identifiable. From this data, researchers and policy-makers are enabled to explore spatial relationships and make informed decisions on resource allocation, resource planning and public policy interventions. 
+
+### Vector data
+Vector data is used for discrete data to graphically represent the real world, objects comprised of points, (poly)lines and polygons. Points are used to mark specific locations, like the position of a landmark. Polylines represent features such as roads, rivers, or boundaries. Polygons enclose areas and represent features like land parcels or administrative boundaries. Vector data is widely used for mapping, spatial analysis, and decision-making in fields like urban planning, environmental management, and transportation.
+
+#### Points
+
+Points are given by a singular coordinate pair relating to a specific geographical location, such as a street address.
+Given that they are represented by a single coordinate pair, they do not have any length or area, meaning that they technically cannot be "seen". Having points that cannot be seen is not practical, so for mapping purposes, points are represented by symbols, for example, circles or squares, which have both area and shape for the points to be seen.
+
+An example of how points look on a map can be seen in the Figure below, with the pink circles representing coordinates for specific place names.
+
+
+
+```{r points, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Points representing named places in pink"}
+knitr::include_graphics("figures/3_images/points.png")
+```
+
+
+#### Polylines
+
+Polylines (or lines) are comprised of two or more coordinate pairs, where the coordinate pairs are called **vertices**. The difference between a **vertex** (singular of vertices) and a point, is that a vertex is defined by the relationship with neighbouring vertices, and each vertex is connected to at least one other vertex.
+
+Similarly to points, polylines have no area, so cannot be "seen". For mapping purposes, polylines are represented by lines which have area. These symbolising lines can vary in their style, for example, they can be solid, dashed, or dotted.
+
+Examples of what polylines represent include rivers, railways and road networks, with the Figure below representing road networks in a specific area with white lines.
+
+<!-- ![Polylines representing road networks in white lines](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module3/images/polyline.png) -->
+
+```{r lines, echo=FALSE, fig.align='center', out.width="80%", fig.cap="Polylines representing road networks in white"}
+knitr::include_graphics("figures/3_images/polyline.png")
+```
+
+
+#### Polygons
+Polygons (or lattices or areas) are comprised of three or more line segments that share the same start and end coordinate pairs to form a shape that encloses an area in the "inside environment". Given that they have both area and length (of the perimeter), polygons are visible without additional the symbolisation needed for points and polylines.
+
+Examples of what polygons represent include buildings, lakes, postcode areas and counties, with the Figure below including polygons in white representing settlement boundaries.
+
+<!-- ![Polygon representing settlement boundaries in white outlines](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module3/images/polygon.png) -->
+
+
+```{r polygon, echo=FALSE, fig.align='center', out.width="80%", fig.cap="Polygon representing settlement boundaries in white outlines"}
+knitr::include_graphics("figures/3_images/polygon.png")
+```
+
+
+### Raster data
+
+Raster data is a continuous representation (for continuous data) of the Earth's surface, comprised of regular grid cells identified with an associated number or by the row and column. Individual grid cells are grouped together to represent an image.
+
+There are two main types of grid cell data structure:
+
+  - Binary (categorical or thematic) - e.g. land cover, soils data, ...
+  - Continuous - e.g. elevation, temperature, ...
+
+The **cell size** (or **spatial resolution**) determines the area of a grid, where smaller grid cells lead to a finer spatial resolution. For example, a grid of 1km x 1km cells means that a single value represents an area of 1km x 1km
+
+An example of raster data can be seen in the Figure below, with the different colours representing the difference in average population in 100m by 100m grid cells.
+
+<!-- ![Raster showing the average population in 100m by 100m grid cells](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module3/images/raster.png) -->
+
+```{r raster, echo=FALSE, fig.align='center', out.width="80%", fig.cap="Raster showing the average population in 100m by 100m grid cells"}
+knitr::include_graphics("figures/3_images/raster.png")
+```
+
+<!-- ![Grid cell in continuous raster](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module3/images/raster cell.png) -->
+
+
+```{r rastercell, echo=FALSE, fig.align='center', out.width="80%", fig.cap="Grid cell in continuous raster"}
+knitr::include_graphics("figures/3_images/raster cell.png")
+```
+
+### Sources of spatial data
+Multiple sources of geospatial data exist, for example:
+
+  - Field data collection - e.g. using a GPS
+  - Remote sensing and satellite imageries
+    - Digitisation (digitising features) - e.g. roads, OpenStreetMap (OSM)
+    - Feature/components extraction (automatic detection of features) - e.g. building footprints
+    - Spectral analysis (computing parameters for each cell) - e.g. vegetation indices, slope, elevation
+    - Classification (grouping cells into classes) - e.g. land cover classification
+    - Change detection (comparing cell values over time) - e.g. loss or gain of forest
+
+### Geospatial covariates
+
+Geospatial covariates can be described as supporting datasets that don't directly measure the population but (may) correlate to the population, used as proxies of variation in population density. If the covariates correlate to the population, they can provide important context for the population data, explaining unexplained variations and consequently improving the model accuracy.
+
+Geospatial covariates act as predictor values in producing a weighting layer, related to the population density and associated with both the built and natural environment. The weighting layer is used to spatially disaggregate the enumeration areas (EA) population. Geospatial covariates are also used as proxies of variation in population density.
+
+Street data, building footprints and vegetation data are all examples of geospatial covariates where typically, building footprints and the corresponding residential information are strong predictors.
+
+
+## Basic GIS concepts
+
+A Geographic Information System (GIS) is the most common way of processing and analysing spatial data through being a multi-component environment which creates, manages, manipulates, visualises and analyses data.
+
+
+
+### Geoprocessing
+
+In order to analyse the data available, the dataset must be in raster format. If it is not already in raster format, each geographic variable/geospatial covariate must be converted to raster data, where each variable must have the same spatial resolution with the cells spatially aligned in a continuous and coherent mesh.
+
+For example, vector data with points representing building footprints can be transformed to raster data via grid cells, where cells having at least one building (defined by the centroid of the building footprint) are classified as residential. From this, raster data can be derived on building counts, building area, building length and distance to nearest buildings.
+
+
+
+```{r vectortoraster, echo=FALSE, fig.align='center', out.width="80%", fig.cap="Deriving raster data from vector"}
+knitr::include_graphics("figures/3_images/vector to raster.png")
+```
+
+
+If the data is already in raster format, geoprocessing involves re-sampling, aligning the dataset to a grid reference layer and delineation of the study area.
+
+Alternatively, for binary or categorical data, a grid can be created based on the proportion covered, for example, it is possible to calculate the distance to a single value or the density of a feature. An example of this data conversion can be seen in the Figure below, converting binary data on the loss of forest area to the proportion of each grid cell with forest loss.
+
+
+
+```{r forestloss, echo=FALSE, fig.align='center', out.width="80%", fig.cap="Cell proportions from binary data"}
+knitr::include_graphics("figures/3_images/forest loss.png")
+```
+
+
+## Using GIS in R
+In R, Geographic Information Systems (GIS) capabilities are facilitated through various packages such as `sp`, `raster`, `sf` . These packages provide functions for reading, manipulating, analysing, and visualizing spatial data within the `R` environment. 
+
+
+### Importing spatial data in R
+
+A basic vector data format is **Shapefiles**, which is made up of several files sharing the same name but different extensions:
+
+  - Basic:
+    - `.shp`: stores the map object information
+    - `.dbf`: stores the attribute information of the features
+    - `.shx`: stores the index of the feature geometry
+  - Additional
+    - `.prj`: projection information (ESRI)
+    - `.xml`: metadata associated with file
+  - QGIS specific
+    - `.qpj`: project information (QGIS)
+    - `.qml`: style information
+    - `.qix`: spatial index
+
+
+
+
+To import vector spatial data, the functions `st_read()` or `read_sf()` from the `sf` package are required.
+
+
+
+```{r install sf, eval=FALSE, warning=FALSE}
+#install sf package
+install.packages("sf")
+```
+
+```{r load sf, message=FALSE, warning=FALSE}
+#load the sf package
+library(sf)
+```
+
+```{r importing vector data, eval=FALSE, warning=FALSE}
+#import vector data
+health_facilities <- st_read(paste0(
+  data_path, "GRID3_Nigeria_-_Health_Care_Facilities.shp"))
+road_network <- st_read(paste0(data_path, "nga_rds_1m_dcw.shp"))
+states <- st_read(paste0(data_path, "Admin2_states.shp"))
+country <- st_read(paste0(data_path, "nga_polbnda_adm0_1m.shp"))
+```
+
+```{r importing vector data2, echo=FALSE, include=FALSE, warning=FALSE}
+#read in the vector data
+health_facilities <- st_read(paste0(
+  data_path, "GRID3_Nigeria_-_Health_Care_Facilities.shp"))
+road_network <- st_read(paste0(data_path, "nga_rds_1m_dcw.shp"))
+states <- st_read(paste0(data_path, "Admin2_states.shp"))
+country <- st_read(paste0(data_path, "nga_polbnda_adm0_1m.shp"))
+```
+
+To import raster spatial data, the function `raster()` from the `raster` package is required.
+
+```{r install raster package, eval=FALSE}
+#install the raster package
+install.packages("raster")
+```
+
+```{r load raster package, message=FALSE, warning=FALSE}
+#load the raster package
+library(raster)
+```
+
+```{r importing raster data}
+#read in the raster data
+pop_raster <- raster(paste0(data_path, "NGA_population_v1_2_gridded.tif"))
+```
+
+### Handling spatial data in R
+Most spatial processing can be done with the following packages:
+
+  - `sf`
+  - `raster`
+  - `tmap`
+  - `terra`
+  - `leaflet`
+  - `mapview`
+  - `units`
+  - `exactextractr`
+
+Additionally, `tidyverse` functions such as `merge()`, `subset()` and `extract()` can be used for manipulating the attribute tables of the spatial data.
+
+```{r install GIS packages, eval=FALSE}
+install.packages("tmap")
+install.packages("terra")
+install.packages("leaflet")
+install.packages("mapview")
+install.packages("units")
+install.packages("tidyverse")
+install.packages("RColorBrewer")
+install.packages("exactextractr")
+```
+
+```{r GIS packages library, message=FALSE, warning=FALSE}
+library(tmap)
+library(terra)
+library(leaflet)
+library(mapview)
+library(units)
+library(tidyverse)
+library(RColorBrewer)
+library(exactextractr)
+# tmap_options(check.and.fix = TRUE) #fix potential issues during the processing
+```
+
+#### Converting between vectors and rasters in R 
+
+Vector data can be converted to raster data through using the function `rasterize()` in R from the package `raster()` with arguments:
+
+  - `x`: the shape file you wish to rasterise
+  - `y`: the raster object 
+  - `field`: the values (codes) you wish to transfer over to raster object
+
+```{r rasterize}
+#rasterise the vector data
+health_facilities_raster <- rasterize(health_facilities, pop_raster,
+                                      field='lga_code')
+#plot the raster data - axis limits added for clarity of plot
+plot(health_facilities_raster, xlim=c(3,6), ylim=c(6,8))
+```
+
+To stack raster data, the function `stack()` can be utilised, including functions for each of the raster datasets you wish to stack.
+
+```{r stack the raster data}
+#stack raster data
+stack(pop_raster, health_facilities_raster)
+```
+
+Raster data can be converted to a polygon via the function `as.polygons()` from the `terra` package with an argument for the raster data you wish to convert. 
+
+```{r raster to polygon}
+#create a simple example raster dataset
+example_raster <- rast(ncols=3, nrows=3)
+values(example_raster) <- 1:ncell(example_raster)
+
+#convert raster data to polygon
+example_rast_to_poly <- as.polygons(example_raster)
+example_rast_to_poly
+```
+
+Using the function `st_as_sf()` with a polygon dataset as an argument, a polygon can be converted to a `sf` object.
+
+```{r poly to sf}
+#convert polygon created above
+example_poly_to_sf <- st_as_sf(example_rast_to_poly)
+example_poly_to_sf
+```
+
+#### Checking the resolution and number of cells
+
+As previously explained, the spatial resolution of raster data determines the area of a grid, defined by the size of the cells in the raster dataset. The resolution of the dataset can be checked in `R` by using the function `res()`, inputting the chosen raster dataset as an argument, returning the x and y resolution of the raster object.  
+
+```{r resolution}
+#check the resolution of the population raster dataset
+res(pop_raster)
+```
+
+To return just the x or just the y resolution of a raster object, the functions `xres()` and `yres()` can be used respectively, also inputting the raster dataset as an argument. 
+
+```{r x and y resolution}
+#check the x resolution
+xres(pop_raster)
+
+#check the y resolution
+yres(pop_raster)
+```
+
+Additionally, the resolution of a raster object can be updated by assigning new values to the resolution.
+
+```{r example resolution}
+#create an example raster
+example_raster2 <- raster(ncol=18, nrow=18)
+res(example_raster2)
+#update the resolution of the example raster
+res(example_raster2) <- 1/120
+res(example_raster2)
+```
+
+
+To check how many cells are in a raster object, the function `ncell()` can be used, inputting the chosen raster dataset as an argument. 
+
+```{r ncell}
+#check number of cells in population raster data
+ncell(pop_raster)
+```
+
+The functions `ncol()` and `nrow()` discussed in previous modules can also be used for raster objects to check the number of columns and number of rows respectively.
+
+```{r ncol nrow}
+#check the number of columns in the population raster data
+ncol(pop_raster)
+#check the number of rows in the population raster data
+nrow(pop_raster)
+```
+
+
+#### Exporting spatial data in various formats
+
+As in Module 2, exporting data from R requires different functions for different data types.
+
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++--------------------+------------------+------------------+
++--------------------+------------------+------------------+
+| Data type          | Function         | Package required |
++====================+==================+==================+
+| `.csv`             | `write.csv()`    | none (in `base`) | 
++--------------------+------------------+------------------+
+| `.shp`, shape file | `st_write()`     | `sf`             | 
++--------------------+------------------+------------------+
+| `.shp`, shape file | `write_sf()`     | `sf`             | 
+| from polygon       |                  |                  |
++--------------------+------------------+------------------+
+| `.tif`, raster     | `writeRaster()`  | `raster`         | 
++--------------------+------------------+------------------+
++--------------------+------------------+------------------+
+</div>
+
+```{r exporting_data1, eval=FALSE}
+#export a .csv file 
+write.csv(st_drop_geometry(sample_data), 
+          file = "exported_data.csv",
+          row.names = FALSE)
+
+#export a .shp file
+st_write(sample_data, "exported_data.shp")
+
+#export a .shp file 
+write_sf(sample_data, "exported_data.shp")
+
+#export a .tif file
+writeRaster(sample_raster, file = "exported_raster.tif")
+
+```
+
+## Visualisation of spatial data
+Visualizing spatial data is essential for understanding spatial phenomena and communicating findings effectively. 
+Visualizations of static and interactive maps play an important role in spatial analysis and geospatial data interpretation. Static maps provide a snapshot of spatial patterns and relationships of geographic information. They are often used for publication purposes, presentations, and reports, providing a clear visual summary of analytical findings. In `R`, static maps can be created using packages like `ggplot2` and `tmap`, which offer powerful capabilities for designing aesthetically pleasing and informative maps. 
+
+On the other hand, interactive maps offer dynamic exploration capabilities, allowing users to interactively explore spatial data layers, zoom in/out, pan across the map, and query specific features. Interactive maps enhance engagement and facilitate deeper understanding by enabling users to customize their viewing experience and interact with spatial data in real-time. For interactive mapping in `R`, packages like `leaflet` and `mapview` are commonly used.
+
+### Static maps
+
+##### Visualisation with `base` R {-}
+The `plot()` function from `base` R can be used for visualising spatial data, as it reads both for vector and raster data.
+
+
+With vector data, `plot()` defaults to plotting the attributes of the dataset.
+
+```{r plot vector data, warning=FALSE}
+#plot the states
+plot(states)
+```
+
+However, through indexing the desired attribute, a single attribute can be plotted.
+
+```{r plot vector data index}
+#plot just the shape area attribute
+plot(states['region'], main = "region",
+     pal = rev(heat.colors(10)))
+```
+
+To display a raster dataset with `plot()`, only the dataset name is required as an argument.
+
+``` {r plot the raster data}
+#plot the raster data
+plot(pop_raster)
+```
+
+To take a quick look at a vector, the geometry of the dataset can be extracted with the function `st_geometry()`, and calling the function `plot()`.
+
+```{r geometry}
+#plot the states
+st_geometry(states) %>% plot()
+```
+
+Alternatively, the function `st_geometry()` can be called inside the function `plot()`.
+
+```{r geometry in plot}
+#plot the states
+plot(st_geometry(states))
+```
+
+Layers can be combined by using the argument `add = TRUE` in the `plot()` function, however, this argument only works with the `st_geometry()` function.
+
+``` {r combine layers}
+#add layers for the states to the country plot
+plot(st_geometry(country))
+plot(st_geometry(states), add = TRUE,
+     pch = 16, col = "#004C92", cex = 0.5)
+```
+
+Vector and raster data can be plotted at the same time by combining the plot layers with the argument `add = TRUE` in the `plot()` function.
+
+```{r vector and raster}
+plot(pop_raster)
+plot(st_geometry(states), add = TRUE,
+     pch = 16, cex = 0.5)
+```
+
+
+##### Visualisation with `tmap` {-}
+The `tmap` package has more options and possibilities for mapping and allows for both static and interactive views.
+
+Through using the function `tm_shape()` with the dataset, the vector data can be plotted, mapping the shape of the country.
+
+``` {r tmap vector}
+#plot the country shapefile
+tm_shape(country) +
+  tm_fill("Terr_Name")
+```
+
+Points can be added to the map of the country using the function `tm_shape()` with the dataset as the argument in conjunction with the function `tm_dots()` with arguments for the size and title. In this case, the points represent health facilities.
+
+```{r tmap health centres}
+#plot the country with points for health facilities
+tm_shape(country) +
+  tm_fill("Terr_Name")+
+  tm_shape(health_facilities)+
+  tm_dots(size = 0.2, col = "type", title = "Health facilities")
+```
+
+Polylines can be added to the map using the function `tm_shape()` with the dataset that includes the polylines as the argument. In this case, the polylines represent the road networks.
+
+```{r tmap road netwokrs}
+#plot the country with a layer for road networks
+tm_shape(country) +
+  tm_fill("Terr_Name")+
+  tm_shape(road_network)+
+  tm_lines(size = 0.5)
+```
+
+Polygons can be added to the map using the function `tm_fill()`, including the variable name that identifies the shapes/polygons as the argument. In this case, the polygons represent the states of the country.
+
+```{r tmap states, warning=FALSE}
+#plot the country with a layer for the states
+tm_shape(states) +
+  tm_fill("statename")+
+  tm_layout(legend.show = TRUE)
+```
+
+Choropleth maps can be created with `tmap` through adding the attribute of choice as an argument to the polygon element.
+
+``` {r tmap choropleth map}
+#create choropleth map
+tm_shape(states) + tm_polygons("Area")
+```
+
+To add a colour palette (or change the default colour scheme) the argument `pal=` can be added. For example, to make the choropleth map have a blue colour palette, add the argument `pal="Blues"` to the `tm_polygons()` function.
+
+```{r colour_palette1}
+#change colour palette of choropleth map
+tm_shape(states) + tm_polygons("Area", pal="Blues")
+```
+
+To reverse the colours within the palette, a hyphen, `-`, can be added in front of the colours chosen, for example `pal="-Blues"`.
+
+```{r colour_palette_reverse}
+#reverse colours in choropleth map
+tm_shape(states) + tm_polygons("Area", pal="-Blues")
+```
+
+
+The function `tm_shape()` can also be used to plot raster data, however, it can take a long time to plot due to the large size of the dataset.
+
+``` {r tmap raster, , warning=FALSE}
+#displaying raster data
+tm_shape(country) +
+   tm_borders()+
+   tm_shape(pop_raster) +
+   tm_raster()
+```
+
+Similarly to using the `plot()` function, multiple layers can be included based on one input.
+
+``` {r tmap multiple layers on one input}
+#add multiple layers to plot
+tm_shape(states) +
+  tm_polygons() +
+  tm_dots(size = 0.5, col = "pink") +
+  tm_text("statename", col = "purple", size = 0.75)
+```
+
+Alternatively, multiple different layers can be included using multiple shapes.
+
+```{r tmap multiple layers multiple shapes}
+#plot multiple shapes and layers
+tm_shape(states) +
+  tm_polygons()  +
+  tm_shape(health_facilities) +
+  tm_dots(size = 0.01)
+```
+
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** How can you add multiple layers, such as polygons for states and points for health facilities, to a single map using `tmap`?
+  
+  1. By using `tm_shape()` and `tm_fill()`
+  
+  2. By using `tm_shape()` and `tm_dots()`
+  
+  3. By using multiple `tm_shape()` functions with different elements
+  
+  4. By using `tm_shape()` and `tm_lines()`
+    
+</div>
+
+
+As with standard data visualisation, you can save the plots by assigning them to a given name, and similar to how with `ggplot2` plots can be saved and added to with recall, `tmap` allows for parts of the map to be saved and then reused.
+
+``` {r tmap save and reuse}
+#save and reuse plot
+mymap <- tm_shape(states) + tm_polygons()
+mymap + tm_dots(size = 0.75, col="pink") +  tm_text("statename", col = "purple")
+```
+
+Similarly to how plots can be saved as explained in Module 2, maps produced in R can also be saved. In order to save maps, use the function `tmap_save()` with arguments for the plot name and what you want to name the file.
+
+```{r save maps}
+#save mymap as a .png file
+tmap_save(mymap, "mymap.png")
+```
+
+As introduced in Module 2, the function `arrange()` can be used to display multiple different plots at the same time, effectively combining multiple plots into one image.
+
+```{r arrange1}
+#create three maps
+m1 <- tm_shape(country) + tm_polygons()
+m2 <- tm_shape(states) + tm_polygons()
+m3 <- tm_shape(health_facilities) + tm_dots()
+
+#arrange them in one image
+tmap_arrange(m1, m2, m3, nrow = 1)
+
+```
+
+## Interactive maps
+
+### Visualisation with `tmap` {-}
+The maps produced so far are static map. `tmap` allows us to also do an interactive map where we can zoom-in and out to see the spatial distribution of objects. We use the `tmap_mode()` function to toggle between interactive and static maps.
+The default option is `tmap_mode("plot")`, and is a static mapping mode. Alternatively, `tmap_mode("view")` is used for interactive map.
+
+```{r tstates interactive}
+tmap_mode("view")
+#plot the states
+tm_shape(states)+
+  tm_borders(col='brown', lwd=3)+
+  tm_shape(states)+
+  tm_borders()+
+  tm_basemap('OpenStreetMap')
+```
+
+<!---```{r thealth interactive}
+tmap_mode("view")
+#plot healthcare facilities in each state
+tm_shape(health_facilities)+
+  tm_dots(col='type', size=0.01)+
+  tm_basemap('OpenStreetMap')+
+  tm_shape(states)+
+  tm_borders(lwd=1)
+```--->
+
+```{r troads interactive}
+tmap_mode("view")
+# plot road networks
+tm_shape(road_network)+
+  tm_lines(size = 0.5)+
+  tm_basemap('OpenStreetMap')+
+  tm_shape(states)+
+  tm_borders(lwd=1)
+```
+
+### Visualisation with `leaflet` {-}
+
+`leaflet` is another package that is used for mapping, primarily to create dynamic maps. For this package, the function `leaflet()` is called, using the piper operator `%>%` to add layers to the map, where layers are added using the function `add*()` where the asterisk `*` is replaced by different words corresponding to different layer types. For example, the function `addPolygons()` adds a polygon layer to the map and the function `addTiles()` adds a basemap (a base layer of a map) to visualise the country, area or region being mapped.
+
+The code below demonstrates how to plot a polygons representing the country's states to a basemap using the `leaflet` package.
+
+```{r leaflet states interactive}
+#plot the states
+states_map <- leaflet() %>%
+  addTiles() %>%
+  addPolygons(data = states, color = "brown", weight = 3, fillOpacity = 0)
+#display the map
+states_map
+```
+
+Points can be added to interactive plots with `leaflet` using the `addCircleMarkers()` function. 
+
+To demonstrate the plotting of points, a plot the healthcare facilities with `leaflet`, differentiating the different types by different colours can be mapped.
+
+First the different types of healthcare facilities need to be set as a factor.
+
+```{r leaflet_health_interactive1}
+#convert 'type' column to factor
+health_facilities$type <- as.factor(health_facilities$type)
+```
+
+To distinguish between the different types of healthcare facilities, a colour palette can be created through identifying each of the unique types with the function `unique()` and then creating the palette with the function `palette()`.
+
+```{r leaflet_health_interactive2}
+#define unique types
+unique_types <- unique(health_facilities$type)
+
+#define colour palette
+color_pal <- colorFactor(palette = "Accent", domain = unique_types)
+```
+
+Once the variable is set as a factor and the colour palette is created, the points can be mapped. The below code creates a map with a base layer for the country's map, points for each of the healthcare facilities with the different types given by different colour points and polygons to identify each of the country's states. Additionally, to help identify the different healthcare facility types, a legend layer is added using the function `addLegend()`.
+
+```{r leaflet_health_interactive3}
+#create Leaflet map
+health_facilities_map <- leaflet(health_facilities) %>%
+  addTiles() %>%
+  addCircleMarkers(lng = ~longitude,
+                   lat = ~latitude,
+                   stroke = TRUE,
+                   color = "black",
+                   weight = 0.5,
+                   fill = TRUE,
+                   fillColor = ~color_pal(type),  
+                   radius = 2,
+                   fillOpacity = 0.5) %>%
+  addPolygons(data = states,
+              color = "orange",
+              fillColor = "transparent",
+              weight = 1.5) %>%
+  addLegend(position = "bottomright",
+            pal = color_pal,
+            values = ~type,
+            title = "Type")
+
+#display the map
+health_facilities_map
+
+```
+
+<!-- Lastly, polylines can be added to the maps using the function `addPolylines()`, demonstrated in the code below where polylines are added to represent the road networks of the country. -->
+
+<!---```{r leaflet_roads_interactive}
+#plot road networks
+leaflet() %>%
+  addTiles() %>%
+  addPolylines(data = road_network, weight = 1.5, color = "black") %>%
+  addPolygons(data = states, weight = 2, color = "orange", fillColor = "transparent")
+```--->
+
+
+
+
+### Visualisation with `mapview` {-}
+
+`mapview` is an another package that can be used to create maps, originally created with the purpose of creating quick interactive maps.
+
+To create a simple map the function `mapview()` can be used, including the dataset as a necessary argument, with further optional arguments such as `col.regions = ` to assign specific colours to polygon (region) shapes.
+
+In this case, since the `states` data contains information on the states of the country, including their boarders, mapping `states` as the dataset will result in an interactive map with polygons for the country's states.
+
+<!---```{r mstates interactive}
+#plot the states
+#create map with state borders
+mapview(states, color = 'orange', lwd = 2,
+        col.regions = "grey", alpha = 0.5)
+```--->
+
+The same function `mapview()` can be used to plot points, used in the same way but with the addition of a dataset which contains points data, such as the `health_facilities` data. As with `leaflet`, maps can be layered with `mapview`, but instead of using the piper operator, a plus sign `+` is used. 
+
+```{r mhealth interactive}
+#plot the health facilities with a layer for states
+mapview(health_facilities, zcol = 'type', cex = 2, col.regions=brewer.pal(7, "Accent"), alpha = 0.5) +
+  mapview(states, color = 'orange', lwd = 2,
+        col.regions = "transparent", alpha = 1)
+```
+
+<!-- Lastly, polylines can be plotted with a polyline dataset included as an argument. In this example, the `road_network` dataset is used, creating a map of the country's road networks, layered with a map of the country's states.  -->
+
+<!---```{r mroads interactive}
+#plot the road networks with a layer for states
+mapview(road_network, lwd = 1.5, color = "black") +
+  mapview(states, color = 'orange', lwd = 2,
+        col.regions = "transparent", alpha = 1)
+```--->
+
+
+
+## Basic geoprocessing
+
+A vector layer can be joined with tabular data using a common identifier.
+
+The population dataset in `.csv` format contains predicted population figures for all of the states. This `.csv` file can be joined with the shapefile for the states and mapped.
+
+```{r import population dataset}
+#import the population dataset
+pop_estimate <- read.csv(paste0(data_path, "Population.csv"))
+```
+
+```{r view data}
+#view the population size estimates
+view(pop_estimate)
+```
+
+The variables (or attributes) of the states shapefile can be viewed to help identify a common field which would allow for joining the vector layer with the tabular data.
+
+```{r view states, eval=TRUE}
+#view the attributes of the states vector data
+view(states)
+```
+
+There are multiple common fields to both datasets that can be used to join the two datasets, however, the variable "statename" will be used. The function `innter_join()` will join the two datasets, keeping only the observations in `x` that possess a matching 'key' in `y`.
+
+```{r join data, eval=TRUE}
+#join the states vector data and the population estimates tabular data together
+pop_states <- states %>%
+  inner_join(pop_estimate, by = "statename")
+```
+
+The function `fulljoin()` can be used to join the two datasets, however, it keeps all observations in `x` and `y`.
+```{r full join}
+#join the states vector data and the population estimates tabular data together
+pop_states_full <- full_join(states, pop_estimate, by="statename")
+```
+
+Alternatively, the function `merge()` can be used to join two datasets based on a unique ID.
+```{r merge}
+#merge two datasets
+pop_merged <- merge(states, pop_estimate, by="statename")
+```
+
+Once the datasets are joined, the population distribution by state can be visualised using the spatial visualisation methods previously discussed.
+
+```{r visualising pop dist by state}
+#visualize population distribution by state
+# tm_shape(pop_states)+
+#   tm_polygons(col='total', lwd=2)+
+#   tm_shape(states)+
+#   tm_borders()+
+#   tm_basemap('OpenStreetMap')
+
+# Set tmap mode to static plot
+tmap_mode("plot")
+
+# Create static map
+tm_shape(pop_states) +
+  tm_polygons(col = "total", 
+              title = "total",
+              lwd = 2) +
+  tm_shape(states) +
+  tm_borders() +
+  tm_layout(frame = FALSE,
+            legend.position = c("right", "bottom"),
+            main.title = "")
+  # tm_scale_bar() +   # Display scale bar
+  # tm_compass() # Display north arrow
+
+```
+
+### Coordinate reference systems (CRS)
+
+Given that the Earth is a globe, it cannot be visualised in itself all at once. In other words, you can only see one side of the Earth at a time. To circumvent this issue when mapping, **projected maps** are used, a two-dimensional flattened out version of the Earth which can be viewed all at one time. 
+
+A simplified example of this concept is through visualising an orange. You cannot see all sides of the orange peel at one time, given that it is spherical, like the Earth. However, through peeling the orange, and flattening the peel out on a surface, the entire orange peel can be seen at once. The idea of this process has been done by cartographers for centuries, in order to effectively map out the globe.
+
+Coordinate reference systems, also commonly referred to as the abbreviation CRS, provide a standardised method that uses coordinates to define how these two-dimensional projected maps relate to real locations on Earth. Within GIS, there are two types of coordinate reference systems, **Projected Coordinate Systems** and **Geographic Coordinate Systems**, where the latter is the commonly used method where position on the Earth's surface as given in latitude and longitude coordinates.
+
+To extract coordinate system information from vector data or raster data in R, the function `st_crs()` can be used.
+
+```{r extract CS info}
+#extract CS information from healthcare_facilities vector data 
+st_crs(health_facilities)
+
+#extract CS information from pop_raster raster data
+st_crs(pop_raster)
+```
+
+If there is no coordinate system definition for an object, or you wish to overwrite the existing information, the function `st_set_crs()` can be used to assign coordinate system information to the object.
+
+
+### Converting between Lat/Long and the Universal Transverse Mercator (UTM) coordinate system
+
+The Universal Transverse Mercator (UTM) coordinate system is a map projection based on the Transverse Mercator projection, a modified version of the standard Mercator cylindrical projections which has been around since the 1500s. The standard Mercator projections of the Earth distort area leading to the sizes of many countries being massively misrepresented, and this approach uses an upright cylinder for its map projection. The Transverse Mercator projection uses a cylinder that has been rotated 90 degrees, used to form the UTM projection through placing the cylinder 60 times, each occasion having a different central line leading to 60 UTM zones each 6 degrees of longitude wide in order to minimise distortion in each segment. Given that distortion is minimised for each zone, it is a poor choice of map projection when multiple zones are projected together. Therefore, UTM is most suitable for narrow regions, rather than world map projections. 
+
+To convert between latitude/longitude coordinates and the UTM coordinate system in R, the following code can be used. 
+
+Firstly, the function `st_crs()` is used to check the current coordinate reference system.
+```{r check coordinate system}
+#check the current coordinate reference system of the states shapefile
+current_crs <- st_crs(states)
+print(current_crs)
+mapview::mapview(states)
+```
+
+The results show that the current coordinate system is on latitude/longitude, so will be converted to the UTM coordinate system. However, before converting, the UTM code (identifying which zone the region is in) and corresponding EPSG code (a unique reference number for identifying regions in coordinate systems) need to be found, this can be done through searching the internet for the regions UTM code and then searching for the corresponding EPSG code. A good resource for converting between the two codes is the following website [up42.com](https://docs.up42.com/data/reference/utm).
+
+The `states` data is from Nigeria. Nigeria has 3 UTM codes as it is in zones 31, 32 and 33. However, for this example, the middle zone will be used, leading to the UTM code `32N`. The corresponding EPSG code is then 32632.
+
+To convert between the coordinate systems, the function `st_transform()` can be used, including the shapefile and the corresponding EPSG code as arguments. 
+
+```{r convert to utm}
+#convert the states projection system to UTM
+states_utm <- st_transform(states, 32632)
+
+#check the new coordinate reference system
+new_crs <- st_crs(states_utm)
+print(new_crs)
+
+mapview::mapview(states_utm)
+```
+
+
+To convert back to the original coordinate reference system, the function `st_transform()` can be used again, with the UTM data and original coordinate reference system as arguments.
+
+```{r utm to lat/long}
+#convert states back to latitude/longitude coordinate reference system
+states_original_crs <- st_transform(states_utm, current_crs)
+
+#check the coordinate reference system after converting back
+crs_after_conversion <- st_crs(states_original_crs)
+print(crs_after_conversion)
+
+```
+
+
+### Subsetting, clipping and masking
+Using the function `filter()`, a vector layer can be subset, with the function `qtm()` from the package `tmap` plotting a quick thematic plot.
+
+```{r subset vector layer}
+#vector layer using a simple query
+pop_kano <- pop_states %>%
+  filter(statename=='Kano') # extracting Kano states
+qtm(pop_kano)
+```
+
+The population raster can be clipped using the Kano state and the polygon extent.
+```{r clip raster}
+#clip the population raster
+r_clipped <- crop(pop_raster, pop_kano)
+```
+
+The clipped population raster can then be plotted, creating a map of the Kano state.
+```{r clipped pop raster plot, message=FALSE}
+#create map of Kano state
+tm_shape(r_clipped)+
+  tm_raster(title="Population")+
+  tm_shape(pop_kano)+
+  tm_basemap('OpenStreetMap')+
+  tm_borders(lwd = 3)
+```
+
+Another method of clipping is to use the function `st_intersection()` where a vector layer can be clipped based on another layer.
+
+```{r clipping intersection}
+#clip country based on states
+states_clipped <- st_intersection(country, states)
+```
+
+Again using the `filter()` function, states with a population of more than 5 million people can be subset, then plotted with the `tmap` package.
+
+```{r subset pop 5mil, warning=FALSE}
+#subset population
+state_5million <- pop_states %>%
+  filter(total > 5000000)
+#give names of states that have over 5 million people
+state_5million$statename
+
+#plot the states with a population of over 5 million people
+tm_shape(state_5million)+
+  tm_polygons(col = "total", title = "Population")+
+  tm_basemap('OpenStreetMap')+
+  tm_borders(lwd=4)
+```
+
+Masking is an important part of raster processing, typically done to remove low-quality observations from the raster through setting particular cells to the `NoData` value. In `R`, this can be done through using the function `mask()`.
+
+To demonstrate masking, the following example is used with a simulated dataset, where values of the second raster below 0.4 are set to be `NA`. 
+
+```{r masking data setup}
+#simulate some raster data
+raster1 <- raster(ncol=20, nrow=20)
+raster2 <- raster(ncol=20, nrow=20)
+values(raster1) <- runif(ncell(raster1)) * 10
+values(raster2) <- runif(ncell(raster1))
+raster2[raster2 < 0.4] <- NA
+```
+
+To visually demonstrate the missing values, the two rasters can be plotted side-by-side, where the white spaces in the second raster correspond to the `NA` values.
+
+```{r masking plot}
+#plot the two rasters side-by-side
+par(mfrow=c(1,2))
+plot(raster1, main="Raster 1")
+plot(raster2, main="Raster 2")
+```
+
+The `mask()` function can then be used with arguments for the two rasters, where the raster with the missing data is put second as follows.
+
+```{r masking}
+#mask the raster
+masked_raster <- mask(raster1, raster2)
+plot(masked_raster)
+```
+
+
+### Buffer analysis
+
+Buffer analysis is a crucial step within spatial statistics because it enables the aggregation of the output data based on another layer and within a specific area, for example, aggregating the population within a 1km radius around a health post or summation of pixel values at the sub-district administrative level.
+
+To demonstrate how to perform buffer analysis in R, a dataset containing local government area (LGA) boundaries (in Nigeria) is used.
+```{r import lga data, include=FALSE}
+#import local government area dataset
+lga <- st_read(paste0(data_path,"GRID3_Nigeria_-_Local_Government_Area_Boundaries.shp"))
+```
+
+For the analysis, only the health facilities in the Abuja local government area (municipal area council) are of interest.
+
+```{r select abuja HF}
+#filter to have only the Abuja LGA
+Abuja_lga <- lga %>%
+  filter(lga_name_x == "Municipal Area Council")
+#filter to select only the health facilities in the Abuja LGA
+health_facilities_Abuja <- health_facilities %>%
+  filter(lga_name=='Municipal Area Council')
+```
+
+To calculate the amount of health facilities are in Abuja, the function `tally()` can be used.
+```{r tally function}
+#the number of health facilities in Abuja is given by "n", in this case, n=226
+tally(health_facilities_Abuja)
+```
+
+The number of specific points, health facilities in this example, can be counted and visualised for a given region.
+Counting is done using the functions `group_by()` and `summarise()`, with functions from the `ggplot2` package used for visualising the counts (grouped by type) in a bar plot.
+
+```{r counting and visualising}
+#count health facilities in Abuja and create bar plot
+health_facilities_Abuja %>%
+  group_by(type) %>%
+  summarise(count= n()) %>%
+  ggplot(aes(x = type, y = count)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = count), vjust = -0.5, size = 4) +
+  xlab("Type of Health Facility") +
+  ylab("Number") +
+  ggtitle("Number of Health Facilities in Abuja")+
+  scale_fill_brewer(type = "qual", palette = "Greens")
+```
+
+The plotting methods discussed above can be used to visualise the points by the group, in this case, health facilities by type.
+
+```{r plotting the health facilities}
+#plot health facilities
+tm_shape(health_facilities_Abuja)+
+  tm_dots(col='type', size=0.07, id='primary_na', popup.vars=c('category','functional','source'))+
+  tm_basemap('OpenStreetMap')+
+  tm_shape(Abuja_lga)+
+  tm_borders(lwd=4)
+
+```
+
+The `table()` function can be used to count the number of points, and subset the group that you want to count for. For example, to find out the number of tertiary health care facilities there are in Abuja can be done using the following code.
+```{r table subset}
+#create a table to count points
+table(health_facilities_Abuja$type)
+```
+
+The `crop()` function can be used to create a geographical subset in the raster data.
+```{r subset raster}
+#subset the raster data for the Abuja region
+pop_Abuja <- crop(pop_raster, Abuja_lga)
+
+#plot the cropped raster
+plot(pop_Abuja)
+
+#map the health facilities with the cropped raster data on the same plot
+tm_shape(health_facilities_Abuja)+
+  tm_dots(col='type', size=0.07, id='primary_na', popup.vars=c('category','functional','source'))+
+  tm_basemap('OpenStreetMap')+
+  tm_shape(pop_Abuja)+
+  tm_raster()+
+  tm_shape(Abuja_lga)+
+  tm_borders(lwd=4)
+```
+
+Buffering points can be computed using the function `st_buffer()` with arguments for the data and `dist` for the desired size (e.g. 1km around each of the health facilities).
+```{r buffer points}
+#select the buffer points to be 1km around the health facilities
+health_facilities_Abuja_buffered <- st_buffer(health_facilities_Abuja, 
+                                              dist=set_units(1, km))
+
+#add the buffer points to the map
+tm_shape(pop_Abuja)+
+  tm_raster()+
+  tm_shape(health_facilities_Abuja_buffered)+
+  tm_borders()+
+  tm_shape(health_facilities_Abuja)+
+  tm_dots( size=0.08, id='primary_na')+
+  tm_shape(Abuja_lga)+
+  tm_borders(lwd=4)+
+  tm_basemap('OpenStreetMap')
+```
+
+The function `as()` can be used to convert the merged buffer points into a SpatialPolygonsDataFrame object through including both the buffer points data and the type of data object (in this case, "Spatial") as arguments.
+
+```{r converting spatial data}
+#convert the merged buffers to a SpatialPolygonsDataFrame object
+health_facilities_Abuja_buffered <- as(health_facilities_Abuja_buffered, 
+                                       "Spatial")
+```
+
+
+The population size can be computed through using the function `extract()` from the `raster` package, identifying the cropped raster data, buffer points data and function (in this case, sum) as arguments, in addition to changing the defaults of the arguments `na.rm` and `df` to `TRUE`. This computes the population within the buffer points (1km radius around health care facilities in Abuja) through extracting the corresponding populations from the raster data.
+
+```{r computing the population}
+#extract the population of those in the buffer point regions from the raster data
+health_facilities_Abuja_pop <- raster::extract(pop_Abuja,
+                                               health_facilities_Abuja_buffered,
+                                               fun=sum, na.rm=T,df=T)
+
+#rename extracted population
+health_facilities_Abuja_pop <- health_facilities_Abuja_pop %>%
+  rename(pop = NGA_population_v1_2_gridded)
+
+```
+
+The overall population within the given regions can then be computed by using the function `sum()` with the desired population as the argument.
+```{r sum pop}
+#Total number of people living within a 1km radius of a health centre in Abuja
+sum(health_facilities_Abuja_pop$pop)
+```
+
+  
+## End of module exercises
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **1.** What is the primary purpose of the `.prj` file in a shapefile set, and which package is commonly used to handle this file type in R?
+  
+  1. Stores map object information, handled by `raster` package
+  
+  2. Stores attribute information, handled by `sp` package
+  
+  3. Stores projection information, handled by `sf` package
+
+  4. Stores metadata information, handled by `terra` package
+    
+</div>
+
+
+  
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **2.** Create a map of Nigeria that combines the raster layer for building count and the vector layer for region. 
+</div>
+
+
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **3.** Create a choropleth map that shows the variation in population density for Nigeria at region level. Export the results as a .png file. 
+</div>
+
+<div
+class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **4.** How do you plot a raster dataset using `tmap`, ensuring it can handle large datasets efficiently?
+  
+  1. `tm_shape(raster_data)` + `tm_fill()`
+
+  2. `tm_shape(raster_data)` + `tm_raster()`
+  
+  3. `tm_shape(raster_data)` + `tm_polygons()`
+  
+  4. `tm_shape(raster_data)` + `tm_dots()`
+
+</div>
+
+## Useful resources
+
+  - Types of spatial data: [Spatial Statistics For Data Science: Theory and Practice with R](https://www.paulamoraga.com/book-spatial/types-of-spatial-data.html)
+  - Basic GIS concepts: [esri UK](https://resource.esriuk.com/blog/what-is-gis/)
+  - GIS in R: [Nick Eubank](https://www.nickeubank.com/gis-in-r/)
+  - Using spatial data in R: [Using Spatial Data with R](https://cengel.github.io/R-spatial/)
+  - Visualisation of spatial data: [Spatial Data Science](https://r-spatial.org/book/08-Plotting.html)
+  - Visualisation of spatial data: [Making Maps with R](https://bookdown.org/nicohahn/making_maps_with_r5/docs/introduction.html)
+  - Interactive maps with `mapview`: [`mapview`](https://r-spatial.github.io/mapview/)
+  - Basic geoprocessing: [Geoprocessing in R](https://bakaniko.github.io/FOSS4G2019_Geoprocessing_with_R_workshop/geoprocessing-in-r.html)
+  - Coordinate reference systems: [QGIS Documentation](https://docs.qgis.org/3.40/en/docs/gentle_gis_introduction/coordinate_reference_systems.html)

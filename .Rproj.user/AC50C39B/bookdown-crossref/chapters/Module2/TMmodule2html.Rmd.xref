@@ -1,0 +1,28 @@
+h1:working-with-data-frames Working with Data Frames
+h2:importing-and-exporting-data-in-and-from-r Importing and exporting data in and from R
+h3:installing-and-loading-packages Installing and loading packages
+h3:reading-data-into-the-r-environment Reading data into the R environment
+h3:creating-work-paths Creating work paths
+h3:exploring-data-attributes Exploring data attributes
+h3:viewing-data Viewing data
+h3:extracting-data Extracting data
+h3:attaching-data Attaching data
+h3:writing-data-to-external-repositories Writing data to external repositories
+h2:basic-data-wrangling-methods-for-data-preparation-and-handling-in-r Basic data wrangling methods for data preparation and handling in R
+h3:dealing-with-na-not-available-values Dealing with NA () values
+h3:key-data-wrangling-methods Key data wrangling methods
+h2:data-visualisation Data visualisation
+h3:bar-plots Bar plots
+h3:box-plots Box plots
+h3:histograms Histograms
+h3:density-plots Density plots
+h3:scatter-plots Scatter plots
+h3:violin-plots Violin plots
+h3:line-graphs Line graphs
+h3:population-pyramids Population pyramids
+h3:lollipop-plots Lollipop plots
+h3:plots-with-an-image-background Plots with an image background
+h3:viewing-and-saving-plots Viewing and saving plots
+h2:end-of-module-exercises End of module exercises
+h2:useful-resources Useful resources
+

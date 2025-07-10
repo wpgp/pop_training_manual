@@ -1,0 +1,12 @@
+h1:model-fit-checks-and-cross-validation Model Fit Checks and Cross-Validation
+h2:model-assumption-checking Model assumption checking
+h2:model-selection Model selection
+h3:watanabe-akaike-information-criterion-waic Watanabe-Akaike Information Criterion (WAIC)
+h3:deviance-information-criterion-dic Deviance Information Criterion (DIC)
+h3:conditional-predictive-ordinate-cpo Conditional predictive ordinate (CPO)
+h3:probability-integral-transform-pit Probability Integral Transform (PIT)
+h2:cross-validation Cross-validation
+h3:basic-cross-validation Basic cross-validation
+h3:k-fold-cross-validation K-Fold Cross-Validation
+h3:useful-resources Useful resources
+

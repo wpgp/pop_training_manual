@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>7 Introduction to Small Area Population Estimation and Modelling (SAPEM) | WorldPop Population Modelling Training Manual, Vol. I</title>
+  <meta name="description" content="An open book of WorldPop methods to produce gridded population estimates." />
+  <meta name="generator" content="bookdown 0.43 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="7 Introduction to Small Area Population Estimation and Modelling (SAPEM) | WorldPop Population Modelling Training Manual, Vol. I" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="An open book of WorldPop methods to produce gridded population estimates." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="7 Introduction to Small Area Population Estimation and Modelling (SAPEM) | WorldPop Population Modelling Training Manual, Vol. I" />
+  
+  <meta name="twitter:description" content="An open book of WorldPop methods to produce gridded population estimates." />
+  
+
+<meta name="author" content="WorldPop, University of Southampton" />
+
+
+<meta name="date" content="2025-07-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="bayesian-statistical-inference.html"/>
+<link rel="next" href="bayesian-hierarchical-population-modelling-in-r.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.2.2/leaflet.js"></script>
+<script src="libs/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.2.2/leaflet-providers-plugin.js"></script>
+<script src="libs/HomeButton-0.0.1/home-button.js"></script>
+<script src="libs/HomeButton-0.0.1/easy-button-src.min.js"></script>
+<link href="libs/health_facilities - type-CSS-0.0.1/health_facilities - type_home-button.css" rel="stylesheet" />
+<script src="libs/clipboard-0.0.1/setClipboardText.js"></script>
+<link href="libs/mapviewCSS-0.0.1/mapview-popup.css" rel="stylesheet" />
+<link href="libs/mapviewCSS-0.0.1/mapview.css" rel="stylesheet" />
+<link href="libs/states-CSS-0.0.1/states_home-button.css" rel="stylesheet" />
+<link href="libs/states_utm-CSS-0.0.1/states_utm_home-button.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#book-contents"><i class="fa fa-check"></i>Book Contents</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html"><i class="fa fa-check"></i><b>1</b> Basics of R Programming</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#overview-of-r"><i class="fa fa-check"></i><b>1.1</b> Overview of R</a>
+<ul>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#getting-started-with-r"><i class="fa fa-check"></i>Getting started with R</a>
+<ul>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#downloading-r-and-rstudio"><i class="fa fa-check"></i>Downloading R and RStudio</a></li>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#features-of-the-r-gui-environment"><i class="fa fa-check"></i>Features of the R GUI environment</a></li>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#features-of-the-rstudio-environment"><i class="fa fa-check"></i>Features of the RStudio environment</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#creating-opening-and-saving-r-scripts"><i class="fa fa-check"></i>Creating, opening and saving R scripts</a></li>
+<li class="chapter" data-level="1.1.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#getting-and-setting-the-working-directory"><i class="fa fa-check"></i><b>1.1.1</b> Getting and setting the working directory</a></li>
+<li class="chapter" data-level="1.1.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#creating-opening-and-saving-r-projects"><i class="fa fa-check"></i><b>1.1.2</b> Creating, opening and saving R projects</a></li>
+<li class="chapter" data-level="1.1.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#getting-help-in-r"><i class="fa fa-check"></i><b>1.1.3</b> Getting help in R</a></li>
+<li class="chapter" data-level="1.1.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#r-coding-best-practices"><i class="fa fa-check"></i><b>1.1.4</b> R coding best practices</a>
+<ul>
+<li class="chapter" data-level="1.1.4.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#commenting"><i class="fa fa-check"></i><b>1.1.4.1</b> Commenting</a></li>
+<li class="chapter" data-level="1.1.4.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#naming-conventions"><i class="fa fa-check"></i><b>1.1.4.2</b> Naming conventions</a></li>
+<li class="chapter" data-level="1.1.4.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#spacing"><i class="fa fa-check"></i><b>1.1.4.3</b> Spacing</a></li>
+<li class="chapter" data-level="1.1.4.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#punctuation"><i class="fa fa-check"></i><b>1.1.4.4</b> Punctuation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#data-types-and-key-components"><i class="fa fa-check"></i><b>1.2</b> Data types and key components</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#basic-operations-in-r"><i class="fa fa-check"></i><b>1.2.1</b> Basic operations in R</a>
+<ul>
+<li class="chapter" data-level="1.2.1.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#arithmetic-operators"><i class="fa fa-check"></i><b>1.2.1.1</b> Arithmetic operators</a></li>
+<li class="chapter" data-level="1.2.1.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#logical-operators"><i class="fa fa-check"></i><b>1.2.1.2</b> Logical operators</a></li>
+<li class="chapter" data-level="1.2.1.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#other-operators"><i class="fa fa-check"></i><b>1.2.1.3</b> Other operators</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#key-functions-in-r"><i class="fa fa-check"></i><b>1.3</b> Key functions in R</a></li>
+<li class="chapter" data-level="1.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#data-structures"><i class="fa fa-check"></i><b>1.4</b> Data structures</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#vectors"><i class="fa fa-check"></i><b>1.4.1</b> Vectors</a></li>
+<li class="chapter" data-level="1.4.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#matrices"><i class="fa fa-check"></i><b>1.4.2</b> Matrices</a></li>
+<li class="chapter" data-level="1.4.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#arrays"><i class="fa fa-check"></i><b>1.4.3</b> Arrays</a></li>
+<li class="chapter" data-level="1.4.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#data-frames"><i class="fa fa-check"></i><b>1.4.4</b> Data frames</a></li>
+<li class="chapter" data-level="1.4.5" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#list"><i class="fa fa-check"></i><b>1.4.5</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#end-of-module-exercises"><i class="fa fa-check"></i><b>1.5</b> End of module exercises</a></li>
+<li class="chapter" data-level="1.6" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#useful-resources"><i class="fa fa-check"></i><b>1.6</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html"><i class="fa fa-check"></i><b>2</b> Working with Data Frames</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#importing-and-exporting-data-in-and-from-r"><i class="fa fa-check"></i><b>2.1</b> Importing and exporting data in and from R</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#installing-and-loading-packages"><i class="fa fa-check"></i><b>2.1.1</b> Installing and loading packages</a></li>
+<li class="chapter" data-level="2.1.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#reading-data-into-the-r-environment"><i class="fa fa-check"></i><b>2.1.2</b> Reading data into the R environment</a></li>
+<li class="chapter" data-level="2.1.3" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#creating-work-paths"><i class="fa fa-check"></i><b>2.1.3</b> Creating work paths</a></li>
+<li class="chapter" data-level="2.1.4" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#exploring-data-attributes"><i class="fa fa-check"></i><b>2.1.4</b> Exploring data attributes</a></li>
+<li class="chapter" data-level="2.1.5" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#viewing-data"><i class="fa fa-check"></i><b>2.1.5</b> Viewing data</a></li>
+<li class="chapter" data-level="2.1.6" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#extracting-data"><i class="fa fa-check"></i><b>2.1.6</b> Extracting data</a></li>
+<li class="chapter" data-level="2.1.7" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#attaching-data"><i class="fa fa-check"></i><b>2.1.7</b> Attaching data</a></li>
+<li class="chapter" data-level="2.1.8" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#writing-data-to-external-repositories"><i class="fa fa-check"></i><b>2.1.8</b> Writing data to external repositories</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#basic-data-wrangling-methods-for-data-preparation-and-handling-in-r"><i class="fa fa-check"></i><b>2.2</b> Basic data wrangling methods for data preparation and handling in R</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#dealing-with-na-not-available-values"><i class="fa fa-check"></i><b>2.2.1</b> Dealing with NA (‘Not Available’) values</a></li>
+<li class="chapter" data-level="2.2.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#key-data-wrangling-methods"><i class="fa fa-check"></i><b>2.2.2</b> Key data wrangling methods</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#data-visualisation"><i class="fa fa-check"></i><b>2.3</b> Data visualisation</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#bar-plots"><i class="fa fa-check"></i><b>2.3.1</b> Bar plots</a></li>
+<li class="chapter" data-level="2.3.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#box-plots"><i class="fa fa-check"></i><b>2.3.2</b> Box plots</a></li>
+<li class="chapter" data-level="2.3.3" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#histograms"><i class="fa fa-check"></i><b>2.3.3</b> Histograms</a></li>
+<li class="chapter" data-level="2.3.4" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#density-plots"><i class="fa fa-check"></i><b>2.3.4</b> Density plots</a></li>
+<li class="chapter" data-level="2.3.5" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#scatter-plots"><i class="fa fa-check"></i><b>2.3.5</b> Scatter plots</a></li>
+<li class="chapter" data-level="2.3.6" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#violin-plots"><i class="fa fa-check"></i><b>2.3.6</b> Violin plots</a></li>
+<li class="chapter" data-level="2.3.7" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#line-graphs"><i class="fa fa-check"></i><b>2.3.7</b> Line graphs</a></li>
+<li class="chapter" data-level="2.3.8" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#population-pyramids"><i class="fa fa-check"></i><b>2.3.8</b> Population pyramids</a></li>
+<li class="chapter" data-level="2.3.9" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#lollipop-plots"><i class="fa fa-check"></i><b>2.3.9</b> Lollipop plots</a></li>
+<li class="chapter" data-level="2.3.10" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#plots-with-an-image-background"><i class="fa fa-check"></i><b>2.3.10</b> Plots with an image background</a></li>
+<li class="chapter" data-level="2.3.11" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#viewing-and-saving-plots"><i class="fa fa-check"></i><b>2.3.11</b> Viewing and saving plots</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#end-of-module-exercises-1"><i class="fa fa-check"></i><b>2.4</b> End of module exercises</a></li>
+<li class="chapter" data-level="2.5" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#useful-resources-1"><i class="fa fa-check"></i><b>2.5</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html"><i class="fa fa-check"></i><b>3</b> Working with Spatial Data in R</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#spatial-data-overview-and-types"><i class="fa fa-check"></i><b>3.1</b> Spatial data: Overview and types</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#points-data"><i class="fa fa-check"></i><b>3.1.1</b> Points data</a></li>
+<li class="chapter" data-level="3.1.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#areal-data"><i class="fa fa-check"></i><b>3.1.2</b> Areal data</a></li>
+<li class="chapter" data-level="3.1.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#vector-data"><i class="fa fa-check"></i><b>3.1.3</b> Vector data</a>
+<ul>
+<li class="chapter" data-level="3.1.3.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#points"><i class="fa fa-check"></i><b>3.1.3.1</b> Points</a></li>
+<li class="chapter" data-level="3.1.3.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#polylines"><i class="fa fa-check"></i><b>3.1.3.2</b> Polylines</a></li>
+<li class="chapter" data-level="3.1.3.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#polygons"><i class="fa fa-check"></i><b>3.1.3.3</b> Polygons</a></li>
+</ul></li>
+<li class="chapter" data-level="3.1.4" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#raster-data"><i class="fa fa-check"></i><b>3.1.4</b> Raster data</a></li>
+<li class="chapter" data-level="3.1.5" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#sources-of-spatial-data"><i class="fa fa-check"></i><b>3.1.5</b> Sources of spatial data</a></li>
+<li class="chapter" data-level="3.1.6" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#geospatial-covariates"><i class="fa fa-check"></i><b>3.1.6</b> Geospatial covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#basic-gis-concepts"><i class="fa fa-check"></i><b>3.2</b> Basic GIS concepts</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#geoprocessing"><i class="fa fa-check"></i><b>3.2.1</b> Geoprocessing</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#using-gis-in-r"><i class="fa fa-check"></i><b>3.3</b> Using GIS in R</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#importing-spatial-data-in-r"><i class="fa fa-check"></i><b>3.3.1</b> Importing spatial data in R</a></li>
+<li class="chapter" data-level="3.3.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#handling-spatial-data-in-r"><i class="fa fa-check"></i><b>3.3.2</b> Handling spatial data in R</a>
+<ul>
+<li class="chapter" data-level="3.3.2.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#converting-between-vectors-and-rasters-in-r"><i class="fa fa-check"></i><b>3.3.2.1</b> Converting between vectors and rasters in R</a></li>
+<li class="chapter" data-level="3.3.2.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#checking-the-resolution-and-number-of-cells"><i class="fa fa-check"></i><b>3.3.2.2</b> Checking the resolution and number of cells</a></li>
+<li class="chapter" data-level="3.3.2.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#exporting-spatial-data-in-various-formats"><i class="fa fa-check"></i><b>3.3.2.3</b> Exporting spatial data in various formats</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-of-spatial-data"><i class="fa fa-check"></i><b>3.4</b> Visualisation of spatial data</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#static-maps"><i class="fa fa-check"></i><b>3.4.1</b> Static maps</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#interactive-maps"><i class="fa fa-check"></i><b>3.5</b> Interactive maps</a>
+<ul>
+<li class="chapter" data-level="" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-with-tmap-1"><i class="fa fa-check"></i>Visualisation with <code>tmap</code></a></li>
+<li class="chapter" data-level="" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-with-leaflet"><i class="fa fa-check"></i>Visualisation with <code>leaflet</code></a></li>
+<li class="chapter" data-level="" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-with-mapview"><i class="fa fa-check"></i>Visualisation with <code>mapview</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#basic-geoprocessing"><i class="fa fa-check"></i><b>3.6</b> Basic geoprocessing</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#coordinate-reference-systems-crs"><i class="fa fa-check"></i><b>3.6.1</b> Coordinate reference systems (CRS)</a></li>
+<li class="chapter" data-level="3.6.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#converting-between-latlong-and-the-universal-transverse-mercator-utm-coordinate-system"><i class="fa fa-check"></i><b>3.6.2</b> Converting between Lat/Long and the Universal Transverse Mercator (UTM) coordinate system</a></li>
+<li class="chapter" data-level="3.6.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#subsetting-clipping-and-masking"><i class="fa fa-check"></i><b>3.6.3</b> Subsetting, clipping and masking</a></li>
+<li class="chapter" data-level="3.6.4" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#buffer-analysis"><i class="fa fa-check"></i><b>3.6.4</b> Buffer analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#end-of-module-exercises-2"><i class="fa fa-check"></i><b>3.7</b> End of module exercises</a></li>
+<li class="chapter" data-level="3.8" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#useful-resources-2"><i class="fa fa-check"></i><b>3.8</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html"><i class="fa fa-check"></i><b>4</b> Introduction to Statistical Modelling with Implementation in R</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#concept-of-statistical-modelling"><i class="fa fa-check"></i><b>4.1</b> Concept of statistical modelling</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#overview-of-statistical-modelling"><i class="fa fa-check"></i><b>4.1.1</b> Overview of statistical modelling</a></li>
+<li class="chapter" data-level="4.1.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#correlation"><i class="fa fa-check"></i><b>4.1.2</b> Correlation</a></li>
+<li class="chapter" data-level="4.1.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#scaled-covariates"><i class="fa fa-check"></i><b>4.1.3</b> Scaled covariates</a></li>
+<li class="chapter" data-level="4.1.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#uncertainty"><i class="fa fa-check"></i><b>4.1.4</b> Uncertainty</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#simple-regression"><i class="fa fa-check"></i><b>4.2</b> Simple regression</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#linear-regression"><i class="fa fa-check"></i><b>4.2.1</b> Linear regression</a></li>
+<li class="chapter" data-level="4.2.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#polynomial-regression"><i class="fa fa-check"></i><b>4.2.2</b> Polynomial regression</a></li>
+<li class="chapter" data-level="4.2.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#non-linear-regression"><i class="fa fa-check"></i><b>4.2.3</b> Non-linear regression</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#multiple-regression"><i class="fa fa-check"></i><b>4.3</b> Multiple regression</a></li>
+<li class="chapter" data-level="4.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#generalised-linear-regression"><i class="fa fa-check"></i><b>4.4</b> Generalised linear regression</a></li>
+<li class="chapter" data-level="4.5" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#model-predictions"><i class="fa fa-check"></i><b>4.5</b> Model predictions</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#predictions-with-the-formula-and-coefficients"><i class="fa fa-check"></i><b>4.5.1</b> Predictions with the formula and coefficients</a></li>
+<li class="chapter" data-level="4.5.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#predictions-with-functions"><i class="fa fa-check"></i><b>4.5.2</b> Predictions with functions</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#model-selection"><i class="fa fa-check"></i><b>4.6</b> Model selection</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#accuracy-and-precision"><i class="fa fa-check"></i><b>4.6.1</b> Accuracy and precision</a></li>
+<li class="chapter" data-level="4.6.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#akaike-information-criterion"><i class="fa fa-check"></i><b>4.6.2</b> Akaike information criterion</a></li>
+<li class="chapter" data-level="4.6.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#bayesian-information-criterion"><i class="fa fa-check"></i><b>4.6.3</b> Bayesian information criterion</a></li>
+<li class="chapter" data-level="4.6.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#r-squared-statistic"><i class="fa fa-check"></i><b>4.6.4</b> R-squared statistic</a></li>
+<li class="chapter" data-level="4.6.5" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#analysis-of-variance"><i class="fa fa-check"></i><b>4.6.5</b> Analysis of variance</a></li>
+<li class="chapter" data-level="4.6.6" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#likelihood-ratio-testing"><i class="fa fa-check"></i><b>4.6.6</b> Likelihood ratio testing</a></li>
+</ul></li>
+<li class="chapter" data-level="4.7" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#stepwise-regression"><i class="fa fa-check"></i><b>4.7</b> Stepwise regression</a>
+<ul>
+<li class="chapter" data-level="4.7.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#forward-stepwise-regression"><i class="fa fa-check"></i><b>4.7.1</b> Forward stepwise regression</a></li>
+<li class="chapter" data-level="4.7.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#backward-stepwise-regression"><i class="fa fa-check"></i><b>4.7.2</b> Backward stepwise regression</a></li>
+<li class="chapter" data-level="4.7.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#both-ways-stepwise-regression"><i class="fa fa-check"></i><b>4.7.3</b> Both ways stepwise regression</a></li>
+</ul></li>
+<li class="chapter" data-level="4.8" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#cross-validation"><i class="fa fa-check"></i><b>4.8</b> Cross-validation</a>
+<ul>
+<li class="chapter" data-level="4.8.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#k-fold-cross-validation"><i class="fa fa-check"></i><b>4.8.1</b> <em>k</em>-fold cross-validation</a></li>
+<li class="chapter" data-level="4.8.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#leave-one-out-cross-validation"><i class="fa fa-check"></i><b>4.8.2</b> Leave-one-out cross-validation</a></li>
+</ul></li>
+<li class="chapter" data-level="4.9" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#hierarchical-regression"><i class="fa fa-check"></i><b>4.9</b> Hierarchical regression</a>
+<ul>
+<li class="chapter" data-level="4.9.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#data-structure"><i class="fa fa-check"></i><b>4.9.1</b> Data structure</a></li>
+<li class="chapter" data-level="4.9.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#variance-partition-coefficient"><i class="fa fa-check"></i><b>4.9.2</b> Variance partition coefficient</a></li>
+<li class="chapter" data-level="4.9.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#random-intercepts-modelling"><i class="fa fa-check"></i><b>4.9.3</b> Random intercepts modelling</a></li>
+<li class="chapter" data-level="4.9.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#random-intercepts-mixed-effects-modelling"><i class="fa fa-check"></i><b>4.9.4</b> Random intercepts mixed-effects modelling</a></li>
+<li class="chapter" data-level="4.9.5" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#random-slope-mixed-effects-modelling"><i class="fa fa-check"></i><b>4.9.5</b> Random slope mixed-effects modelling</a></li>
+<li class="chapter" data-level="4.9.6" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#adding-an-extra-level"><i class="fa fa-check"></i><b>4.9.6</b> Adding an extra level</a></li>
+</ul></li>
+<li class="chapter" data-level="4.10" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#useful-resources-3"><i class="fa fa-check"></i><b>4.10</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html"><i class="fa fa-check"></i><b>5</b> Probability Theory and Applications</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#introduction-to-probability"><i class="fa fa-check"></i><b>5.1</b> Introduction to probability</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#theoretical-and-experimental-probability"><i class="fa fa-check"></i><b>5.1.1</b> Theoretical and experimental probability</a></li>
+<li class="chapter" data-level="5.1.2" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#keywords"><i class="fa fa-check"></i><b>5.1.2</b> Keywords</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#axioms-of-probability"><i class="fa fa-check"></i><b>5.2</b> Axioms of probability</a></li>
+<li class="chapter" data-level="5.3" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#joint-probability"><i class="fa fa-check"></i><b>5.3</b> Joint probability</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#joint-probability-table"><i class="fa fa-check"></i><b>5.3.1</b> Joint probability table</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#conditional-probability"><i class="fa fa-check"></i><b>5.4</b> Conditional probability</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#multiplication-rule-of-conditional-probability"><i class="fa fa-check"></i><b>5.4.1</b> Multiplication rule of conditional probability</a></li>
+<li class="chapter" data-level="5.4.2" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#law-of-total-probability"><i class="fa fa-check"></i><b>5.4.2</b> Law of total probability</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#contingency-tables"><i class="fa fa-check"></i><b>5.5</b> Contingency tables</a></li>
+<li class="chapter" data-level="5.6" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#useful-resources-4"><i class="fa fa-check"></i><b>5.6</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html"><i class="fa fa-check"></i><b>6</b> Bayesian Statistical Inference</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#introduction"><i class="fa fa-check"></i><b>6.1</b> Introduction</a></li>
+<li class="chapter" data-level="6.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#bayes-theorem"><i class="fa fa-check"></i><b>6.2</b> Bayes’ theorem</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#bayes-theorem-for-random-variables"><i class="fa fa-check"></i><b>6.2.1</b> Bayes’ theorem for random variables</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#the-likelihood-function"><i class="fa fa-check"></i><b>6.3</b> The likelihood function</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#different-types-and-structures"><i class="fa fa-check"></i><b>6.3.1</b> Different types and structures</a>
+<ul>
+<li class="chapter" data-level="6.3.1.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#count-data"><i class="fa fa-check"></i><b>6.3.1.1</b> Count data</a></li>
+<li class="chapter" data-level="6.3.1.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#binary-data"><i class="fa fa-check"></i><b>6.3.1.2</b> Binary data</a></li>
+<li class="chapter" data-level="6.3.1.3" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#proportional-data"><i class="fa fa-check"></i><b>6.3.1.3</b> Proportional data</a></li>
+<li class="chapter" data-level="6.3.1.4" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#continuous-data"><i class="fa fa-check"></i><b>6.3.1.4</b> Continuous data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#prior-distribution"><i class="fa fa-check"></i><b>6.4</b> Prior distribution</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#conjugate-priors"><i class="fa fa-check"></i><b>6.4.1</b> Conjugate priors</a></li>
+<li class="chapter" data-level="6.4.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#flat-improper-and-non-informative-priors"><i class="fa fa-check"></i><b>6.4.2</b> Flat, improper and non-informative priors</a></li>
+<li class="chapter" data-level="6.4.3" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#informative-prior"><i class="fa fa-check"></i><b>6.4.3</b> Informative prior</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#overview-of-posterior-inference"><i class="fa fa-check"></i><b>6.5</b> Overview of posterior inference</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#markov-chain-monte-carlo-approach"><i class="fa fa-check"></i><b>6.5.1</b> Markov Chain Monte Carlo approach</a></li>
+<li class="chapter" data-level="6.5.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#integrated-nested-laplace-approximation-approach"><i class="fa fa-check"></i><b>6.5.2</b> Integrated Nested Laplace Approximation approach</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#elicitation-of-priors"><i class="fa fa-check"></i><b>6.6</b> Elicitation of priors</a>
+<ul>
+<li class="chapter" data-level="6.6.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#priors-inla"><i class="fa fa-check"></i><b>6.6.1</b> Priors INLA</a>
+<ul>
+<li class="chapter" data-level="6.6.1.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#penalised-complexity-priors"><i class="fa fa-check"></i><b>6.6.1.1</b> Penalised Complexity priors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6.7" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#sampling-and-evaluating-the-posterior-density"><i class="fa fa-check"></i><b>6.7</b> Sampling and evaluating the posterior density</a></li>
+<li class="chapter" data-level="6.8" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#useful-resources-5"><i class="fa fa-check"></i><b>6.8</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><i class="fa fa-check"></i><b>7</b> Introduction to Small Area Population Estimation and Modelling (SAPEM)</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#small-area-population-estimation"><i class="fa fa-check"></i><b>7.1</b> Small area population estimation</a></li>
+<li class="chapter" data-level="7.2" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#direct-estimation"><i class="fa fa-check"></i><b>7.2</b> Direct estimation</a></li>
+<li class="chapter" data-level="7.3" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#indirect-estimation"><i class="fa fa-check"></i><b>7.3</b> Indirect estimation</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#approaches-for-creating-gridded-population-datasets"><i class="fa fa-check"></i><b>7.3.1</b> Approaches for creating gridded population datasets</a>
+<ul>
+<li class="chapter" data-level="7.3.1.1" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#top-down"><i class="fa fa-check"></i><b>7.3.1.1</b> Top-down</a></li>
+<li class="chapter" data-level="7.3.1.2" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#bottom-up"><i class="fa fa-check"></i><b>7.3.1.2</b> Bottom-up</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#useful-resources-6"><i class="fa fa-check"></i><b>7.4</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html"><i class="fa fa-check"></i><b>8</b> Bayesian Hierarchical Population Modelling in R</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#data-sources"><i class="fa fa-check"></i><b>8.1</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#population-data"><i class="fa fa-check"></i><b>8.1.1</b> Population data</a></li>
+<li class="chapter" data-level="8.1.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#settlement-data"><i class="fa fa-check"></i><b>8.1.2</b> Settlement data</a></li>
+<li class="chapter" data-level="8.1.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#other-sources"><i class="fa fa-check"></i><b>8.1.3</b> Other sources</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#data-cleaning-and-covariates-extraction"><i class="fa fa-check"></i><b>8.2</b> Data cleaning and covariates extraction</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#extracting-continuous-rasters"><i class="fa fa-check"></i><b>8.2.1</b> Extracting continuous rasters</a></li>
+<li class="chapter" data-level="8.2.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#extracting-categorical-rasters"><i class="fa fa-check"></i><b>8.2.2</b> Extracting categorical rasters</a></li>
+<li class="chapter" data-level="8.2.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#extracting-building-count"><i class="fa fa-check"></i><b>8.2.3</b> Extracting building count</a></li>
+<li class="chapter" data-level="8.2.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#exracting-building-total-area"><i class="fa fa-check"></i><b>8.2.4</b> Exracting building total area</a></li>
+<li class="chapter" data-level="8.2.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#adding-admin-area-names-to-the-data"><i class="fa fa-check"></i><b>8.2.5</b> Adding admin area names to the data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#exploratory-analysis"><i class="fa fa-check"></i><b>8.3</b> Exploratory analysis</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#basic-visualisation"><i class="fa fa-check"></i><b>8.3.1</b> Basic visualisation</a></li>
+<li class="chapter" data-level="8.3.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#geospatial-visualisation"><i class="fa fa-check"></i><b>8.3.2</b> Geospatial visualisation</a></li>
+<li class="chapter" data-level="8.3.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#checking-for-nas"><i class="fa fa-check"></i><b>8.3.3</b> Checking for NAs</a></li>
+<li class="chapter" data-level="8.3.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#checking-for-minimum-and-maximum-values"><i class="fa fa-check"></i><b>8.3.4</b> Checking for minimum and maximum values</a></li>
+<li class="chapter" data-level="8.3.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#checking-the-distribution-of-categorical-variables"><i class="fa fa-check"></i><b>8.3.5</b> Checking the distribution of categorical variables</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#model-set-up"><i class="fa fa-check"></i><b>8.4</b> Model set-up</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#simple-linear-regression"><i class="fa fa-check"></i><b>8.4.1</b> Simple linear regression</a></li>
+<li class="chapter" data-level="8.4.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#multiple-regression-1"><i class="fa fa-check"></i><b>8.4.2</b> Multiple regression</a></li>
+<li class="chapter" data-level="8.4.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#generalised-linear-regression-1"><i class="fa fa-check"></i><b>8.4.3</b> Generalised linear regression</a></li>
+<li class="chapter" data-level="8.4.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#fitting-fixed-effects-models-in-r-inla"><i class="fa fa-check"></i><b>8.4.4</b> Fitting fixed effects models in <code>R-INLA</code></a></li>
+<li class="chapter" data-level="8.4.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#fitting-bayesian-hierarchical-mixed-effects-models-in-r-inla"><i class="fa fa-check"></i><b>8.4.5</b> Fitting Bayesian hierarchical mixed effects models in <code>R-INLA</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#stan-mcmc-approach"><i class="fa fa-check"></i><b>8.5</b> STAN (MCMC) approach</a>
+<ul>
+<li class="chapter" data-level="8.5.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#metropolis-hastings-algorithm"><i class="fa fa-check"></i><b>8.5.1</b> Metropolis-Hastings algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="8.6" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#inla-and-inla-spde-approach"><i class="fa fa-check"></i><b>8.6</b> INLA and INLA-SPDE approach</a>
+<ul>
+<li class="chapter" data-level="8.6.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#mesh-construction"><i class="fa fa-check"></i><b>8.6.1</b> Mesh construction</a></li>
+<li class="chapter" data-level="8.6.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#building-the-spde"><i class="fa fa-check"></i><b>8.6.2</b> Building the SPDE</a></li>
+<li class="chapter" data-level="8.6.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#projection-matrix"><i class="fa fa-check"></i><b>8.6.3</b> Projection matrix</a></li>
+<li class="chapter" data-level="8.6.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#data-location-indexing"><i class="fa fa-check"></i><b>8.6.4</b> Data location indexing</a></li>
+<li class="chapter" data-level="8.6.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#projection-data"><i class="fa fa-check"></i><b>8.6.5</b> Projection data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html"><i class="fa fa-check"></i><b>9</b> Model Fit Checks and Cross-Validation</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#model-assumption-checking"><i class="fa fa-check"></i><b>9.1</b> Model assumption checking</a></li>
+<li class="chapter" data-level="9.2" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#model-selection-1"><i class="fa fa-check"></i><b>9.2</b> Model selection</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#watanabe-akaike-information-criterion-waic"><i class="fa fa-check"></i><b>9.2.1</b> Watanabe-Akaike Information Criterion (WAIC)</a></li>
+<li class="chapter" data-level="9.2.2" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#deviance-information-criterion-dic"><i class="fa fa-check"></i><b>9.2.2</b> Deviance Information Criterion (DIC)</a></li>
+<li class="chapter" data-level="9.2.3" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#conditional-predictive-ordinate-cpo"><i class="fa fa-check"></i><b>9.2.3</b> Conditional predictive ordinate (CPO)</a></li>
+<li class="chapter" data-level="9.2.4" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#probability-integral-transform-pit"><i class="fa fa-check"></i><b>9.2.4</b> Probability Integral Transform (PIT)</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#cross-validation-1"><i class="fa fa-check"></i><b>9.3</b> Cross-validation</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#basic-cross-validation"><i class="fa fa-check"></i><b>9.3.1</b> Basic cross-validation</a></li>
+<li class="chapter" data-level="9.3.2" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#k-fold-cross-validation-1"><i class="fa fa-check"></i><b>9.3.2</b> K-Fold Cross-Validation</a></li>
+<li class="chapter" data-level="9.3.3" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#useful-resources-7"><i class="fa fa-check"></i><b>9.3.3</b> Useful resources</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html"><i class="fa fa-check"></i><b>10</b> Population Prediction and Uncertainty Quantification</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#covariate-stacking"><i class="fa fa-check"></i><b>10.1</b> Covariate stacking</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#admin-names"><i class="fa fa-check"></i><b>10.1.1</b> Admin names</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#grid-cellpixel-level-prediction"><i class="fa fa-check"></i><b>10.2</b> Grid cell/pixel level prediction</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#pre-processing"><i class="fa fa-check"></i><b>10.2.1</b> Pre-processing</a></li>
+<li class="chapter" data-level="10.2.2" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#inla-spde-approach"><i class="fa fa-check"></i><b>10.2.2</b> INLA-SPDE approach</a>
+<ul>
+<li class="chapter" data-level="10.2.2.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#predictions"><i class="fa fa-check"></i><b>10.2.2.1</b> Predictions</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2.3" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#posterior-distribution-simulation"><i class="fa fa-check"></i><b>10.2.3</b> Posterior distribution simulation</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#aggregation-to-area-units-of-interest-and-uncertainty-quantification"><i class="fa fa-check"></i><b>10.3</b> Aggregation to area units of interest and uncertainty quantification</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#rasterising-the-predictions-at-grid-cell-level"><i class="fa fa-check"></i><b>10.3.1</b> Rasterising the predictions at grid cell level</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#useful-resources-8"><i class="fa fa-check"></i><b>10.4</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html"><i class="fa fa-check"></i><b>11</b> Age-Sex Disaggregation</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#disaggregation-of-population-totals-by-age-sex-proportions"><i class="fa fa-check"></i><b>11.1</b> Disaggregation of population totals by age-sex proportions</a>
+<ul>
+<li class="chapter" data-level="11.1.1" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#unavailable-age-sex-data"><i class="fa fa-check"></i><b>11.1.1</b> Unavailable age-sex data</a></li>
+<li class="chapter" data-level="11.1.2" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#available-age-sex-data"><i class="fa fa-check"></i><b>11.1.2</b> Available age-sex data</a>
+<ul>
+<li class="chapter" data-level="11.1.2.1" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#age-sex-disaggregation-1"><i class="fa fa-check"></i><b>11.1.2.1</b> Age-sex disaggregation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#useful-resources-9"><i class="fa fa-check"></i><b>11.2</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html"><i class="fa fa-check"></i><b>12</b> Exercise Solutions by Module</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-1"><i class="fa fa-check"></i><b>12.1</b> Module 1</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises"><i class="fa fa-check"></i><b>12.1.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.1.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#end-of-module-exercises-3"><i class="fa fa-check"></i><b>12.1.2</b> End of module exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-2"><i class="fa fa-check"></i><b>12.2</b> Module 2</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-1"><i class="fa fa-check"></i><b>12.2.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.2.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#end-of-module-exercises-4"><i class="fa fa-check"></i><b>12.2.2</b> End of module exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-3"><i class="fa fa-check"></i><b>12.3</b> Module 3</a>
+<ul>
+<li class="chapter" data-level="12.3.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-2"><i class="fa fa-check"></i><b>12.3.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.3.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#end-of-module-exercises-5"><i class="fa fa-check"></i><b>12.3.2</b> End of module exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-4"><i class="fa fa-check"></i><b>12.4</b> Module 4</a>
+<ul>
+<li class="chapter" data-level="12.4.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-3"><i class="fa fa-check"></i><b>12.4.1</b> General exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.5" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-5"><i class="fa fa-check"></i><b>12.5</b> Module 5</a>
+<ul>
+<li class="chapter" data-level="12.5.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-4"><i class="fa fa-check"></i><b>12.5.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.5.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-5"><i class="fa fa-check"></i><b>12.5.2</b> General exercises</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">WorldPop Population Modelling Training Manual, Vol. I</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="introduction-to-small-area-population-estimation-and-modelling-sapem" class="section level1 hasAnchor" number="7">
+<h1><span class="header-section-number">7</span> Introduction to Small Area Population Estimation and Modelling (SAPEM)<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#introduction-to-small-area-population-estimation-and-modelling-sapem" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This module focuses on small area population estimation, with information on both direct and indirect estimation methods, where the latter includes both top-down and bottom-up methodology. For this module, much of the relevant code is provided by the Book of Methods.</p>
+<div id="small-area-population-estimation" class="section level2 hasAnchor" number="7.1">
+<h2><span class="header-section-number">7.1</span> Small area population estimation<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#small-area-population-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p><strong>Small area estimates (SAE)</strong> of a population use statistical techniques and models to provide a reliable population number at smaller (granular) area units, where the areas or domains often correspond to geographic domains (e.g. school districts and health service areas) or to socio-demographic groups (e.g. age by gender groups and groups in poverty). This is often done using multiple data sources, for example, sample surveys, and auxiliary data which have wider coverage with geospatial covariates, administrative data and census data. Small area population estimation is both quick and cost effective.</p>
+<p>SAE is needed, often as the focus of data collection systems is on the “big picture”, meaning that resulting estimates are reliable only to the highly aggregated levels such as national or regional levels, and not reliable for the smaller areas such as provinces or school districts. Additionally, granular or disaggregated data collection typically requires more resources, for example, more money, people and equipment, and often takes much longer. In many cases, limited resources are available, with time and financial constraints, so the granular data is not available, which is where SAE comes in useful. It should also be noted that there are challenges with traditional surveys, where census data is often very outdated (illustrated later in the module in Section 3. Indirect estimation).</p>
+<p>There is a demand for SAE given the importance of granular data being used in policy-making and decision-making, such as economic policies, business planning and allocation of government funds.</p>
+<p>There are two main methods to small area population estimation, <strong>direct estimation methods</strong> and <strong>indirect estimation methods</strong>, where the latter includes spatial statistical population models, for example, a bottom-up model.</p>
+<p>For implementation of SAE in R, the following packages can be utilised.</p>
+<ul>
+<li><code>car</code>: provides functions that are useful for assessing regression models, calculations around those models and graphics.</li>
+<li><code>sae</code>: provides functions to obtain model-based estimates for small areas, for both (basic) direct and indirect estimation methods, among other useful functions.</li>
+<li><code>InformationValue</code>: provides functions that assess the performance of classification models among other useful functions.</li>
+<li><code>rsq</code>: provides functions that compute the generalised R-squared and partial R-squared statistics, and partial correlation coefficients for GLMs.</li>
+</ul>
+<p>One of the problems with using satellite images for population size estimation is that satellite imagery does not always identify where there are buildings, for instance, when there is tree canopy covering a settlement. In this case, modelling is useful for better predicting the population size. A 2-step model solution is used as follows.</p>
+<ul>
+<li>Step 1: The relationships between the geospatial covariates and building intensity are exploited with a Bayesian hierarchical modelling framework. Estimates of building intensity across the entire area, including the areas under tree canopy cover, are obtained using the best fitting model.</li>
+<li>Step 2: The estimates of the building intensity obtained in Step 1 are then used to calculate population density. The relationship between population density and a set of geospatial covariates are explored within a Bayesian hierarchical modelling framework.</li>
+</ul>
+<p>As discussed in previous modules, the form of linear and generalised linear models are as given below. The form of a generalised additive model (GAM) is also given for reference.</p>
+<ul>
+<li>Linear model (LM): <span class="math inline">\(Y_i = \beta_0 + \beta_1X_i + \epsilon_i\)</span>, where <span class="math inline">\(\beta_0\)</span> is the intercept, <span class="math inline">\(\beta_1\)</span> is the slope and <span class="math inline">\(\epsilon_i\)</span> is the error term.</li>
+<li>Generalised linear model (GLM): <span class="math inline">\(g(\mu_i) = \beta_0 + \beta_1X_i\)</span>, where <span class="math inline">\(\beta_0\)</span> is the intercept and <span class="math inline">\(\beta_1\)</span> is the slope.</li>
+<li>Generalised additive model (GAM): <span class="math inline">\(g(\mu_i) = \alpha + \sum_{j=1}^K f_j(x_j)\)</span> where <span class="math inline">\(g(\mu_i)\)</span> is the mean function (for example, log, logit or identity), <span class="math inline">\(\alpha\)</span> is the intercept and <span class="math inline">\(f_j(x_j)\)</span> is the smooth function for continuous covariates.</li>
+</ul>
+<p>Similarly, the following models are with a non-spatial random effect, <span class="math inline">\(v_i\)</span>, that does not describe any form of spatial dependence between the observations in the linear, generalised linear and generalised additive mixed models.</p>
+<ul>
+<li>Linear mixed model (LMM): <span class="math inline">\(Y_i = \beta_0 + \beta_1X_i + \epsilon_i + v_i\)</span></li>
+<li>Generalised linear model (GLMM): <span class="math inline">\(g(\mu_i) = \beta_0 + \beta_1X_i + v_i\)</span></li>
+<li>Generalised additive model (GAMM): <span class="math inline">\(g(\mu_i) = \alpha + \sum_{j=1}^K f_j(x_j) + v_i\)</span></li>
+</ul>
+<p>However, these models are non-spatial, as they do not have a spatial random effect. The following models are <strong>spatial statistical models</strong>, given that they have a spatially varying random effect, <span class="math inline">\(v_i\)</span>, which varies in space as a result of <strong>spatial geography</strong> (where individuals live). This relationship is described using the statistical models that are usually distanced based or use neighbourhood matrices.</p>
+<ul>
+<li>Linear mixed model (LMM): <span class="math inline">\(Y_i = \beta_0 + \beta_1X_i + \epsilon_i + v_i\)</span></li>
+<li>Generalised linear model (GLMM): <span class="math inline">\(g(\mu_i) = \beta_0 + \beta_1X_i + v_i\)</span></li>
+<li>Generalised additive model (GAMM): <span class="math inline">\(g(\mu_i) = \alpha + \sum_{j=1}^K f_j(x_j) + v_i\)</span></li>
+</ul>
+<p>It is important to check which geospatial covariates are significant, since as with non-spatial models and covariates discussed in Module 4, you only want to include significant geospatial covariates in the spatial statistical models. This can be done in <code>R</code> by following these steps:</p>
+<ol style="list-style-type: decimal">
+<li>Specify an appropriate <em>GLM</em> for the response with all the covariates included to obtain the model <code>f1</code>. In the example below, given that the data is count data, a Poisson distribution is used. For more information on why, see Module 4 Section 4: Generalised linear regression.</li>
+</ol>
+<div class="sourceCode" id="cb587"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb587-1"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb587-1" tabindex="-1"></a><span class="co">#specify appropriate GLM</span></span>
+<span id="cb587-2"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb587-2" tabindex="-1"></a>f1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(pop <span class="sc">~</span>., <span class="at">data =</span> data_pop, <span class="at">family =</span> poisson) <span class="co">#count data for Poisson </span></span>
+<span id="cb587-3"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb587-3" tabindex="-1"></a><span class="co">#summary for the model</span></span>
+<span id="cb587-4"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb587-4" tabindex="-1"></a><span class="fu">summary</span>(f1)</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Run a stepwise selection with the <code>stepAIC()</code> function with the <code>MASS</code> package. See Module 4 Section 7: Stepwise regression for more information on the <code>stepAIC()</code> function and stepwise regression.</li>
+</ol>
+<div class="sourceCode" id="cb588"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb588-1"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb588-1" tabindex="-1"></a><span class="co">#use stepAIC() for both ways stepwise regression</span></span>
+<span id="cb588-2"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb588-2" tabindex="-1"></a>step_pop <span class="ot">&lt;-</span> <span class="fu">stepAIC</span>(f1, <span class="at">scale =</span> <span class="dv">0</span>, <span class="at">direction =</span> <span class="fu">c</span>(<span class="st">&quot;both&quot;</span>), <span class="at">trace =</span> <span class="dv">1</span>, </span>
+<span id="cb588-3"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb588-3" tabindex="-1"></a>                    <span class="at">keep =</span> <span class="cn">NULL</span>, <span class="at">steps =</span> <span class="dv">1000</span>, <span class="at">use.start =</span> <span class="cn">FALSE</span>, <span class="at">k =</span> <span class="dv">2</span>)</span>
+<span id="cb588-4"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb588-4" tabindex="-1"></a>step_pop</span></code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li>Rerun the selected model and call it something else, for example, <code>f2</code>.</li>
+<li>Check for multicollinearity through computing the Variance Inflation Factors (VIF) using the <code>vif()</code> function from the <code>car</code> package.</li>
+</ol>
+<div class="sourceCode" id="cb589"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb589-1"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb589-1" tabindex="-1"></a><span class="co">#use vif() to check for multicollinearity</span></span>
+<span id="cb589-2"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb589-2" tabindex="-1"></a>vif_f2 <span class="ot">&lt;-</span> <span class="fu">vif</span>(f2)</span></code></pre></div>
+<ol start="5" style="list-style-type: decimal">
+<li>Retain only significant covariates with a VIF value of less than 5 (<em>note:</em> 5 is not always the chosen level of significance).</li>
+</ol>
+<div class="sourceCode" id="cb590"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb590-1"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb590-1" tabindex="-1"></a><span class="co">#select covariates with vif value of &lt; 5</span></span>
+<span id="cb590-2"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb590-2" tabindex="-1"></a>vif_f2[<span class="fu">which</span>(vif_f2 <span class="sc">&lt;</span> <span class="dv">5</span>)]</span></code></pre></div>
+</div>
+<div id="direct-estimation" class="section level2 hasAnchor" number="7.2">
+<h2><span class="header-section-number">7.2</span> Direct estimation<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#direct-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Firstly, the domain of a survey specifies to which level precise and accurate estimates can be obtained. Then, suppose that the target population of the survey can be divided into <span class="math inline">\(M\)</span> domains (<span class="math inline">\(D_1, \cdots, D_m, \cdots,D_M\)</span>).</p>
+<p>To estimate the population size of a small area (for example, the total number of people in poverty), direct (survey) estimation can be used. The characteristic of interest, <span class="math inline">\(y_j\)</span> must be specified (for example, <span class="math inline">\(y_j=1\)</span> if the sampled unit is classified as in poverty and <span class="math inline">\(y_j=0\)</span> otherwise), with each sampling unit having an associated sampling weight, <span class="math inline">\(w_j\)</span>. The resulting direct survey estimate <span class="math inline">\(\hat{Y}\)</span> can then be computed as the weighted sum of each characteristic of interest, <span class="math inline">\(y_j\)</span>, for each sampled unit <span class="math inline">\(j\)</span> as follows.</p>
+<p><span class="math display">\[ \hat{Y} = \sum_{j \in S} w_j y_j,\]</span>
+where <span class="math inline">\(j\in S\)</span> corresponds to each sampled unit in the survey.</p>
+<p>If a domain is divided up into <span class="math inline">\(N\)</span> sub-domains (<span class="math inline">\({SD}_1, \cdots, {SD}_n, \cdots, {SD}_N\)</span>), the above formula can be adapted to compute the direct survey estimate for only the sampled units in sub-domain <span class="math inline">\(n\)</span> by further restricting the summation to only include the sampled units within sub-domain <span class="math inline">\({SD}_n\)</span> as follows.</p>
+<p><span class="math display">\[ \hat{Y}_n = \sum_{j \in S, j \in {SD}_n} w_j y_j.\]</span></p>
+<p>Whilst most direct survey estimators are unbiased, it is important to note that the sampling error of <span class="math inline">\(\hat{Y}_n\)</span> can be high if there is not a suitable number of observations used in the calculation, i.e. if the sub-domain <span class="math inline">\({SD}_n\)</span> is notably smaller than any of the survey domains <span class="math inline">\(D_m\)</span>.</p>
+<p>A basic example of direct estimation can be found when trying to compute the average household size of a region. If you know the total population size and the number of households within a given region, then to estimate the average household size, you would divide the total population by the total number of households. This direct estimation is demonstrated in the code below.</p>
+<div class="sourceCode" id="cb591"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb591-1"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb591-1" tabindex="-1"></a><span class="co">#define total population</span></span>
+<span id="cb591-2"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb591-2" tabindex="-1"></a>total_pop <span class="ot">&lt;-</span> <span class="dv">149375</span></span>
+<span id="cb591-3"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb591-3" tabindex="-1"></a><span class="co">#define total household size</span></span>
+<span id="cb591-4"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb591-4" tabindex="-1"></a>total_hh <span class="ot">&lt;-</span> <span class="dv">29875</span></span>
+<span id="cb591-5"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb591-5" tabindex="-1"></a>  </span>
+<span id="cb591-6"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb591-6" tabindex="-1"></a><span class="co">#compute average household size</span></span>
+<span id="cb591-7"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb591-7" tabindex="-1"></a>ave_hh_size <span class="ot">&lt;-</span> total_pop<span class="sc">/</span>total_hh</span>
+<span id="cb591-8"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb591-8" tabindex="-1"></a>ave_hh_size</span></code></pre></div>
+<pre><code>## [1] 5</code></pre>
+<p>For more information, see <a href="https://www.adb.org/sites/default/files/publication/609476/small-area-estimation-guide-nsos.pdf">Asian Development Bank</a>. For an example of implementation in R, see page 48. Alternatively, see the help files for the relevant packages. For example, the <code>direct()</code> function in the <code>sae</code> package can be used to compute the direct estimators of domain means, and the help file (<code>?direct</code>) provides the following example code to demonstrate the use of the function.</p>
+<!-- The `direct()` function can include the following arguments. -->
+<!--   - `y`: a vector that specifies the values of the characteristic of interest (in the below example, the characteristic of interest is income). -->
+<!--   - `dom`: a vector (or factor) that is of the same size as `y` that contains the domain codes. -->
+<!--   - `sweight`: an optional vector that is the same size as `y` that contains the sampling weights. If no `sweight` is given, by default, the estimators are obtained using simple random sampling (SRS). -->
+<!--   - `domweight`: a data frame with 2 columns. The first column contains the domain codes and the second column contains the population sizes. -->
+<!--   - `data`: an optional data frame which contains the variables given as `y`, `dom` and `sweight`. If no `data` argument is given, by default, variables are taken from the environment.  -->
+<!-- ```{r direct function} -->
+<!-- library(sae) -->
+<!-- #load data set with synthetic income data for provinces (domains) in Spain -->
+<!-- data(incomedata) -->
+<!-- #load population sizes of provinces in Spain -->
+<!-- data(sizeprov)    -->
+<!-- #compute Horvitz-Thompson direct estimator of mean income for each  -->
+<!-- #province under random sampling without replacement within each province. -->
+<!-- result1 <- direct(y=income, dom=prov, sweight=weight, -->
+<!--                    domsize=sizeprov[,2:3], data=incomedata) -->
+<!-- head(result1) -->
+<!-- ``` -->
+</div>
+<div id="indirect-estimation" class="section level2 hasAnchor" number="7.3">
+<h2><span class="header-section-number">7.3</span> Indirect estimation<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#indirect-estimation" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Maps are very important for population modelling. For example, if in a given country, the aim is to vaccinate as close to 100% of under 5s as possible against polio, maps can aid in the visualisation of how many under 5s there are and where they are in order to ensure the correct amount of vaccine is available for each area. Additionally, detailed maps of each region are required in order to plan vaccinator logistics and routes.</p>
+<p>It is also important to consider the population at risk. To do this, supporting data on how many people there are and where they are, who they are and how do they move around is required.</p>
+<p>In terms of population data, censuses are one of the best sources available for population levels and trends, for example, to visualise age pyramids. Census data also provides population demographic and socio-economic characteristics, in addition to information on housing characteristics and socio-economic inequalities, including poverty levels. Population data can be very valuable for many different uses. It can help with appropriate resource allocation and evidence-based policy making and planning, act as a support tool for public health planning and also aid in monitoring development goals. However, whilst valuable, there are many challenges faced with relying solely on census data for population data.</p>
+<p>Whilst census data is very valuable, it is expensive and only collected once a decade, meaning that it can be very outdated with no way of monitoring the inter-censal years. This increases the need for more timely and detailed data. Registry and administration data can help fill these gaps, but they can be incomplete and unreliable in low-income settings, adding to the challenge of tracking progress towards development goals. Additionally, in some countries, even the most basic census, boundary and mapping data are lacking, where there have not been reliable censuses for many years, making it difficult to define a baseline and measure changes sub-nationally and regularly from this baseline. This means that additional resources are required, where new geospatial data sources can help compliment existing traditional sources to fill in the gaps and keep a sub-national focus.</p>
+<div class="figure" style="text-align: center">
+<img src="figures/7_images/africa%20census.png" alt="Map of Africa illustrating scarcity of up-to-date census data (data correct as of December 2024)" width="50%" />
+<p class="caption">
+(#fig:africa census)Map of Africa illustrating scarcity of up-to-date census data (data correct as of December 2024)
+</p>
+</div>
+<p>These data sources can include geo-located household surveys, satellite, GIS and mobile phone data. All of these data sources are available more regularly than census data in inter-censal periods and are useful in low- and middle-income settings. However, whilst these sources are valuable in providing regular measurements and sub-national detail, they contain biases and gaps, therefore, it is important to integrate them with each other and more traditional data sources to draw on the strengths of each source and overcome some of the biases present.</p>
+<p>In this context, population modelling is the process of combining aggregated/outdated census or survey data with a set of ancillary data to provide disaggregated population data. There are two main ways of doing this, <strong>top-down</strong>, where the admin-unit based census/official estimated counts are disaggregated, and <strong>bottom-up</strong>, where the census data is outdated/unreliable and so the satellite and mobile data is integrated with survey data. The bottom-up approach is independent of census data, and is more time-consuming and labour intensive, but can be the best approach when the census data is outdated and reliable. The top-down approach is the approach that forms most of WorldPop’s outputs at present.</p>
+<div id="approaches-for-creating-gridded-population-datasets" class="section level3 hasAnchor" number="7.3.1">
+<h3><span class="header-section-number">7.3.1</span> Approaches for creating gridded population datasets<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#approaches-for-creating-gridded-population-datasets" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The data available changes at different stages of the census cycle, so the current stage of the cycle needs to be considered.</p>
+<!-- Directly following the census enumeration: -->
+<!--   - Top-down: Assuming complete spatial coverage, the population totals for the administrative areas (for example, EAs, wards and districts) can be spatially disaggregated.  -->
+<!--   - Bottom-up: If the spatial coverage is incomplete, then the population in enumeration areas can be used to predict the population in the incomplete areas. -->
+<!-- During inter-censal period: -->
+<!--   - Top-down: The projected population totals can be spatially disaggregated, however, projections can become increasingly uncertain with the more time elapsed since the census was completed. -->
+<!--   - Bottom-up: Activities such as listings from household surveys and census cartography that include complete (geolocated) listings of households or collect population count information can be used in the bottom-up modelling. -->
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
+<table style="width:99%;">
+<colgroup>
+<col width="24%" />
+<col width="38%" />
+<col width="36%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th></th>
+<th></th>
+</tr>
+<tr class="even">
+<th></th>
+<th>Top-down</th>
+<th>Bottom-up</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Data sources</td>
+<td>Census data.<br />
+Administrative boundaries.<br />
+</td>
+<td>Survey data.<br />
+Satellite imagery.<br />
+Other ancillary data.</td>
+</tr>
+<tr class="even">
+<td>Directly following the
+census enumeration</td>
+<td>Assumes complete spatial coverage.
+Assumes that the population totals
+for the administrative areas (e.g.
+EAs, wards, districts) can be
+spatially disaggregated.</td>
+<td>If the spatial coverage is
+incomplete, the population
+enumeration areas can be used to
+predict the population in the
+incomplete areas.</td>
+</tr>
+<tr class="odd">
+<td>During the inter-censal
+period</td>
+<td>The projected population totals can
+be spatially disaggregated, however
+projections can become increasingly
+uncertain with the more time
+elapsed since the census was
+completed.</td>
+<td>Activities such as listings
+from household surveys and census
+cartography that include
+complete (geolocated) listings
+of households or collect
+population count information
+can be used.</td>
+</tr>
+<tr class="even">
+<td>Advantages</td>
+<td>It can be very straight-forward to
+implement.<br />
+It can estimate the population
+distributions quickly.</td>
+<td>Can capture the population
+distributions in more detail.<br />
+When census data is unreliable,
+outdated or poor quality, can give
+more accurate estimates.<br />
+Can estimate the population
+distributions in areas where there
+is no census data available.</td>
+</tr>
+<tr class="odd">
+<td>Disadvantages</td>
+<td>In areas where the population
+dynamics are complex or change
+rapidly, the accuracy can decrease.<br />
+The accuracy depends on the quality
+of the census data - if the census
+data is outdated, unreliable or
+poor quality, the results can be
+inaccurate.</td>
+<td>Takes more time, with more
+expertise needed, to produce the
+results.<br />
+Requires more data than top-down
+for implementation.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="top-down" class="section level4 hasAnchor" number="7.3.1.1">
+<h4><span class="header-section-number">7.3.1.1</span> Top-down<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#top-down" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>As mentioned above, this is the approach most commonly taken in WorldPop, focused on the disaggregation of admin-unit based census/official estimate counts. The approach combines the census population counts with the available geospatial covariates, disaggregating the population with a <strong>dasymetric</strong> approach, and producing gridded population estimates. The population data that is input for the top-down approach includes area-level population counts (e.g. wards and districts) with complete spatial coverage (generally from census/projections).</p>
+<div class="figure" style="text-align: center">
+<img src="figures/7_images/top-down.png" alt="Illustration of the top-down approach process from Wardrop et al. (2018) PNAS" width="80%" />
+<p class="caption">
+(#fig:top-down process)Illustration of the top-down approach process from Wardrop et al. (2018) PNAS
+</p>
+</div>
+<p>There are two main techniques for spatial disaggregation mapping, detailed as follows.</p>
+<ul>
+<li><strong>Simple areal weighting</strong>: evenly redistributing aggregated population counts across all grid cells within each spatial unit.
+<ul>
+<li>Pycnophulactic redistribution: producing a smooth surface with disaggregated population values not changing abruptly across spatial unit boundaries.</li>
+<li>Mask simple areal weighting: using a mask to define where, within each target unit, the input population counts must be evenly redistributed.</li>
+</ul></li>
+<li><strong>Dasymetric disaggregation</strong>: redistributing input aggregated population counts across all grid cells within each spatial unit according to pre-defined weights (distributing population counts within selected boundaries through using covariate information such as land cover).
+<ul>
+<li>Mask dasymetric disaggregation: using a mask to define where, within each target unit, the input population counts must be daysmetrically distributed.</li>
+</ul></li>
+</ul>
+<div class="figure" style="text-align: center">
+<img src="figures/7_images/disaggregation.png" alt="Visual example of top-down dasymetric approach" width="80%" />
+<p class="caption">
+(#fig:disaggregation image)Visual example of top-down dasymetric approach
+</p>
+</div>
+<p>There are many benefits to producing gridded estimates, including aggregation flexibility and a fine-grained understanding of population variation. Also, a consistent grid enables easy comparison between areas and with other data themes/topics, for example, health data (location of health facilities, catchment areas, health zones, areas subject to floods).</p>
+<p>There are many covariates available that depict contextual factors for top-down gridded population estimate. Some examples of these covariates are as follows.</p>
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
+<table style="width:81%;">
+<colgroup>
+<col width="34%" />
+<col width="45%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th></th>
+</tr>
+<tr class="even">
+<th>Covariate type</th>
+<th>Examples</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Building patterns</td>
+<td>Building counts<br />
+Building density<br />
+Building mean area<br />
+Building total area</td>
+</tr>
+<tr class="even">
+<td>Residential patterns</td>
+<td>Residential proportion<br />
+Residential count<br />
+Residential mean area<br />
+Residential total area</td>
+</tr>
+<tr class="odd">
+<td>Socio-economic patterns</td>
+<td>Distance to marketplaces<br />
+Distance to place of education<br />
+Distance to local/main roads<br />
+Distance to health providers</td>
+</tr>
+<tr class="even">
+<td>Environmental patterns</td>
+<td>Slope<br />
+Elevation<br />
+Distance to bodies of water<br />
+Distance to protected areas<br />
+Distance to vegetation<br />
+Distance to cultivated areas</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The covariates used should relate to the spatial distribution of the population and available for the entire area. They should also include the geographical information on the location. Typically, covariates with continuous values are better than categorical values.</p>
+<div class="figure" style="text-align: center">
+<img src="figures/7_images/mask%20dasymetric.png" alt="Illustration of the mask dasymetric disaggregation process" width="80%" />
+<p class="caption">
+(#fig:mask dasymetric process)Illustration of the mask dasymetric disaggregation process
+</p>
+</div>
+<!-- With the mask dasymetric disaggregation approach, within each administrative unit (I), for each pixel (i), the population is computed as: -->
+<!-- $$Pop_i = \frac{Pop_I \times Weight_i}{\sum_{i=1}^N Weight_i}$$ -->
+<div id="random-forest-model" class="section level5 hasAnchor" number="7.3.1.1.1">
+<h5><span class="header-section-number">7.3.1.1.1</span> Random Forest model<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#random-forest-model" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The Random Forest algorithm is a commonly-used machine learning algorithm used construct individual regression trees in order to predict values of a response variable, for example, population density, for both categorical variables (<strong>classification</strong>) and continuous variables (<strong>regression</strong>). Prediction is done through using the relationship between the response and the geospatial covariates. It is important to note that Random Forest models are not good at extrapolating values.</p>
+<p>Each of the trees constructed is trained using a random sub-sample of approximately 70% of the initial dataset. The final output is then the average prediction of all trees.</p>
+<p>To use the Random Forest model in R, the package <code>popRF</code> developed for Random Forest-Informed Population Disaggregation can be used. It is published openly and descriptions available on the <a href="https://cran.rstudio.com/web/packages/popRF/index.html">CRAN</a> website. Previously, the dasymetric mapping method was very complex in terms of computation, with for example, different plug-ins or scripts from the weighting scheme to the disaggregation of the population counts. However, the <code>popRF()</code> function performs the entire modelling workflow automatically, making the process much simpler.</p>
+<p>To use the <code>popRF()</code> function, the following arguments are required.</p>
+<ul>
+<li><code>pop</code>: a tabular file containing the IDs of the sub-national areas and the corresponding total population.
+<ul>
+<li>The population counts file is a <code>.csv</code> file that contains two columns. One that contains the unique area IDs (the same as in the mastergrid) and another column that contains the corresponding population values.</li>
+</ul></li>
+<li><code>cov</code>: at least one ancillary raster covariate dataset must be provided. If multiple covariates are used, then they need to be in a list format.</li>
+<li><code>mastergrid</code>: the raster file representing the sub-national areas and corresponding tabular population count for those areas.
+<ul>
+<li>Mastergrid is also known as <strong>zonal data</strong>, and is the template gridded raster that contains the unique area IDs as their value.</li>
+<li>Once the level of analysis is decided, it is recommended to create the mastergrid first.</li>
+</ul></li>
+<li><code>watermask</code>: a binary raster file indicating the pixels with water (1) and no water (0).
+<ul>
+<li>Surface water does not need to be predicted and so a water mask raster is a required input.</li>
+<li>If only building footprints are provided, the <code>watermask</code> can only contain 0s (i.e. non water) as the model will only predict to settled pixels.</li>
+</ul></li>
+<li><code>px_area</code>: a raster file containing the area of each pixel in square meters.</li>
+</ul>
+<p>To install the package directly from github, the function <code>install_github()</code> from the <code>devtools</code> package can be used as follows.</p>
+<div class="sourceCode" id="cb593"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb593-1"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb593-1" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;devtools&quot;</span>)</span>
+<span id="cb593-2"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb593-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;wpgp/popRF&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb594"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb594-1"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#cb594-1" tabindex="-1"></a><span class="fu">library</span>(<span class="st">&quot;popRF&quot;</span>)</span></code></pre></div>
+<p>Once the package is installed and loaded into R, the following are the main steps required to use the <code>popRF()</code> function.</p>
+<ol style="list-style-type: decimal">
+<li>Set the directory location of the inputs.</li>
+<li>Create a list from the names and locations of the required covariates.</li>
+<li>State the names and locations of the mandatory inputs.</li>
+<li>Write the command line that executes the Random Forest application.</li>
+</ol>
+<p>To assess the results from using the <code>popRF()</code> function, first it must be checked that the aggregated admin totals match the values in the population input file used. Also, it must be checked that the explained variance is sufficiently high (&gt;80%), and remember that smaller-scale inputs improve the results a lot. Also, you should look over the results to see if there are any ‘weird’ shapes or patterns, and finally, check the results against a satellite image base layer.</p>
+<p>For more information and implementation in R, see Chapters 17 and 18 of the <a href="https://wpgp.github.io/bookworm/top-down-population-mapping-method.html">Book of Methods</a>.</p>
+</div>
+<div id="weighting-layer" class="section level5 hasAnchor" number="7.3.1.1.2">
+<h5><span class="header-section-number">7.3.1.1.2</span> Weighting layer<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#weighting-layer" class="anchor-section" aria-label="Anchor link to header"></a></h5>
+<p>The weighting layer is used to divide up the population totals for each municipality into their enumeration areas (EA). This layer is created from predictive variables (geospatial covariates) related to population density, and associated with both the built and natural environment.</p>
+<p>The weights represent the proportions of the population from each municipality (for <span class="math inline">\(j=1,...,J\)</span>) that lives within EA <span class="math inline">\(i\)</span> (for <span class="math inline">\(i=1,...,I_j\)</span>), and can be calculated using the model predictions from the random forest model as follows.</p>
+<p><span class="math display">\[ \text{weight}_i = \frac{\exp(\text{predicted}_i)}{\sum_{i=1}^{I_j}\exp(\text{predicted}_i)}\]</span>
+where <span class="math inline">\(\text{predicted}_i\)</span> is defined as the model prediction for EA <span class="math inline">\(i\)</span> and <span class="math inline">\(I_j\)</span> is defined as the total number of EAs in municipality <span class="math inline">\(j\)</span>.</p>
+<p>Geospatial covariates are used as proxies of variation in population density and are <strong>spatially harmonised</strong> so that all variables have the same spatial resolution and grid cell alignment for the geospatial covariate stack. For the geospatial covariate stack, the subset of geospatial covariates that are most strongly correlated with population density should be selected. It is commonly found that the covariates derived from building footprints or residential information are strong predictors for population density. If there are any covariates which are unexpectedly high predictors for population density, those covariates can be removed to test whether they are influential/necessary.</p>
+</div>
+</div>
+<div id="bottom-up" class="section level4 hasAnchor" number="7.3.1.2">
+<h4><span class="header-section-number">7.3.1.2</span> Bottom-up<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#bottom-up" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>As mentioned earlier, the bottom-up methods are typically used when there is no recent (or appropriate) census data available in order to use the top-down approach. For the bottom-up methods, a sample of locations are chosen for which there is geolocated household survey data available. This data is then used in conjunction with geospatial covariates to fit a statistical model which estimates the population size in areas which were not sampled. In order to make the best use of the available data, for this approach, customised statistical models are applied, which also allow for probabilistic estimates of uncertainty.</p>
+<p>The bottom-up modelling process is then as follows.</p>
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
+<table>
+<colgroup>
+<col width="31%" />
+<col width="68%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th></th>
+</tr>
+<tr class="even">
+<th>Step</th>
+<th>Breakdown</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><ol style="list-style-type: decimal">
+<li>Data collation,
+preparation and
+data analyses</li>
+</ol></td>
+<td>Data cataloguing<br />
+Data cleaning<br />
+Variable description<br />
+Variable preparation<br />
+Shapefile cleaning<br />
+Data visualisation<br />
+Exploratory analyses<br />
+Results presentation/discussion</td>
+</tr>
+<tr class="even">
+<td><ol start="2" style="list-style-type: decimal">
+<li>Exploration of
+settlement data/
+creation of geospatial
+covariates</li>
+</ol></td>
+<td>Raster visualisation<br />
+Raster cleaning<br />
+Various raster analyses<br />
+Covariate checks<br />
+Correlation analysis<br />
+Raster stacking<br />
+Other activities</td>
+</tr>
+<tr class="odd">
+<td><ol start="3" style="list-style-type: decimal">
+<li>Development and
+exploration of various
+statistical model
+structures</li>
+</ol></td>
+<td>Data integration<br />
+Random intercept model development (STAN and INLA)<br />
+Observation-level prediction<br />
+Bayesian models with covariates (STAN and INLA)<br />
+Observation-level prediction</td>
+</tr>
+<tr class="even">
+<td><ol start="4" style="list-style-type: decimal">
+<li>Model selection,
+model validation,
+population prediction/
+uncertainty
+quantification</li>
+</ol></td>
+<td>Model checks and testing<br />
+Model selection<br />
+Cross-validation<br />
+Population prediction<br />
+Uncertainty quantification</td>
+</tr>
+<tr class="odd">
+<td><ol start="5" style="list-style-type: decimal">
+<li>Gridded population,
+estimates, model
+documentation,
+report and paper</li>
+</ol></td>
+<td>Population gridding production<br />
+Model outline documentation<br />
+Report writing<br />
+Manuscript preparation for scientific publication</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<!--   1. Data collation, preparation and data analyses -->
+<!--       - Data cataloguing -->
+<!--       - Data cleaning  -->
+<!--       - Variable description -->
+<!--       - Variable preparation -->
+<!--       - Shapefile cleaning  -->
+<!--       - Data visualisation -->
+<!--       - Exploratory analyses -->
+<!--       - Results presentation/discussion -->
+<!--   2. Exploration of settlement data/creation of geospatial covariates -->
+<!--       - Raster visualisation  -->
+<!--       - Raster cleaning  -->
+<!--       - Various raster analyses -->
+<!--       - Covariate checks -->
+<!--       - Correlation analysis -->
+<!--       - Raster stacking  -->
+<!--       - Other activities -->
+<!--   3. Development and exploration of various statistical model structures -->
+<!--       - Data integration -->
+<!--       - Random intercept model development (STAN and INLA) -->
+<!--       - Observation-level prediction -->
+<!--       - Bayesian models with covariates (STAN and INLA) -->
+<!--       - Observation-level prediction -->
+<!--   4. Model selection, model validation, population prediction/uncertainty quantification  -->
+<!--       - Model checks and testing  -->
+<!--       - Model selection  -->
+<!--       - Cross-validation  -->
+<!--       - Population prediction  -->
+<!--       - Uncertainty quantification -->
+<!--   5. Gridded population estimates, model documentation, report and paper -->
+<!--       - Population gridding production  -->
+<!--       - Model outline documentation  -->
+<!--       - Report writing  -->
+<!--       - Manuscript preparation for scientific publication -->
+<div class="figure" style="text-align: center">
+<img src="figures/7_images/bottom-up.png" alt="Illustration of the bottom-up approach process from Wardrop et al. (2018) PNAS" width="80%" />
+<p class="caption">
+(#fig:bottom-up process)Illustration of the bottom-up approach process from Wardrop et al. (2018) PNAS
+</p>
+</div>
+<p>For more in-depth explanations of the bottom-up methods and implementation in R, see Chapters 5, 6 and 7 of the <a href="https://wpgp.github.io/bookworm/bottom-up-population-mapping-method.html">Book of Methods</a>. A summary of the key types of input data required as explained in the Book of Methods is given below.</p>
+<p>There are a few key types of input data for bottom-up methods, these are as follows.</p>
+<ul>
+<li>Population data
+<ul>
+<li>Should include enumerated population counts for enumerated areas only (at cluster or geolocated household level).</li>
+<li>Ideally includes a polygon shapefile with the boundary of each enumeration area and the total population within each area.</li>
+<li>Additional (optional) information collected during census and surveys such as point locations of buildings and/or households within enumeration areas can be useful for providing higher resolution information.</li>
+<li>Obtained from partial census results, microcensus surveys designed for population modelling and pre-survey listing data from routine household surveys</li>
+</ul></li>
+<li>Settlement map
+<ul>
+<li>Used for identifying where residential structures are located/exist via building locations (points), building footprints (polygons) and/or gridded maps identifying pixels that contain buildings (raster).</li>
+<li>May classify areas into different settlement types.</li>
+<li>Additional (optional) information for each building such as building area, height and use can be beneficial for population modelling.</li>
+<li>Obtained from satellite imagery, pre-census cartography, building points and footprints and gridded derivatives of building footprints.</li>
+</ul></li>
+<li>Geospatial covariates
+<ul>
+<li>Spatial datasets with national coverage focused on variables which are likely to have some correlation to the population density.</li>
+<li>Common geospatial covariates include road networks, night-time lights, locations of public facilities (e.g. hospitals or schools).</li>
+<li>To ensure that the accuracy of the population estimates is as high as possible, the covariates used in the estimation should be highly correlated to the population density (good quality covariates) and has comprehensive national coverage.</li>
+</ul></li>
+<li>Administrative boundaries
+<ul>
+<li>May include regions, states (provinces), divisions and sub-divisions.</li>
+<li>Administrative units are often nested within each other.</li>
+<li>If there are population totals for each administrative unit, they can be used to summarise model results.</li>
+</ul></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="useful-resources-6" class="section level2 hasAnchor" number="7.4">
+<h2><span class="header-section-number">7.4</span> Useful resources<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#useful-resources-6" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li>Small area estimation: <a href="https://www.adb.org/sites/default/files/publication/609476/small-area-estimation-guide-nsos.pdf">Introduction to Small Area Estimation Techniques</a></li>
+<li>popRF: <a href="https://www.worldpop.org/tutorials/small-area-population-estimates-2/">WorldPop tutorial</a></li>
+<li>Top-down: <a href="https://wpgp.github.io/bookworm/top-down-population-mapping-method.html">Book of Methods</a></li>
+<li>Top-down: <a href="https://www.worldpop.org/wp-content/uploads/2022/10/top-down-tutorial.html">WorldPop tutorial</a></li>
+<li>Bottom-up: <a href="https://wpgp.github.io/bookworm/bottom-up-population-mapping-method.html">Book of Methods</a></li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="bayesian-statistical-inference.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="bayesian-hierarchical-population-modelling-in-r.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section",
+    "scroll_highlight": true
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

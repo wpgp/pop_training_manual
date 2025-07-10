@@ -1,0 +1,12 @@
+h1:population-prediction-and-uncertainty-quantification Population Prediction and Uncertainty Quantification
+h2:covariate-stacking Covariate stacking
+h3:admin-names Admin names
+h2:grid-cellpixel-level-prediction Grid cell/pixel level prediction
+h3:pre-processing Pre-processing
+h3:inla-spde-approach INLA-SPDE approach
+h4:predictions Predictions
+h3:posterior-distribution-simulation Posterior distribution simulation
+h2:aggregation-to-area-units-of-interest-and-uncertainty-quantification Aggregation to area units of interest and uncertainty quantification
+h3:rasterising-the-predictions-at-grid-cell-level Rasterising the predictions at grid cell level
+h2:useful-resources Useful resources
+

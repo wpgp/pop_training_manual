@@ -1,0 +1,51 @@
+h1:introduction-to-statistical-modelling-with-implementation-in-r Introduction to Statistical Modelling with Implementation in R
+h2:concept-of-statistical-modelling Concept of statistical modelling
+h3:overview-of-statistical-modelling Overview of statistical modelling
+h3:correlation Correlation
+fig:image Visual examples of the different types of correlation
+h3:scaled-covariates Scaled covariates
+h3:uncertainty Uncertainty
+h2:simple-regression Simple regression
+h3:linear-regression Linear regression
+fig:image Reading the coefficients from the model output
+fig:image Interpreting the summary output
+h3:polynomial-regression Polynomial regression
+h3:non-linear-regression Non-linear regression
+h2:multiple-regression Multiple regression
+h2:generalised-linear-regression Generalised linear regression
+h2:model-predictions Model predictions
+h3:predictions-with-the-formula-and-coefficients Predictions with the formula and coefficients
+h3:predictions-with-functions Predictions with functions
+h2:model-selection Model selection
+h3:accuracy-and-precision Accuracy and precision
+fig:image Visual examples of accuracy and precision
+h3:akaike-information-criterion Akaike information criterion
+fig:image Reading the AIC statistic from a GLM sumamry
+h3:bayesian-information-criterion Bayesian information criterion
+h3:r-squared-statistic R-squared statistic
+h3:analysis-of-variance Analysis of variance
+fig:image Understanding the ANOVA table
+fig:image Understanding the ANOVA table
+h3:likelihood-ratio-testing Likelihood ratio testing
+h2:stepwise-regression Stepwise regression
+h3:forward-stepwise-regression Forward stepwise regression
+h3:backward-stepwise-regression Backward stepwise regression
+h3:both-ways-stepwise-regression Both ways stepwise regression
+h2:cross-validation Cross-validation
+h3:k-fold-cross-validation -fold cross-validation
+fig:image Visual example of k-fold cross-validation
+h3:leave-one-out-cross-validation Leave-one-out cross-validation
+fig:image Visual example of leave-one-out cross-validation
+h2:hierarchical-regression Hierarchical regression
+h3:data-structure Data structure
+fig:image Visual example of a hierarchical data structure
+h3:variance-partition-coefficient Variance partition coefficient
+fig:VPC Visual example of VPC equalling 0 and 1 respectively
+h3:random-intercepts-modelling Random intercepts modelling
+fig:empty Interpreting the summary output
+h3:random-intercepts-mixed-effects-modelling Random intercepts mixed-effects modelling
+h3:random-slope-mixed-effects-modelling Random slope mixed-effects modelling
+fig:lme Interpreting the summary output
+h3:adding-an-extra-level Adding an extra level
+h2:useful-resources Useful resources
+

@@ -1,0 +1,1052 @@
+
+```{r setup_module1, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Basics of R Programming
+
+This module is ideal for individuals who have little to no experience with R, and those who would like a reminder. It contains the basics for getting started with R, beginning with how to install R on your computer, and understanding the key aspects of the software. Lastly, Module 1 gives an introduction to using R, including information on the basic operations, functions, and data structures. 
+
+## Overview of R
+
+R is a free, open source statistical programming language and environment used for statistical computing and has a wide range of graphical facilities for data analysis. Its uses also include (but not limited to) the following:
+
+  - Data manipulation - e.g. extract, clean, store, process, ...
+  - Calculations (simple and complex) - e.g. addition, subtraction, ...
+  - Data visualisation - e.g. charts, line graphs, maps, exploratory analysis, ...
+  - Statistical and data analysis - e.g. regression, t-tests, correlation, ...
+  - Machine and deep learning - e.g. modelling, cross-validation, descriptive statistics, ...
+  - Reporting and creating documents (using Markdown and LaTeX) - e.g. reports, presentations, reproducible research, ...
+  - Mapping (Geographic Information System, GIS) - e.g. interactive visualisation, population size estimation,...
+  
+  
+### Getting started with R {-}
+#### Downloading R and RStudio {-}
+
+R can be downloaded on Windows, Mac and Linux from [R-Project.org](https://cran.r-project.org/). Select the link to download for the correct operating system for your computer.
+
+<!-- ![R download webpage](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rdownload enlarged.png) -->
+<!-- ![R download webpage](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rdownload enlarged.png) -->
+
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "R download webpage"}
+knitr::include_graphics("figures/1_images/rdownload enlarged.png")
+```
+
+For Windows, click "install R for the first time".
+
+<!-- ![R download webpage: Windows](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rdownload windows enlarged.png) -->
+
+<!-- ![R download webpage: Windows](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rdownload windows enlarged.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "R download webpage: Windows"}
+knitr::include_graphics("figures/1_images/rdownload windows enlarged.png")
+```
+
+For macOS, click the correct download package for your Mac's software version.
+
+<!-- ![R download webpage: macOS](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rdownload mac enlarged.png) -->
+
+<!-- ![R download webpage: macOS](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rdownload mac enlarged.png) -->
+
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "R download webpage: macOS"}
+knitr::include_graphics("figures/1_images/rdownload mac enlarged.png")
+```
+
+R does not have a particularly user-friendly graphical user interface (GUI). RStudio is a capable and free GUI add-on for R with improved functionality and usability. It can be downloaded from [Postit.co](https://posit.co/download/rstudio-desktop/). The webpage for downloading RStudio detects whether the operating system is Windows or macOS (or Linux), so the correct operating system does not need to be selected. 
+
+For Windows users, the webpage will look like the image below.
+
+<!-- ![RStudio download webpage: Windows](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rstudio download windows.png) -->
+
+<!-- ![RStudio download webpage: Windows](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rstudio download windows.png) -->
+
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "RStudio download webpage: Windows"}
+knitr::include_graphics("figures/1_images/rstudio download windows.png")
+```
+For macOS users, the webpage will look like the image below.
+
+<!-- ![RStudio download webpage: Mac](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rstudio download mac.png) -->
+
+<!-- ![RStudio download webpage: Mac](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/rstudio download mac.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "RStudio download webpage: macOS"}
+knitr::include_graphics("figures/1_images/rstudio download mac.png")
+```
+
+Once "Download RStudio desktop" has been selected, the preferred version of RStudio can be selected, e.g. 2023.03.1+446, and the installation process can be followed once the download is complete.
+
+To check both R and RStudio are installed on the computer, search for *"R"* and *"RStudio"* in the search bar of the computer. Once both are installed, the process is complete and they can be used. 
+
+Note: RStudio is just one example of R GUI, others are available such as [Positron](https://positron.posit.co/).
+
+#### Features of the R GUI environment {-}
+
+When opening R, the user interface should have a window open for the console, where calculations can be made and results will be printed. It should look something like the image below.
+
+
+<!-- ![As open R GUI](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/empty RGui.png) -->
+
+<!-- ![As open R GUI](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/empty RGui.png) -->
+
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "R GUI upon opening"}
+knitr::include_graphics("figures/1_images/empty RGui.png")
+```
+
+Additional windows can be opened, such as windows for scripts to code in and windows to display plots, seen in the image below.
+
+
+<!-- ![Annotated R GUI](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/annotated RGui.png) -->
+
+<!-- ![Annotated R GUI](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/annotated RGui.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated R GUI"}
+knitr::include_graphics("figures/1_images/annotated RGui.png")
+```
+
+#### Features of the RStudio environment {-}
+
+The user interface for RStudio is more efficient, with designated *panes* for displaying different information all at once in a much more convenient way.
+
+<!-- ![Annotated RStudio GUI](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio Gui.png) -->
+
+<!-- ![Annotated RStudio GUI](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio Gui.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI"}
+knitr::include_graphics("figures/1_images/RStudio Gui.png")
+```
+
+There are four panes as seen in the figure below:
+
+1. Script - this pane is only present once a script has been created
+2. Console - where numerical output will be returned
+3. Viewer - computer files, plots, packages, help files, reports and presentations can be viewed here
+4. Environment - any objects that have been created are present in the environment and can be cleared by clicking on the 'broom' icon toward the centre of the toolbar
+
+See the image below for assistance in navigating the key aspects of the RStudio GUI. 
+
+<!-- ![Annotated RStudio GUI](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio GUI key.png) -->
+
+<!-- ![Annotated RStudio GUI](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio GUI key.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI"}
+knitr::include_graphics("figures/1_images/RStudio GUI key.png")
+```
+
+### Creating, opening and saving R scripts {-}
+
+Whilst commands can be typed directly into the console, it is difficult to keep record of what has been run to ensure the code is reproducible and inconvenient when typographical mistakes are made. Utilising a script solves these issues, with the ability to make changes to and save the code written.
+
+In RStudio, to open a new script, use the main toolbar and follow **File > New File > R Script** and pane 1 will appear. If a script is already present, it will open the new script in a new tab in the pane.
+
+<!-- ![Annotated RStudio GUI: New script](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/Rstudio newscript.png) -->
+
+<!-- ![Annotated RStudio GUI: New script](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/Rstudio newscript.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI: New script"}
+knitr::include_graphics("figures/1_images/Rstudio newscript.png")
+```
+
+To run the code from a script, highlight the desired line(s) to run and click **Run** on the script pane at the top right. Alternatively, keyboard short cuts can be used to run the code, press **Control + Enter** on Windows or **Command + Enter** on Mac. If code is run without highlighting any lines, only the current line (where the cursor is) will be run.
+
+To open an existing R script, use the main toolbar and follow **File > Open File** then navigate to the desired R script in the files pop-up window. 
+
+<!-- ![Annotated RStudio GUI: Open script](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/Rstudio openscript.png) -->
+
+<!-- ![Annotated RStudio GUI: Open script](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/Rstudio openscript.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI: Open script"}
+knitr::include_graphics("figures/1_images/Rstudio openscript.png")
+```
+
+To save an R script, use the main toolbar and follow **File > Save As** and navigate to the desired location in the pop-up file directory window and name the script. To save updated versions of the script, use the main toolbar and follow **File > Save** 
+
+<!-- ![Annotated RStudio GUI - Save script](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/Rstudio savescript.png) -->
+
+<!-- ![Annotated RStudio GUI - Save script](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/Rstudio savescript.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI: Save script"}
+knitr::include_graphics("figures/1_images/Rstudio savescript.png")
+```
+
+### Getting and setting the working directory
+
+The working directory is the folder on the computer where RStudio will access data and files from and/or save data to without any extra commands or steps. To avoid data and files being saved in an unknown location as well as to allow RStudio to access the data, it is important to know the working directory of your R session.
+
+To check the location of the working directory, use the function `getwd()`. In the console, the working directory file path name will be printed. 
+
+To set the working directory, you use the function `setwd(“location of your data folder”)` and include the file path name in the parentheses. 
+
+Alternatively, the main toolbar menus can be used to set the working directory following the steps below, also demonstrated in the figure below:
+
+  1. Click on "Session"
+  2. Navigate to "Set Working Directory"
+  3. Navigate to "Choose Working Directory"
+  4. Select in your computer where you would like your R session files saved 
+
+<!-- ![Annotated RStudio GUI - Set working directory](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio setwd.png) -->
+
+<!-- ![Annotated RStudio GUI - Set working directory](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio setwd.png) -->
+
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI: Set working directory"}
+knitr::include_graphics("figures/1_images/RStudio setwd.png")
+```
+
+### Creating, opening and saving R projects
+
+When working with files in R, it is imperative that the working directory is set at the start of each script in order for R to be able to access the files. However, when working on different computers or working collaboratively with others, the file path will change leading to reproducibility issues. 
+
+An R Project is essentially a reproducible working directory, preventing the need to use the function `setwd()` in each script through having all of your work in a self-contained folder with a designated `.Rproj` file which can be opened and run seamlessly by anybody who has access. 
+
+To create an R project, use the main toolbar and follow the path  **File > New Project... > New Directory > New Project**, give your directory a name and then click on **Create Project**. 
+
+<!-- ![Annotated RStudio GUI - Create project](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/create proj1.png) -->
+
+<!-- ![Annotated RStudio GUI - Create project](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/create proj1.png) -->
+
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI: Create project"}
+knitr::include_graphics("figures/1_images/create proj1.png")
+```
+
+<!-- ![Annotated RStudio GUI - Create project](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/create proj2.png) -->
+
+<!-- ![Annotated RStudio GUI - Create project](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/create proj2.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI: Create project"}
+knitr::include_graphics("figures/1_images/create proj2.png")
+```
+To open an existing R project, use the main toolbar and follow the path **File > Open Project... >** and select the desired project from the pop-up file directory window. 
+
+<!-- ![Annotated RStudio GUI - Open project](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/open proj.png) -->
+
+<!-- ![Annotated RStudio GUI - Open project](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/open proj.png) -->
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI: Open project"}
+knitr::include_graphics("figures/1_images/open proj.png")
+```
+
+To save an R project, the same method is used as for R scripts, using the main toolbar and following the path **File > Save As** and navigate to the desired location in the pop-up file directory window and name the project To save updated versions of the project, use the main toolbar and follow **File > Save**.
+
+### Getting help in R
+
+There are inbuilt facilities which provide information to help about any specific command or package in R. 
+
+The first method to get help in R is to run lines of code. For example, to get information about '`mean`', run any of the following 
+
+  - `help(mean)`: displays help in pane 3
+  - `?mean`: displays help in pane 3
+  - `help.start(mean)`: displays help as html
+  - `??mean`: displays help as html
+  
+Alternatively, use the toolbar of pane 3, navigate to the **Help** tab and use the search bar to look for the command.
+
+<!-- ![Annotated RStudio GUI - Help files](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio help.png) -->
+
+<!-- ![Annotated RStudio GUI - Help files](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio help.png) -->
+
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI: Help files"}
+knitr::include_graphics("figures/1_images/RStudio help.png")
+```
+
+The help files for R functions and commands contain information on the following sections:
+
+  - Description: A brief description on what the function(s) does and its usage
+  - Usage: How to use the function(s) with what arguments need to be supplied and any default values of arguments
+  - Arguments: Explanation on what the arguments are
+  - Details: More in-depth information on the background of the function(s)
+  - Value: Values that the function(s) returns
+  - Source: What the function(s) is based on
+  - References: Bibliography used for creating function(s)
+  - See Also: Links to similar functions that may be of use
+  - Examples: Examples on how to use the function(s)
+
+If the information provided in the help files is insufficient, [Stack Overflow](https://stackoverflow.com/) is a great website where individuals can ask and answer questions. There are over 300,000 questions already asked on there so it is likely that the answer to your question has already been asked. 
+
+For some aspects of R, there are 'Cheat Sheets' available, posters which provide the essential, key information on the topic. To access this help, use the main toolbar and follow **Help > Cheat Sheets > ** and select the file which matches your needs best. If the cheat sheet you require is not provided in the list, more options can be found by selecting **Browse Cheat Sheets...**.
+
+<!-- ![Annotated RStudio GUI - Help files](/Volumes/worldpop/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio cheatsheets.png) -->
+
+<!-- ![Annotated RStudio GUI - Help files](/Projects/WP000008_UNFPA_THA_Phase2/Working/Pop_Modelling_Training_Manual/Module1/images/RStudio cheatsheets.png) -->
+
+```{r, echo=FALSE, fig.align='center', out.width="80%", fig.cap = "Annotated RStudio GUI: Help files"}
+knitr::include_graphics("figures/1_images/RStudio cheatsheets.png")
+```
+
+### R coding best practices
+
+#### Commenting
+Including comments describing the code is good practice as it ensures that the code can be understood by both yourself in the future and others that the code is shared with. Comments can be added into the code by using the hash key, `#`, and stops the line being commented from running with the rest of the code.
+
+```{r adding comments}
+#adding a comment with a hash tag ensures that yourself and others can understand
+#the code quickly if returned to after some time.
+X <- c(2, 3, 5, 7, 11, 13, 17, 19, 23, 29) #X contains prime numbers in order
+```
+
+Additionally, the hash can be used to create sections within scripts. To create a section, use at least 3 in a row without spaces in between (`###`). This is good practice for keeping your scripts organised.
+
+#### Naming conventions
+It is not only important to ensure anything in your code that is assigned a name is clear and identifiable, but also that the name chosen does not conflict with something that already has assignment by R (for example, `c` is already assigned to a function in R, used for combining values into vectors or lists). Some names are reserved by R, such as the names of existing functions. These names should not be used as your code will overwrite the existing code and the functions/values will no longer work.
+
+To ensure that you are not assigning names that are not already taken, you can run the desired name and if it returns any code that you did not write, then R has already reserved that name. However, if it returns an error message, then the name is available for you to use.
+
+```{r naming conventions, error = TRUE}
+#check if the name "abs" is available 
+abs #"abs" is not available as it returns code for an existing function
+#check if "absolute" is available instead
+absolute #returns error message, "absolute" is free to use
+
+#"c" is also not available 
+c
+#"pi" is also not available 
+pi
+```
+
+#### Spacing
+R ignores spaces provided that they are not in the middle of a command name or operator. As a result, R treats the following as identical lines of code.
+```{r spaces}
+x<-1+2+3
+x <- 1+2+3
+x <- 1 + 2 + 3
+x    <-    1   +     2     +   3
+```
+
+However, if you include the space in the middle of the operator, R will not return the result, but `FALSE` instead.
+```{r spaces not working}
+x < - 1 + 2 + 3
+```
+
+R also ignores indentations at the start of a line, so spaces at the start of a line of code will appear the same as if there are no spaces. This is different to Python. 
+
+#### Punctuation
+If you are putting different R commands on different lines, then there is no need for punctuation. However, if you are putting multiple R commands on the same line, then each command needs to be separated by a semicolon.
+
+```{r multiple commands}
+#separate each R command with a semicolon 
+2*3; 4+5; 1-6
+```
+
+## Data types and key components
+
+There are six common data types:
+
+  1. Boolean: logical statements e.g. `TRUE`, `FALSE`, `T`, `F`
+  2. Character: letters or non-numbers e.g. "alphabets", "names", ...
+  3. Factor: non-numbers (characters) with levels, both ordered and unordered, with a predefined, finite number of values e.g. marital status field only allowing the options of: "single", "separated", "married", "widowed/widower" or "divorced"
+  4. Integer: whole numbers e.g. 1L, 2L, 100L, ...
+  5. Numeric: 1 and any number with decimals e.g. 1, 1.5, 8.9, ...
+  6. Complex: complex numbers with real and imaginary parts e.g. 3+4i, 1-I, ...
+  
+To check the data type in R, use the `class()` function. 
+
+There are three key components in R:
+  
+  1. Objects: used to store values
+  2. Functions: allow for manipulations on objects to be performed
+  3. Operators: used to create interactions between objects or between an object and a function
+
+### Basic operations in R
+#### Arithmetic operators
+
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++------------+------------------+
++------------+------------------+
+| Operator   | Description      |
++============+==================+
+| `+`        | addition         | 
+|            |                  | 
++------------+------------------+
+| `-`        | subtraction      | 
+|            |                  |
++------------+------------------+
+| `*`        | multiplication   | 
+|            |                  |
++------------+------------------+
+| `/`        | division         | 
+|            |                  |
++------------+------------------+
+|`^` or `**` | exponentiation   | 
+|            |                  |
++------------+------------------+
+| `%%`       | modulus of a     | 
+|            | number           |
++------------+------------------+
+| `%/%`      | integer division | 
+|            |                  |
++------------+------------------+
+| `%*%`      | matrix           | 
+|            | multiplication   |
++------------+------------------+
++------------+------------------+
+</div>
+
+#### Logical operators
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++------------+------------------+
++------------+------------------+
+| Operator   | Description      |
++============+==================+
+| `<`        | less than        | 
+|            |                  | 
++------------+------------------+
+| `<=`       | less than or     | 
+|            | equal to         |
++------------+------------------+
+| `>`        | greater than     | 
+|            |                  |
++------------+------------------+
+| `>=`       | greater than or  | 
+|            | equal to         |
++------------+------------------+
+| `==`       | exactly equal to | 
+|            |                  |
++------------+------------------+
+| `!=`       | not equal to     | 
+|            |                  |
++------------+------------------+
+| `!x`       | not x            | 
+|            |                  |
++------------+------------------+
+| `&`        | and              | 
+|            |                  |
++------------+------------------+
+| `|`        | or               | 
+|            |                  |
++------------+------------------+
+| `isTRUE(x)`| test if X is TRUE| 
+|            |                  |
++------------+------------------+
++------------+------------------+
+</div>
+
+#### Other operators
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++------------+------------------+
++------------+------------------+
+| Operator   | Description      |
++============+==================+
+| `#`        | commenting (do   | 
+|            | not run line)    |
++------------+------------------+
+| `$`        | extract value    | 
+|            |                  |
++------------+------------------+
+| `<-`       | assign value to  | 
+|            | object           |
++------------+------------------+
+| `=`        | equals or assign | 
+|            | value to object  |
++------------+------------------+
+| `~`        | assign variable  | 
+|            | to another       |
++------------+------------------+
++------------+------------------+
+</div>
+
+## Key functions in R
+
+Functions are always indicated with a name followed by `()`, and anything inside the parentheses is an argument, or option that is passed. Some arguments have a default value, meaning that if no value for that argument is given in the code, the default value will be used.
+
+The following table contains some of the more commonly used functions that are available in base R, with a description of what they are used for. Examples on how to use many of these functions are seen later in the module. 
+
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
++-------------+------------------+
++-------------+------------------+
+| Function    | Description      |
++=============+==================+
+| `log()`     | logarithm        | 
+|             |                  | 
++-------------+------------------+
+| `exp()`     | exponential      | 
+|             |                  |
++-------------+------------------+
+| `abs()`     | absolute value   | 
+|             |                  |
++-------------+------------------+
+| `seq()`     | sequence of      | 
+|             | values           |
++-------------+------------------+
+| `sqrt()`    | square root      | 
+|             |                  |
++-------------+------------------+
+| `sd()`      | standard         | 
+|             | deviation        |
++-------------+------------------+
+| `var()`     | variance         | 
+|             |                  |
++-------------+------------------+
+| `median()`  | median           | 
+|             |                  |
++-------------+------------------+
+| `mean()`    | mean             | 
+|             |                  |
++-------------+------------------+
+| `quantile()`| quantiles        | 
+|             |                  |
++-------------+------------------+
+| `sum()`     | add all elements | 
+|             | together         |
++-------------+------------------+
+| `diff()`    | difference       | 
+|             |                  |
++-------------+------------------+
+| `min()`     | minimum value/   | 
+|             | element          |
++-------------+------------------+
+| `max()`     | maximum value/   | 
+|             | element          |
++-------------+------------------+
+| `range()`   | gives smallest & | 
+|             | largest numbers  |
++-------------+------------------+
+| `table()`   | tabulation       | 
+|             |                  |
++-------------+------------------+
+| `length()`  | length of the    | 
+|             | vector           |
++-------------+------------------+
+| `summary()` | summarise the    | 
+|             | entire vector    |
++-------------+------------------+
+| `c()`       | combine values   | 
+|             | into list or     |
+|             | vector           |
++-------------+------------------+
+| `cbind()`   | combine vectors, | 
+|             | matrices or data |
+|             | frame by column  |
++-------------+------------------+
+| `rbind()`   | combine vectors, | 
+|             | matrices or data |
+|             | frame by row     |
++-------------+------------------+
+| `which()`   | gives the TRUE   | 
+|             | indices of a     |
+|             | logical object   |
++-------------+------------------+
+| `round()`   | rounds the input | 
+|             | to the specified |
+|             | accuracy         |
++-------------+------------------+
+| `paste() `  | link vectors     |
+|             | after converting |
+|             | to characters    |
++-------------+------------------+
+| `paste0()`  | pastes everything|
+|             | as given         |
++-------------+------------------+
+| `cat()`     | converts         |
+|             | arguments to     |
+|             | character strings|
++-------------+------------------+
+| `print()`   | outputs  the     |
+|             | object(s) given  |
++-------------+------------------+ 
++-------------+------------------+ 
+</div>
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** Which of the following will give a different output from the other 3?
+  Hint: Look at the help file for the `log()` function.
+  
+  1. `log(x=6, base=4)`
+  2. `log(4, 6)`
+  3. `log(base=4, x=6)`
+  4. `log(6, 4)`
+</div>
+
+
+
+## Data structures
+
+There are five data structures:
+
+  1. Vector: one dimensional where all elements must be of the same type, either numeric, character or factor
+  2. Matrix: two dimensional where data elements of the same data type are stored in rows and columns
+  3. Array: a data structure that contains multiple matrices where the elements are arranged sequentially
+  4. Data frame: two dimensional and can contain vectors of different data structures and can combine different variables
+  5. List: a flexible data structure that can contain all other data structures
+
+
+### Vectors
+
+A vector can be a sequence of numbers, characters, logical, complex or a combination, and can be created in numerous ways. 
+
+One way of creating a vector is to use the function `c()` which combines the values input as arguments into a vector, providing that each value is separated with a comma. 
+
+```{r c() numeric vector}
+#vector which contains the numbers 1, 2, 5, 3 and 7 in that order
+c(1,2,5,3,7) 
+```
+
+If creating a vector that is a string of characters, it is imperative that each character is separated is enclosed by either `'` or `"`. 
+
+```{r c() character vector}
+Regions <- c("Northern", "Northeastern",
+             "Western", "Central", "Eastern",
+             "Southern")
+Regions
+```
+
+A vector can be created to contain a combination of both numbers as strings. 
+```{r mixed vector}
+mixed_vec <- c(4, "oranges", 5, "apples", 12, "carrots")
+mixed_vec
+```
+
+Factors are related to vectors, and in R, factors are stored as integer vectors, where there are a finite number of categories and each level (or label) is a character. These can be created with the `factor()` function, inputting the vector you wish to convert to a factor as the argument.
+
+```{r factor vector}
+#create factor for marital status
+marital_status <- factor(c("single", "separated", "married", "widowed/widower",
+                           "divorced", "married", "widowed/widower", "single",
+                           "single", "married"))
+
+#transform Regions to factor
+Regions_fac <- factor(Regions)
+```
+To access the levels of the factor, you can either just print the variable itself or use the `levels()` function, inputting the factor variable as the argument.
+```{r factor levels}
+#marital status levels
+marital_status
+
+#Regions levels
+levels(Regions_fac)
+```
+
+The structure of the factor can be accessed with the `str()` function, where the output shows the different levels and indicates which level each of the elements of the variable are.
+```{r str factor}
+#structure of marital status
+str(marital_status)
+```
+Note: the `data.frame()` function explored later in this module automatically converts character vectors into factors if the argument `stringsAsFactors=FALSE` is not passed.
+
+Another way to create a vector is to use a colon `:` which generates a regular sequence. `a:b` creates a sequence of numbers from a to b in increments/steps of either +1 or -1.
+```{r colon sequences}
+#vector of a sequence from 1 to 10, going up in increments of 1
+1:10 
+#vector of a sequence from 20 to 10, going down in increments of 1 
+20:10 
+
+#'a' and 'b' do not need to be integers:
+#vector of a sequence from 5.5 to 15.5, going up in increments of 1
+5.5:15.5 
+```
+Also to create a vector, the function `seq()` in R can be used, with the following arguments:
+  
+  - `from`: the starting value (default=1)
+  - `to`: the end value (default=1)
+  - `by`: a numeric value indicating the size of each increment/step (default= (to-from)/(length.out-1))
+  - `length.out`: a non-negative numeric value indicating the desired length of the sequence
+  
+```{r seq sequences}
+#vector of a sequence from 1 to 50, going up in increments of 2
+seq(from = 1, to = 51, by = 2) 
+#vector of a sequence from 1 to 50, with the sequence of length 20
+seq(from = 1, to = 50, length.out = 20) 
+```
+
+
+The function `rep()` which replicates the value(s) input can also be used to create a vector in R, using the following arguments:
+
+  - `x`: a number, vector or a factor which you want to replicate
+  - `times`: a non-negative integer or integer-valued vector giving the number of times to repeat `x`
+  - `each`: a non-negative integer giving the number of times to repeat each element in `x` in order/consecutively
+  - `length.out`: a non-negative integer to give the value of the desired length of the vector
+  
+```{r rep sequences}
+#vector of 1s repeated 10 times
+rep(x = 1, times = 10) 
+#vector of a sequence from 1 to 10, going up in increments of 1, repeated twice
+rep(x = 1:10, times = 2) 
+#vector of a sequence from 1 to 10, going up in increments of 1, where each 
+#element is repeated twice consecutively
+rep(x = 1:10, each = 2) 
+#vector of a sequence from 1 to 10, going up in increments of 1, repeated until
+#the length of the vector is 15
+rep(x = 1:10, length.out = 15) 
+```
+  
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** Create a vector that goes from 5 to 25 by increments of 1.
+</div>
+
+A combination of the different vector construction methods can be used at once, for example, the combine function `c()` can be used within the other functions and can also be used to combine existing vectors.
+```{r vector combinations}
+vec1 <- seq(from = 10, to = 100, by = 10) 
+vec2 <- rep(x = 15:10, each = 2)
+#combine vectors vec1 and vec2
+vec3 <- c(vec1, vec2) 
+vec3
+```
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** Create another vector that goes from 5 to 25 by increments of 1, but using a different method. Call this vector `V1`
+</div>
+
+
+Elements from vectors can be indexed (selected) using square brackets `[]`.
+
+```{r indexing vectors}
+#extract the first (1st) element from vec1
+vec1[1] 
+#extract the first (1st), fourth (4th) and sixth (6th) element from vec2
+vec2[c(1, 4, 6)] 
+#show all elements of vec2 except the 4th and 5th elements
+vec2[-c(4, 5)]
+#element-wise calculations: multiply the third (3rd) element from vec3 by the 
+#fourth (4th) element of vec2
+vec3[3]*vec2[4] 
+```
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** Extract the 5th element of `V1`.
+</div>
+
+
+Through indexing elements from vectors, elements within vectors can be updated.
+
+```{r updating vectors}
+mixed_vec
+#update the first (1st) element of mixed_vec from 4 to 6
+mixed_vec[1] <- 6 
+#update the second (2nd) and fourth (4th) elements of mixed_vec from oranges 
+#and apples to lemons and bananas
+mixed_vec[c(2, 4)] <- c("lemons", "bananas") 
+mixed_vec
+```
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** Remove the 7th element from the vector `V1` and call this new vector `V2`.
+</div>
+
+Vectors can be summarised, inputting the vector into functions different functions.
+
+```{r summarising vectors}
+#find the length of vec1
+length(vec1) 
+#sum the elements of vec2
+sum(vec2) 
+#find the mean of the elements in vec3
+mean(vec3)
+
+#create a vector
+vec4 <- c(12, 3, -1, 239, 84 ) 
+#find the mean of the elements in vec4
+mean(vec4) 
+#round the mean of vec4 to the nearest whole number
+round(x = mean(vec4), digits = 0) 
+```
+  
+Logical operators can be used with vectors to return TRUE or FALSE for each element depending on the conditions given.
+```{r logical operators vectors}
+#return TRUE for elements which are both greater than 10 and less than 100, and 
+#FALSE if both conditions are not met
+vec4 > 10 & vec4 < 100 
+```
+
+Indexing used with logical vectors returns the elements in the vector which meet the conditions given. 
+
+
+```{r logical operators vectors 2}
+
+#both conditions must be true, greater than 10 AND less than 100
+vec4[vec4 > 10 & vec4 < 100] 
+#either condition can be true, greater than 100 OR less than 0
+vec4[vec4 > 100 | vec4 < 0] 
+```
+
+The function `which()` can be used in conjunction with logical operators to return the index/indices of the element(s) which meet the conditions given, rather than the logical statements or values. 
+
+```{r which vectors}
+#gives the indices of the elements in vec4 which are greater than 10
+which(vec4 > 10) 
+```
+
+Extensions of the `which()` function are `which.min()` and `which.max()` which respectively give the indices of the elements with the minimum value and the maximum value.
+
+```{r which min and max}
+#gives index of the element in vec4 which has the smallest value
+which.min(vec4) 
+#gives index of the element in vec4 which has the largest value
+which.max(vec4) 
+```
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** How many elements in your vector, `V1`, are greater than 11?
+</div>
+
+
+### Matrices
+
+Used for data storage and often faster to work with than a data frame. 
+
+Create a matrix using the function `matrix()` in R, with the following arguments:
+
+  - `data`: the data that you want to include in the matrix
+  - `nrow`: the number of rows you want the matrix to have
+  - `ncol`: the number of columns you want the matrix to have
+  - `byrow`: logical, if `FALSE` (the default), the matrix fills by columns, if `TRUE`, the matrix fills by row
+  - `dimnames`: (optional, `NULL` by default) input a `list` of length 2, containing the row and column names respectively
+
+```{r creating matrices}
+#example of creating a 4x4 matrix:
+mat <- matrix(data = seq(1, 16), nrow = 4, ncol = 4, byrow = TRUE)
+mat
+```
+
+```{r combining matrices}
+#combine two matrices by column:
+matrix1 <- matrix(data = 1, nrow = 2, ncol = 2)
+matrix2 <- matrix(data = 2, nrow = 2, ncol = 2)
+
+#returns a 2x4 matrix
+cbind(matrix1, matrix2) 
+```
+  
+Matrices can also be created through combining multiple vectors.
+```{r matrices from vectors}
+#create two vectors of the same length
+vec_mat_a <- 1:10
+vec_mat_b <- 11:20
+#use rbind to create a 2x10 matrix
+vec_mat1 <- rbind(vec_mat_a, vec_mat_b)
+vec_mat1
+#use cbind to create a 10x2 matrix
+vec_mat2 <- cbind(vec_mat_a, vec_mat_b)
+vec_mat2
+```
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** Create a matrix that contains the sequence of numbers from 1 to 16, going up in increments of 1. Let the matrix have 4 rows and have the matrix elements fill by row. Call this matrix `M1`.
+</div>
+
+
+To check the dimensions of a matrix, you can use the function `dim()`.
+
+```{r dim matrix}
+dim(vec_mat1)
+dim(vec_mat2)
+```
+
+Using square brackets `[,]` you can take subsets of matrices, the first element in the square bracket corresponds to the row indexing and the second element corresponds to the column indexing, `[row, column]`. 
+
+```{r matrix indexing 1}
+# a vector of all the first row elements of the matrix 
+mat[1,] 
+# a vector of all the first column elements of the matrix 
+mat[,1] 
+```
+You can subset multiple rows and multiple columns by indexing using vectors.
+```{r matrix indexing 2}
+#a matrix containing the first and second rows of the matrix
+mat[c(1,2),] 
+#a matrix containing the third and fourth columns of the matrix
+mat[,c(3,4)] 
+```
+Both rows and columns can be indexed for selecting either a single element from a matrix or indexing a selection of rows and columns only. 
+
+```{r matrix indexing 3}
+#a single element from the 4th row and the 4th column of the matrix
+mat[4,4] 
+#a matrix containing elements present in the first and second rows AND the 
+#third and fourth columns
+mat[c(1,2), c(3,4)] 
+```
+
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** Extract the 3rd and 4th rows and the 1st and 2nd columns of your matrix, `M1`. Call this matrix `M2`.
+</div>
+
+
+As with vectors, through indexing,  elements of the matrix can be updated. 
+
+```{r updating matrix elements}
+citrus_mat <- matrix(data = c("oranges", "lemons", "limes", "apples"), 
+                     nrow = 2, ncol = 2, byrow = TRUE)
+citrus_mat
+#update the element in the second (2nd) row and the second (2nd) column to also
+#be a citrus fruit
+citrus_mat[2,2] <- "pomelo" 
+citrus_mat
+
+```
+
+
+The functions `rowSums()` and `colSums()` are used to find the row sums and column sums respectively, returning a vector of the values. 
+```{r row and col sums}
+#returns a vector of the row sums
+rowSums(mat) 
+#returns a vector of the column sums
+colSums(mat) 
+```
+
+
+The `apply()` function can be used to obtain row or column summaries of a data matrix, with the following arguments:
+
+  - `X`: the matrix you wish to summarise
+  - `MARGIN`: a vector that indicates which subscripts to apply the function to. For example, `1` indicates all rows, `2` indicates all columns and `c(1,2)` indicates rows and columns
+  - `FUN`: the function that is to be applied to the data
+  - `simplify`: logical, if `TRUE` (the default), results will be simplified if possible
+  
+```{r apply matrices}
+#calculates the column sums of the matrix
+apply(mat, 2, sum) 
+#calculates the row means of the matrix
+apply(mat, 1, mean) 
+```
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **Exercise:** Find the row sums of the matrix `M2`.
+</div>
+
+To multiply two matrices together, the operator `%*%` can be used, providing that the two matrices conform (the number of columns of one matrix must be equal to the number of rows on the other one).
+
+```{r matrix multiplication}
+#multiply the two 2x2 matrices together
+matrix1%*%matrix2 
+```
+
+
+
+### Arrays
+
+An array contains one or more matrices. 
+
+Create an array using the function `array()` in R, with the following arguments:
+
+  - `data`: a vector containing data to fill the array
+  - `dim`: an integer vector of length one or more giving the dimensions of the array
+  - `dimnames`: a `list` with one component for each dimension of the array
+  
+```{r creating arrays}
+#an array of 3, 3x3 matrices
+array1 <- array(c(round(seq(1,36, length=9)), 
+             round(seq(10,30, length=9)), 
+             round(seq(40,200, length=9))),
+           dim=c(nrow=3,ncol=3, 3))
+```
+
+Arrays can be subset in the same way as matrices, using square brackets, except with an extra comma to indicate which of the matrices in the array is to be indexed.
+```{r subset array}
+#subsets the first matrix in the array
+array1[,,1] 
+```
+
+### Data frames
+
+A data frame is a two-dimensional, tabular data type which can store multiple data types in R. It is also the most widely used data format as it can combine different types of variables. 
+
+You can create a data frame by using the function `data.frame()`, combining collections of variables. 
+
+For an example, a data frame can be constructed by creating some dummy/fake data:
+```{r creating dummy data}
+##--Create some dummy or fake data
+#paste0 function pastes everything together, returns region1, ..., region6
+regions = paste0("region", 1:6) 
+
+tot_pop <- c(1000000, 920000, 2050000, 3100000, 1535000, 743000) 
+tot_hh <- c(200505, 124000, 882012,1051200, 452000, 79000) 
+male_prop <- c(0.55, 0.49, 0.45, 0.58, 0.56, 0.55)
+male_pop <- tot_pop*male_prop
+female_pop <- tot_pop - male_pop
+```
+and then using the function `data.frame()`, using the variables created above as the arguments:
+```{r creating data frame}
+data_frame1 <- data.frame(Region = regions,Tot_pop = tot_pop,Tot_hh = tot_hh, 
+                          Male_pop = male_pop, Female_pop = female_pop)
+data_frame1
+```
+
+### List
+
+A list is a vector where each element itself is an object. Informally, it can be described as a 'bag' that contains data of different forms, types and dimensions, including other lists. 
+
+Create a list using the function `list()` in R, for example:
+```{r creating lists}
+#create a list using the variables, matrices and arrays from above
+list1 <- list(Admin = Regions, matrix = mat, array = array1) 
+list1
+```
+Data can be retrieved from a list using the dollar sign `$`, and subset the retrieved data in the same way as without lists.
+```{r retreuving data from lists}
+list1$Admin
+list1$array1[,,2]
+```
+
+
+Logical operators can be used to subset data within a list.
+
+```{r logical operators lists}
+#returns TRUE for element(s) which are greater than 20 and FALSE otherwise
+list1$vector>20 
+#returns TRUE for element(s) which are exactly equal to 10 and FALSE otherwise 
+list1$matrix==10 
+```
+
+Using the dollar sign, `$`, new variables can be added to a list. 
+```{r new variables in lists}
+list1$vector <- vec3
+list1
+```
+
+
+Lists can be also be created to demonstrate different levels, for example, age ranges.
+```{r creating lists 2}
+Age  <- list(Infant = "0-59 months",
+            Child = "5 - 12 years",
+            Teen = "13 - 17 years", 
+            Adult = "18+")
+Age
+```
+Lists can be 'flattened' using the function `unlist()`, which simplifies the list into a vector which contains the same elements.
+```{r unlist }
+Age_unlist <- unlist(Age)
+Age_unlist
+```
+
+## End of module exercises
+
+<div
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **1.**  Use R to find the value of the square root of 25. ($\sqrt(25)$) 
+  Hint: Look at the help file for the function `sqrt()`.
+</div>
+
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **2.**  Use R to find the value of the exponential of $6\times 14 -3$. ($\exp(6\times 14-3)$)
+</div>
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **3.**  Use R to find the value of the absolute value of $7\times 3 - 4\times 9 - 30$. ($|7\times 3 - 4\times 9 - 30|$)
+</div>
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **4.** Use R to find the value of $\frac{73-42}{3}+2\times\left(\frac{36}{4}-17\right)$. Give your answer to 2 decimal places.
+</div>
+
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **5.** How many elements does the following vector have?
+  
+  `seq(from = 0, to = 100, by = 3.14)`
+  
+</div>
+
+<div 
+  class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;"> 
+  **6.** Look at the help file for the function `rnorm()` and use this function to generate 100 random numbers with mean 10 and standard deviation 5.
+  
+</div>
+
+## Useful resources
+
+  - [Stack Overflow](https://stackoverflow.com)
+  - [The Comprehensive R Archive Network (CRAN)](https://cran.r-project.org)
+  - [R-bloggers](https://www.r-bloggers.com)
+  - [Datacamp](https://www.datacamp.com)
+  - [W3Schools](https://www.w3schools.com/r/)

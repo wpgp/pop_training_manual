@@ -1,0 +1,32 @@
+h1:bayesian-hierarchical-population-modelling-in-r Bayesian Hierarchical Population Modelling in R
+h2:data-sources Data sources
+h3:population-data Population data
+h3:settlement-data Settlement data
+h3:other-sources Other sources
+h2:data-cleaning-and-covariates-extraction Data cleaning and covariates extraction
+h3:extracting-continuous-rasters Extracting continuous rasters
+h3:extracting-categorical-rasters Extracting categorical rasters
+h3:extracting-building-count Extracting building count
+h3:exracting-building-total-area Exracting building total area
+h3:adding-admin-area-names-to-the-data Adding admin area names to the data
+h2:exploratory-analysis Exploratory analysis
+h3:basic-visualisation Basic visualisation
+h3:geospatial-visualisation Geospatial visualisation
+h3:checking-for-nas Checking for NAs
+h3:checking-for-minimum-and-maximum-values Checking for minimum and maximum values
+h3:checking-the-distribution-of-categorical-variables Checking the distribution of categorical variables
+h2:model-set-up Model set-up
+h3:simple-linear-regression Simple linear regression
+h3:multiple-regression Multiple regression
+h3:generalised-linear-regression Generalised linear regression
+h3:fitting-fixed-effects-models-in-r-inla Fitting fixed effects models in 
+h3:fitting-bayesian-hierarchical-mixed-effects-models-in-r-inla Fitting Bayesian hierarchical mixed effects models in 
+h2:stan-mcmc-approach STAN (MCMC) approach
+h3:metropolis-hastings-algorithm Metropolis-Hastings algorithm
+h2:inla-and-inla-spde-approach INLA and INLA-SPDE approach
+h3:mesh-construction Mesh construction
+h3:building-the-spde Building the SPDE
+h3:projection-matrix Projection matrix
+h3:data-location-indexing Data location indexing
+h3:projection-data Projection data
+

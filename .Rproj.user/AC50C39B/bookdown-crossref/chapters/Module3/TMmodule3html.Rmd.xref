@@ -1,0 +1,42 @@
+h1:working-with-spatial-data-in-r Working with Spatial Data in R
+h2:spatial-data-overview-and-types Spatial data: Overview and types
+h3:points-data Points data
+h3:areal-data Areal data
+h3:vector-data Vector data
+h4:points Points
+fig:points Points representing named places in pink
+h4:polylines Polylines
+fig:lines Polylines representing road networks in white
+h4:polygons Polygons
+fig:polygon Polygon representing settlement boundaries in white outlines
+h3:raster-data Raster data
+fig:raster Raster showing the average population in 100m by 100m grid cells
+fig:rastercell Grid cell in continuous raster
+h3:sources-of-spatial-data Sources of spatial data
+h3:geospatial-covariates Geospatial covariates
+h2:basic-gis-concepts Basic GIS concepts
+h3:geoprocessing Geoprocessing
+fig:vectortoraster Deriving raster data from vector
+fig:forestloss Cell proportions from binary data
+h2:using-gis-in-r Using GIS in R
+h3:importing-spatial-data-in-r Importing spatial data in R
+h3:handling-spatial-data-in-r Handling spatial data in R
+h4:converting-between-vectors-and-rasters-in-r Converting between vectors and rasters in R
+h4:checking-the-resolution-and-number-of-cells Checking the resolution and number of cells
+h4:exporting-spatial-data-in-various-formats Exporting spatial data in various formats
+h2:visualisation-of-spatial-data Visualisation of spatial data
+h3:static-maps Static maps
+h5:visualisation-with-base-r Visualisation with  R
+h5:visualisation-with-tmap Visualisation with 
+h2:interactive-maps Interactive maps
+h3:visualisation-with-tmap-1 Visualisation with 
+h3:visualisation-with-leaflet Visualisation with 
+h3:visualisation-with-mapview Visualisation with 
+h2:basic-geoprocessing Basic geoprocessing
+h3:coordinate-reference-systems-crs Coordinate reference systems (CRS)
+h3:converting-between-latlong-and-the-universal-transverse-mercator-utm-coordinate-system Converting between Lat/Long and the Universal Transverse Mercator (UTM) coordinate system
+h3:subsetting-clipping-and-masking Subsetting, clipping and masking
+h3:buffer-analysis Buffer analysis
+h2:end-of-module-exercises End of module exercises
+h2:useful-resources Useful resources
+

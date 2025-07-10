@@ -1,0 +1,417 @@
+
+```{r setup_solutions, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Exercise Solutions by Module
+
+
+## Module 1
+
+### General exercises
+
+**Exercise:** Which of the following will give a different output from the other 3? Hint: Look at the help file for the `log()` function.
+
+  1. `log(x=6, base=4)`
+  
+  2. `log(4, 6)`
+  
+  3. `log(base=4, x=6)`
+  
+  4. `log(6, 4)`
+
+*Solution:*
+`?log`, 2. `log(4,6)`
+
+**Exercise:** Create a vector that goes from 5 to 25 by increments of 1.
+
+*Solution:* `5:25` (or some variation)
+
+**Exercise:** Create another vector that goes from 5 to 25 by increments of 1, but using a different method. Call this vector `V1`.
+
+*Solution:* `V1 <- seq(5,25,by=1)` (or some variation)
+
+**Exercise:** Extract the 5th element of `V1`.
+
+*Solution:* `V1[5]`
+
+**Exercise:** Remove the 7th element from the vector `V1` and call this new vector `V2`.
+
+*Solution:* `V2 <- V1[-7]`
+
+**Exercise:** How many elements in your vector, `V1`, are greater than 11?
+
+*Solution:* `sum(V1>11)` = 14
+
+**Exercise:** Create a matrix that contains the sequence of numbers from 1 to 16, going up in increments of 1. Let the matrix have 4 rows and have the matrix elements fill by row. Call this matrix `M1`.
+
+*Solution:* `M1 <- matrix(data=1:16, nrow=4, byrow=T)`
+
+**Exercise:** Extract the 3rd and 4th rows and the 1st and 2nd columns of your matrix, `M1`. Call this matrix `M2`.
+
+*Solution:* `M2 <- M1[c(3,4), c(1,2)]`
+
+**Exercise:** Find the row sums of the matrix `M2`.
+
+*Solution:* `apply(M2, 1, sum)` (or `rowSums(M2)`)
+
+
+### End of module exercises
+
+**Exercise 1:** Use R to find the value of the square root of 25. ($\sqrt(25)$)
+Hint: Look at the help file for the function `sqrt()`. 
+
+*Solution 1:* `sqrt(25)`
+
+**Exercise 2:** Use R to find the value of the exponential of $6\times 14 -3$. ($\exp(6\times 14-3)$)
+
+*Solution 2:* `exp(6*4-3)`
+
+**Exercise 3:** Use R to find the value of the absolute value of $7\times 3 - 4\times 9 - 30$. ($|7 \times 3 - 4 \times 9 - 30|$)
+
+*Solution 3:* `abs(7*3-4*9-30)`
+
+**Exercise 4:**  Use R to find the value of $\frac{73-42}{3}+2\times\left(\frac{36}{4}-17\right)$. Give your answer to 2 decimal places.
+
+*Solution 4:* `(73-42)/3+(2*((36/4)-17))`
+
+**Exercise 5:** How many elements does the following vector have?
+  
+  `seq(from = 0, to = 100, by = 3.14)`
+
+*Solution 5:* `length(seq(0,100,by=3.14))`
+
+**Exercise 6:**  Look at the help file for the function `rnorm()` and use this function to generate 100 random numbers with mean 10 and standard deviation 5.
+
+*Solution 6:* `rnorm(n = 100, mean = 10, sd = 5)`
+
+
+
+
+## Module 2
+
+### General exercises
+
+**Exercise:** What are the defaults for the header argument in the functions `read.table()` and `read.csv()`?
+
+-   `header = T` in `read.table()` and `header = T` in `read.csv()`
+
+-   `header = T` in `read.table()` and `header = F` in `read.csv()`
+
+-   `header = F` in `read.table()` and `header = T` in `read.csv()`
+
+-   `header = F` in `read.table()` and `header = F` in `read.csv()`
+
+*Solution:* `header = F` in `read.table()` and `header = T` in `read.csv()`
+
+### End of module exercises
+
+**Exercise 1:** How many cares have a miles per gallon (`mpg`) of less than 15 in the `mtcars` data?
+
+*Solution 1:*
+
+`library(datasets)`
+
+`cars <- mtcars`
+
+`sum(cars$mpg<15)` = 5
+
+**Exercise 2:** How many cars have exactly 4 cylinders (`cyl`) in the `mtcars` data?
+
+*Solution 2:* `sum(cars$cyl==8)`=14
+
+**Exercise 3:** What is the mean value of horsepower (`hp`) to 2 decimal places in the `mtcars` data?
+
+*Solution 3:* `round(mean(cars$hp), 2)`=146.69
+
+**Exercise 4:** What car has the lowest miles per gallon (`mpg`) value for cars with 8 cylinders (`cyl`) in the `mtcars` data?
+
+*Solution 4:* `cars[which.min(cars$mpg),]`=Cadillac Fleetwood
+
+**Exercise 5:** What is the median miles per gallon (`mpg`) value for cars with 8 cylinders (`cyl`) in the `mtcars` data?
+
+*Solution 5:* `median(cars$mpg[cars$cyl==8])`= 15.2
+
+**Exercise 6:** What car has the highest weight (`wt`) for each amount of cylinders (`cyl`) in the `mtcars` data?
+
+*Solution 6:*
+
+`unique(cars$cyl`
+
+`cars[which.max(cars$wt[cars$cyl==4]),]`=Mazda RX4 Wag
+
+`cars[which.max(cars$wt[cars$cyl==6]),]`=Hornet 4 Drive
+
+`cars[which.max(cars$wt[cars$cyl==8]),]`=Duster 360
+
+**Exercise 7:** Create a bar plot that shows the number of cars with each gear type (`gear`) in the `mtcars` data.
+
+*Solution 7:*
+
+`gear_types <- table(cars$gear)`
+
+`barplot(gear_types, names.arg=c("Type 3", "Type 4", "Type 5"),`
+
+`xlab = "Gear types", ylab = "Total count",`
+
+`main = "Distribution of gear types")`
+
+**Exercise 8:** Create a bar plot that shows the number of cars with each gear type (`gear`) with the distribution of cylinders (`cyl`) for each type in the `mtcars` data. Add a legend for the cylinders.
+
+*Solution 8:*
+
+`cyl_gear_types <- table(cars$cyl, cars$gear)`
+
+`colours <- c("#004C92", "#FF0000", "#FFC600")`
+
+`barplot(cyl_gear_types, names.arg=c("Type 3", "Type 4", "Type 5"),`
+
+`xlab = "Gear types", ylab = "Total count",`
+
+`main = "Distribution of gear types vs cylinders",`
+
+`col = colours)`
+
+`legend("topright", rownames(cyl_gear_types), cex = 1.3, fill = colours)`
+
+**Exercise 9:** Create a scatter plot to show the relationship between weight (`wt`) and miles per gallon (`mpg`) in the `mtcars` data.
+
+*Solution 9:*
+
+`plot(x = cars$wt,y = cars$mpg,`
+
+`xlab = "Weight",`
+
+`ylab = "Miles per gallon",`
+
+`xlim = c(1,6),`
+
+`ylim = c(10,35),`
+
+`main = "Weight vs miles per gallon")`
+
+`ggplot(cars, aes(x = wt, y = mpg)) +`
+
+`geom_point(col="#004C92")+`
+
+`labs(x="Weight", y="Miles per gallon")+`
+
+`ggtitle("Weight vs miles per gallon")`
+
+**Exercise 10:** Create a scatter plot to show the relationship between weight (`wt`) and miles per gallon (`mpg`) by cylinder (`cyl`) in the `mtcars` data.
+
+*Solution 10:*
+
+`plot(cars$wt, cars$mpg, col = cars$cyl,`
+
+`xlab="Weight", ylab="Miles per gallon",`
+
+`main="Weight vs miles per gallon by cylinder")`
+
+`lapply(cars$cyl, function(x) {`
+
+`abline(lm(mpg ~ wt, cars, subset = (cyl == x)), col = x)})`
+
+`legend("topright", rownames(cyl_gear_types),`
+
+`col = c(4,6,8), pch = 1, bty = "n")`
+
+`ggplot(cars, aes(x = wt, y = mpg, group=cyl, col=cyl)) +`
+
+`geom_point() +`
+
+`geom_smooth(method="lm", se=FALSE)+`
+
+`labs(x="Weight", y="Miles per gallon")+`
+
+`ggtitle("Weigth vs miles per gallon by cylinder")`
+
+
+## Module 3
+### General exercises
+
+**Exercise:** How can you add multiple layers, such as polygons for states and points for health facilities, to a single map using `tmap`?
+
+  1. By using `tm_shape()` and `tm_fill()`
+  
+  2. By using `tm_shape()` and `tm_dots()`
+  
+  3. By using multiple `tm_shape()` functions with different elements
+  
+  4. By using `tm_shape()` and `tm_lines()`
+
+*Solution:*
+3. By using multiple `tm_shape()` functions with different elements
+
+### End of module exercises
+
+**Exercise 1:** What is the primary purpose of the `.prj` file in a shapefile set, and which package is commonly used to handle this file type in R?
+
+  1.  Stores map projection information, handled by `raster` package.
+  
+  2.  Stores attribute information, handled by `sp` package
+  
+  3.  Stores projection information, handled by `sf` package
+
+  4.  Stores metadata information, handled by `terra` package
+
+*Solution 1:* 3. Stores projection information, handled by `sf` package
+
+**Exercise 2:** Create a map of Nigeria that combines the raster layer for building count and the vector layer for region.
+
+*Solution 2:*
+```{r, eval=F}
+library(terra)     
+library(sf)       
+library(tmap)     
+
+#load data
+building_raster <- rast(nga_building_count.tif) #raster data
+regions_vector <- st_read(nga_regions.shp) #vector data
+
+#both are in same CRS
+if (st_crs(regions_vector)$epsg != crs(building_raster, describe=TRUE)$code) {
+ regions_vector <- st_transform(regions_vector, crs(building_raster))
+}
+ 
+#plot tmap
+tmap_mode("plot")
+tm_shape(building_raster) +
+ tm_raster(style = "quantile", palette = "YlOrRd", title = "Building Count") +
+tm_shape(regions_vector) +
+ tm_borders(lwd = 1, col = "black") 
+```
+
+**Exercise 3:** Create a choropleth map that shows the variation in population density for Nigeria at region level. Export the results as a .png file.
+
+*Solution 3:*
+```{r, eval=F}
+library(sf)         
+library(tmap)       
+library(dplyr)     
+ 
+#load data
+nigeria_regions <- st_read(nga_regions.shp)
+ 
+#calculate population density
+nigeria_regions <- nigeria_regions %>%
+ mutate(pop_density = nga_pop / nga_area)
+ 
+#create choropleth map
+tmap_mode("plot")
+choropleth_map <- tm_shape(nigeria_regions) +
+tm_polygons("pop_density",
+             style = "quantile",     
+             palette = "Blues") +
+ tm_layout(title = "Nigeria: Population Density by Region")
+ 
+#save as PNG
+tmap_save(choropleth_map, filename = "nigeria_population_density.png", 
+          width = 2000, height = 1500, dpi = 300)
+```
+
+**Exercise 4:** How do you plot a raster dataset using `tmap`, ensuring it can handle large datasets efficiently?
+
+1.  `tm_shape(raster_data)` + `tm_fill()`
+2.  `tm_shape(raster_data)` + `tm_raster()`
+3.  `tm_shape(raster_data)` + `tm_polygons()`
+4.  `tm_shape(raster_data)` + `tm_dots()`
+
+*Solution 4:*
+2. `tm_shape(raster_data)` + `tm_raster()`
+
+
+## Module 4
+
+### General exercises
+
+**Exercise:** Identify the dependent and independent variables in the following sentence:
+
+'A researcher investigates the effects of school density on the grades of its pupils.'
+
+*Solution:* Dependent variable: the grades of the pupils, independent variable: school density
+
+**Exercise:**  Fit a Poisson GLM using the `ccancer` dataset exploring the relationship between the count of
+cancer deaths and the covariates for the cancer site and region in Canada. Is the relationship between the
+dependent and independent variables significant?
+
+*Solution:* 
+`ccancer_glm_exercise <- glm(Count ~ Site + Region, family = "poisson", data = ccancer)`
+
+`summary(ccancer_glm_exercise)` 
+
+Yes, the relationships are significant.
+
+**Exercise:** What is the expected birth weight for a baby boy at a gestational age of 39.5 weeks?
+
+*Solution:* $$Weight = -1447.24 -163.04\times 0+120.89\times 39.5 = 3327.92g$$
+
+## Module 5
+
+### General exercises
+
+**Exercise:** Following on from the example above, what is the probability that an individual that is vaccincated but has a high fever is infected with disease A?
+
+*Solution:* 0.19
+
+**Exercise:** Following on from the example above, what is the conditional probability of drawing a purple button given that the button drawn is not blue?
+
+*Solution:* 
+
+$$
+\begin{aligned}
+P(A|B)&=\frac{P(A\cap B)}{P(B)}\\
+&= \frac{\text{number of pruple buttons}/\text{total number of buttons}}{\text{blue}/\text{total number of buttons}}\\
+&=\frac{4/10}{6/10}\\
+&=\frac{2}{3}=0.67.
+\end{aligned}
+$$
+
+
+**Exercise:** Following on from the example above, what would the probability be of selecting 2 men from the island without replacement?
+
+*Solution:* 
+$$
+\begin{aligned}
+P(M_1 \cap M_2)&=P(M_1)P(M_2|M_1)\\
+&= \frac{\text{number of men}}{\text{total number of people}}\times\frac{\text{number of men left}}{\text{total number of people left}}\\
+&=\frac{4}{10}\times\frac{3}{9}\\
+&=\frac{2}{15}.
+\end{aligned}
+$$
+## Module 6
+
+### General exercises
+
+**Exercise:** Following on from the example above, what is the probability that someone who is vaccinated is from region C?
+
+*Solution:* 
+$$P(A|Vaccinated) = \frac{P(C)P(Vaccinated|C)}{P(Vaccinated)} = \frac{0.3 \times 0.74}{0.728} = 0.305$$
+
+
+**Exercise:** Create a histogram of posterior values for hospital D.
+
+*Solution:* 
+```{r hisogram, eval=F}
+#histogram of posterior values for hospital D
+ggplot(data = predicted_values_df , aes(x = D)) +
+  geom_histogram(bins = 20, color = "#00b4d8", alpha = 1, fill = "#1d3557") +
+  theme_bw() +
+  labs(title = "Posterior Predicted values for D",
+       x = "Posteriors",
+       y = "Frequency")
+```
+
+
+**Exercise:** Create a density plot of the posterior values for hospital G.
+
+*Solution:* 
+```{r density, eval=F}
+#density plot of posterior values for hospital G
+ggplot(data = predicted_values_df , aes(x = G)) +
+  geom_density(alpha = 1, fill = "#1d3557") +
+  theme_bw() +
+  labs(title = "Posterior predicted Values for G",
+       x = "Posteriors",
+       y = "Density")
+```

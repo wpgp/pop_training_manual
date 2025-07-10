@@ -1,0 +1,869 @@
+
+```{r setup_module10, include=FALSE}
+#data path
+data_path <- "data/CMR/"
+#output path 
+output_path <- "output_data/"
+
+
+raster_path1 <- paste0(data_path, "Continuous Rasters/")
+raster_path2 <- paste0(data_path, "Categorical Rasters/")
+raster_path3 <- paste0(data_path, "Settlement Rasters/")
+raster_path4 <- paste0(data_path, "Rasters/")
+shapefile_path <- paste0(data_path, "Shapefiles/")
+mgrid_path <- paste0(data_path, "Mastergrid/")
+```
+
+# Population Prediction and Uncertainty Quantification
+
+This module looks at population prediction methods and associated uncertainty quantification methodology, starting with covariate stacking. Module 10 also covers posterior distribution simulation, aggregation to area units of interest and grid cell/level prediction.
+
+```{r install the raster packages, eval = FALSE}
+#install raster processing packages
+install.packages("terra")
+install.packages("tictoc")
+install.packages("exactextractr")
+```
+
+```{r load the raster packages, message=FALSE, warning=FALSE}
+#load raster processing packages
+library(tidyverse)
+library(terra)
+library("tictoc")
+library(feather)
+library(sf)
+```
+## Covariate stacking
+In order to predict population values across the entire population across the entire country, the covariates available require stacking and the corresponding values of the covariates extracting. However, given that across a country, the entire area is not inhabited, only those points which are settled (inhabited) are of interest, so the covariate information extracted requires some manipulation to obtain only the settled raster values. This section explores these methods for the Cameroon dataset. 
+
+
+Firstly, the rasters available that are going to be stacked need to be imported into the R environment.
+
+```{r import rasters}
+#import all rasters
+raster_list <-list.files(path = raster_path4, pattern = ".tif$", 
+                         all.files = TRUE, full.names = FALSE)
+
+#see the rasters in the list
+raster_list
+```
+There are two approaches to stacking the covariates in R available. The first is to stack all the covariates together at once and then get the relevant raster values with the `values()` function from the `terra` package, including the covariate stack as an argument and specifying `dataframe = TRUE` to return the values as a data frame. This option however, is not always appropriate as extracting the values at once can take a long time and particularly in cases where there are more than a few covariates available, the code can be too much for many computers to handle.
+
+```{r stack covariates op1, eval=FALSE}
+#stack all rasters
+stack_covariates <- rast(paste0(raster_path4, c(raster_list)))
+
+#get raster values
+covs_raster_values <- terra::values(stack_covariates, dataframe = TRUE)
+```
+
+Alternatively, the covariates can be stacked in batches, which is the preferred method of covariate stacking as it does not have as high of a computational burden associated. To use this approach, first the desired size of the batches must be specified, in this case, the size is 2. Then, to cycle through each of the covariates available, a `for()` loop can be used to make the process more automated and hence more efficient. 
+
+```{r batch size}
+#define batch size
+batch_size <- 2
+```
+
+However, before starting the loop, to write only the settled pixels (covariate values which are associated with a pixel where there is a building present) to file, the raster file for the building count can first be processed, with the building count values obtained with the `values()` function. Once the values are obtained, this covariate should be removed from the raster list to not repeat the processing in the loop.
+
+```{r stack covariates op2a, eval=TRUE}
+#read building count raster and get values
+b_count <- rast(paste0(raster_path4, "CMR_buildings_count.tif"))
+b_count <- terra::values(b_count, dataframe = TRUE)
+
+#remove "CMR_buildings_count.tif" from list
+process_rasters_list <- raster_list[-c(2)]
+process_rasters_list
+```
+
+The first step in the loop is to subset the available rasters to select your 'batch'. Once you have the subset, the `rast()` function can be used to load that batch of covariates. As with the first approach, to obtain the raster values, the `values()` function is used. Since only the settled points are wanting to be written to file, the `filter()` and `select()` functions can be used to subset the covariate values and keep only those which correspond to settled points, using the building count raster and corresponding values as a reference. The final results can then be exported as a `.feather` file with the `write_feather()` function from the `feather` package. Whilst it it is not a necessity, the `rm()` function can be used to free up memory for the raster batches and their values created within the loop to help R work more efficiently.
+
+```{r stack covariates op2b, eval=TRUE}
+#loop through covariates in batches
+for (i in seq(1, length(process_rasters_list), batch_size)) {
+  batch_covs <- process_rasters_list[i:min(i + batch_size - 1, 
+                                           length(process_rasters_list))]
+  
+  #load batch of covariates rasters
+  covs_raster <- rast(paste0(raster_path4, batch_covs))
+  
+  #get raster values
+  covs_raster_values <- terra::values(covs_raster, dataframe = TRUE)
+  
+  #write only settled pixels to file
+  covs_raster_values <- covs_raster_values %>% 
+    cbind(b_count) %>% 
+    filter(CMR_buildings_count > 0) %>% 
+    dplyr::select(-CMR_buildings_count)
+  
+  #write processed covariate values to a feather file
+  feather_output_path <- paste0(output_path, "Processed_Covariates_", i, "_to_",
+                                min(i + batch_size - 1, 
+                                    length(process_rasters_list)), ".feather")
+  feather::write_feather(covs_raster_values, feather_output_path)
+  
+  #free up memory
+  rm(covs_raster, covs_raster_values); gc()
+}
+
+```
+
+Once the raster values have been obtained, the files can be read back to the memory with the `dir()` function and then bound together. 
+
+```{r, eval=TRUE}
+#read all files back to memory
+myfiles <-dir(output_path,pattern = "*.feather")
+myfiles
+
+#bind the files
+raster_values <- myfiles %>% 
+  map(function(x) read_feather(file.path(output_path, x))) %>% 
+  reduce(cbind) 
+```
+
+From the modelling in Module 8, it was found that for the Cameroon data, the covariates `x2, x16, x20, x24, x31, x36, x40` were all statistically significant and had a notable relationship with the population density. Therefore, these are the covariates that are of interest for prediction. However, the names of `x(.)` are arbitrary, so the significant variables should be renamed for ease of understanding and aid in the interpretation of any results. The names of the variables can be obtained from the `var_names.csv` and manually input as below. 
+
+```{r, eval=TRUE}
+#load the variable names file
+var_names <- read.csv(paste0(data_path,"var_names.csv")) 
+var_names[c(2, 16, 20, 24, 31, 36, 40),]
+
+#rename variables
+raster_values1 <- raster_values %>%
+  rename(x2 = acled_conflict_data_2021_CMR_ed_masked,
+         x16 = CMR_dst_in_water_100m_2000_2012,
+         x20 = CMR_esaccilc_dst140_100m_2015,
+         x24 = CMR_esaccilc_dst200_100m_2015,
+         x31 = CMR_osm_dst_localroads, 
+         x36 = CMR_osm_dst_railways,
+         x40 = CMR_viirs_100m_2020)
+```
+
+To estimate the population for the settled points, the x,y-coordinates of the centroids of each settled pixel needs to be obtained from the building count dataset. To obtain these coordinates, the raster with the building counts must be read into the environment and then used with the function `xyFromCell()` with arguments for the building count raster and a sequence from 1 to the number of cells in the raster.
+
+```{r obtain xy coordinates}
+#read raster
+r1 <- rast(paste0(raster_path4, "CMR_buildings_count.tif"))
+
+#get the xy coordinate of the centroid of each pixel as a data frame
+coord <- xyFromCell(r1, 1:ncell(r1))
+head(coord)
+```
+
+The coordinates can then be combined using the `cbind()` function with the building count values obtained above, before removing the unwanted objects (the values created above for `r1`, `coord` and `b_count`) from the R environment as they take up a lot of memory, making the processes less efficient. 
+
+```{r stack buildings and coordinates}
+#cbind building count to coordinates
+stack_coord <- cbind(b_count, coord)
+
+#remove unwanted object from memory
+rm(r1, coord, b_count); gc()
+```
+
+Once the coordinates and corresponding building counts are combined, the `filter()` function can be used to filter out the desired (settled), so only the pixels containing buildings remain. 
+
+```{r filter pixels}
+#filter out only settled pixels
+stack_coord <- stack_coord %>% 
+  filter(CMR_buildings_count > 0) 
+```
+
+To predict the population (either using only the intercept or also using covariates) the stack of building count values and corresponding coordinates need to be added to the original dataset, in this case done with the `cbind()` function.
+```{r bind coords to data}
+#cbind coordinates to original data
+raster_values1 <- raster_values1 %>% 
+  cbind(stack_coord)
+```
+
+### Admin names
+
+It is often of interest to identify the population size in different areas of a country, such as in a specific region or department, rather than as the country as a whole. For ease of interpreting the results, it is beneficial to obtain the admin names and add them to the dataset.
+
+To add these admin names to the dataset, first the shapefiles containing the relevant information needs to be read into the R environment.
+
+```{r read in data}
+#read in the regions and department datasets
+regions <- st_read(paste0(shapefile_path, "Region_SHP.shp"))
+dept <- st_read(paste0(shapefile_path, "Departement_SHP.shp"))
+```
+
+The shapefiles containing the admin names need to be converted to a data frame to obtain the ID and region label (denoted in French as *libelle* for the Cameroon dataset).
+```{r convert to dataframe}
+#convert region shapefile to data frame and get id and 'libelle'
+regions <- regions %>% 
+  as_tibble() %>% 
+  dplyr::select(id, libelle) %>% 
+  rename(Regions = id, Regions_libelle = libelle)   #rename id as regions
+
+#convert department shapefile to data frame and get id and 'libelle'
+dept <- dept %>% 
+  as_tibble() %>% 
+  dplyr::select(id, libelle) %>% 
+  rename(Department = id, Department_libelle = libelle) #rename variables
+```
+
+The data frames for region and department can then be joined with the dataset using the function `full_join()`.
+
+```{r join data frames}
+#join regions to data
+prediction_covs <- full_join(raster_values1, regions, by = "Regions")
+
+#join department to data
+prediction_covs <- full_join(prediction_covs, dept, by = "Department")
+```
+
+The `select()` function can then be used to sort the data in order as follows. 
+
+```{r sort data}
+#sort data in order
+prediction_covs <- prediction_covs %>% 
+  dplyr::select(Regions, Regions_libelle, Department, Department_libelle, 
+         CMR_buildings_count, CMR_buildings_total_area, 
+         CMR_Settlement_Classification,
+         starts_with("x"), y)
+```
+
+The `x` and `y` variables can be renamed as `lat` and `lon` to correspond with the latitude and longitude coordinates with the `rename()` function and use the `filter()` function to filter out any rows of data with `NA` for the settlement classification. 
+
+```{r rename and filter}
+#rename x and y as Lat and Lon and filter settlement classification with NA
+prediction_covs <- prediction_covs %>% 
+  rename(Lat = y, Lon = x) %>% 
+  filter(!is.na(CMR_Settlement_Classification)) 
+```
+
+Finally, the `write_rds()` function can be used to export the data as follows. 
+```{r export data}
+#export data to file
+write_rds(prediction_covs, paste0(output_path, "CMR_prediction_stack.rds"))
+```
+
+## Grid cell/pixel level prediction 
+
+Gridded population data is beneficial as it allows for the integration with other datasets. Additionally, there is a major benefit that with gridded population data, population estimates can be calculated for various geographic units at a range of scales. For example
+
+  - EAs, wards, constituencies, districts
+  - Health catchments
+  - Within a specified distance of a feature (for example, within 5km of a health facility)
+
+The idea here is to use model parameter estimates from the fitted model to make predictions at the grid cell level with the extracted geospatial covariates at 100m resolution. The corresponding uncertainty estimates for the population predictions at various administrative levels can also be obtained. 
+
+
+
+As with all other methods, the relevant packages should be installed and loaded.
+
+```{r install posterior packages, eval = FALSE}
+#install the relevant packages
+install.packages("kableExtra")
+install.packages("spdep")
+install.packages("INLA")
+```
+
+```{r posterior packages, message=FALSE, warning=FALSE}
+#load the relevant packages
+library(INLA)
+library(kableExtra)
+library(sf)
+library(tidyverse)
+library(spdep)
+library(tmap)
+library(tictoc)
+library(terra)
+library(dplyr)
+```
+
+For visualisation purposes of the results, the scientific notation for all the variables can be turned off with the following code. 
+
+```{r turn off sci note}
+#turn off scientific notation
+options(scipen = 999)
+```
+
+In Module 8, various models were fitted, ranging from the simple linear model to the Bayesian hierarchical models. In this section, the INLA SPDE approach is used to demonstrate how to make predictions using the more advanced Bayesian Geostatistical Model. 
+
+### Pre-processing 
+
+First the data should be loaded into the R environment.
+
+```{r load data}
+#load csv file
+Data_CMR <- read.csv(paste0(data_path,"Pop_Data_Complete.csv"))
+
+#EA shapefile
+ea_shp <- st_read(paste0(data_path ,"Pop_Data_Complete.gpkg")) 
+```
+The centroid of the EA shapefile needs to be extracted as latitude and longitude coordinates and added into the Data_CMR `.csv` file. This can be done using the `as()` and `st_geometry()` functions to convert the shapefile to a spatial object and using the `coordinates()` function to extract and add the coordinates to the demographic data. 
+
+```{r extract the centroid}
+#convert shapefile to a spatial object
+shp <- as(st_geometry(ea_shp), "Spatial")
+
+#add the lat-long coordinates to the data
+Data_CMR$long <- coordinates(shp)[,1] #extract and add the longitude to the data
+Data_CMR$lat <- coordinates(shp)[,2] #extract and add the latitude to the data
+
+#view first six rows of the data as a summary
+head(Data_CMR, 6)
+```
+Using the piper operator and the `mutate()` function, the population density can be calculated, which is required later in the process, for example, in the model fitting.
+
+```{r compute the density}
+#compute the density
+Data_CMR <- Data_CMR %>% 
+  mutate(Density = Total_Pop/Total_Building_Count)
+```
+
+As seen previously, the covariates need to be standardised so that they are on the same scale, which will aid in the modelling process. The same function as seen in Module 8 (Section 4.2) is given below, and can then be applied to standardise the covariates. This resulting value is also known as a **z-score**.
+
+```{r standardisation}
+#standardisation function for model covariates
+stdise <- function(x)
+{
+  stds <- (x - mean(x, na.rm = TRUE))/sd(x, na.rm = TRUE)
+  return(stds)
+}
+
+#create new data frame to contain standardised covariates
+Data_CMR_std <- Data_CMR
+
+#standardise the covariates only
+cov_vars <- paste0("x", 1:41) 
+Data_CMR_std[, cov_vars] <- apply(Data_CMR[, cov_vars], 2, stdise)
+
+#summary of covariates before and after standardisation
+head(Data_CMR[,cov_vars[1:5]])
+head(Data_CMR_std[,cov_vars[1:5]])
+```
+
+For the processes later, it is important that there are no NA values for the population density. Therefore, from the (standardised) demographic data, the NA values should be removed from the `Density`, which can be done using the `drop_na()` function. 
+
+```{r drop na density}
+#remove NA values in Density
+Data_CMR_std <- Data_CMR_std %>% 
+  drop_na(Density)
+```
+
+
+### INLA-SPDE approach 
+
+In order to fit the Bayesian SPDE model with INLA, a mesh needs to be constructed using the same approach as in Module 8 (Section 6.1).
+
+To begin with, the coordinates of the centroids should be defined. 
+```{r define centroids}
+#define centroid coordinates
+coords <- cbind(Data_CMR_std$long, Data_CMR_std$lat) 
+summary(dist(coords))
+```
+
+Then the `inla.nonconvex.hull()` function can be used to define the boundary with the arguments for `points` (the 2D point coordinates), `convex` (the desired extension radius), `concave` (the minimal concave curvature radius) and `resolution` (the internal computation resolution). This is then followed by the `inla.mesh.2d()` function with arguments for the `boundary` (defined with `inla.nonconvex.hull()`), `max.edge` (adjusts the mesh node sizes between the inner and outer meshes), `offset` (adjusts the distance between the outer and inner meshes), `cutoff` (controls the minimum size of the triangles allowed).
+```{r mesh construction}
+#boundary construction
+bnd <- inla.nonconvex.hull(points = coords,
+                           convex = -0.03, 
+                           concave = -0.05,
+                           resolution = c(100, 100))
+
+#mesh construction
+meshb <- inla.mesh.2d(boundary = bnd,
+                      max.edge = c(0.1, 1),
+                      offset = c(0.05, 1),
+                      cutoff = 0.003)
+```
+
+The resulting mesh can be plotted with the `plot()` function. Here it can be seen visually if the values in the above functions need to be adjusted to be more suitable.
+
+```{r plot mesh}
+#plot mesh
+plot(meshb)
+points(coords, col = "red")
+
+#number of vertices
+meshb$n 
+```
+
+As in Module 8, Section 6, once the mesh is constructed, the SPDE can be built using the `inla.spde2.matern()` function, with the `mesh` constructed above as an argument, along with the arguments `alpha` and `constr`.
+
+```{r build spde}
+#build the SPDE
+spde <- inla.spde2.matern(mesh = meshb, alpha = 2, constr = TRUE)
+```
+
+
+The next step laid out in Module 8 is to create the projection matrix with the `inla.spde.make.A()` function as follows. 
+
+```{r make projection matrix}
+#construct the projection matrix
+A <- inla.spde.make.A(mesh = meshb, loc = coords)
+```
+
+The next step in the posterior distribution simulation process is to specify the spatial effect. This is done through using the function `inla.spde.make.index()` with an argument specifying the base `name` of the effect (in this case `"spatial_effect"`), and `n.spde` (the size of the model, extracted from the `spde` constructed above).
+
+```{r spatial effect}
+#specify the spatial effect 
+indexs <- inla.spde.make.index(name = "spatial_effect",
+                               n.spde = spde$n.spde)
+```
+
+From the covariate selection process, the covariate that were chosen as the most significant or "best" can be extracted from the (standardised) demographic dataset and added to a new variable for the covariates with the `select()` function from the `dplyr` package. Below, there is an additional covariate selected for `Settlement_Type` which is used as a random effect in the subsequent modelling.
+
+```{r select covariates}
+#select covariates
+covs <- Data_CMR_std %>%
+  dplyr::select(x3, x4, x7, x16, x20, x31, x37, x40, Settlement_Type)
+``` 
+
+The `inla.stack()` function can then be used to stack the data, ready for model fitting, with the arguments `data` (a list containing the response variable), `A` (a list containing the projection `A` matrix created earlier and `1` to make the list of covariates), `effects` (a list containing the `Intercept`, the spatial index and the list of covariates) and `tag` (a quick name to call upon).
+
+```{r covariate stacking}
+#stack the data for model fitting
+stk.e <- inla.stack(data = list(y = Data_CMR_std$Density), 
+                    A = list(A,1),  
+                    effects = list(c(list(Intercept = 1), 
+                                   indexs),  
+                                 list(covs)
+                    ),
+                    tag = 'est') 
+```
+
+Before fitting the INLA model, it is best to specify the model formula as seen before, in this case, there are the selected covariates, as well as random effects for the `spatial_effect` and the `Settlement_Type`. Following the model formula specification, the model is fitted with the `inla()` function, specifying the following arguments.
+
+  - `formula`: the pre-defined model formula.
+  - `data`: the data stack.
+  - `family`: the likelihood family, in this case a gamma distribution is used, however, a lognormal distribution could also be used.
+  - `control.predictor`: computes the marginals of the linear predictor.
+  - `control.compute`: a list of logical statements for computing model diagnostics.
+  - `verbose`: logical statement indicating whether the function should run in a verbose mode.
+  - `control.inla`: a list containing the control variables. 
+  
+  
+```{r model specification and fitting}
+#specify model 
+formula <- y ~ -1 + Intercept + x3 + x4 + x7 + x16 + x20 + x31 + x37 +x40 +
+  f(spatial_effect, model = spde)+
+  f(Settlement_Type, model = "iid")
+
+#fit the inla model with a gamma distribution
+res <- inla(formula = formula, 
+            data = inla.stack.data(stk.e, spde = spde), 
+            family = 'gamma',  
+            control.predictor = list(A = inla.stack.A(stk.e), compute = TRUE), 
+            control.compute = list(dic = TRUE, waic = TRUE, cpo = TRUE,
+                                   config = TRUE), 
+            verbose = FALSE, 
+            control.inla=list(int.strategy = "grid", diff.logdens = 4,
+                              strategy = "laplace", npoints = 21))
+
+summary(res)
+```
+
+#### Predictions
+In-sample predictions can be extracted using the `inla.stack.index()` function and the corresponding predicted density (computed through extracting `summary.linear predictor[index, "mean"]` from the above model) added into a new data frame with the `data.frame()` function. 
+
+```{r export in-sample predictions}
+#extract predictions
+index <- inla.stack.index(stk.e, "est")$data
+
+#compute predicted density and include in new data frame
+in_sample <- data.frame(predicted_density = 
+                          exp(res$summary.linear.predictor[index, "mean"]))
+```
+
+The observed population and observed density values from the (standardised) demographic data can be selected in order to be used later in the in-sample model metric assessment.
+
+```{r extract observed data}
+#select observed population, density and building count
+metrics_data <- Data_CMR_std %>% 
+  dplyr::select(Total_Pop, Density, Total_Building_Count) %>% 
+  cbind(in_sample)
+```
+
+The predicted density found above is multiplied by the `Total_Building_Count` extracted from the observed data to obtain the predicted population.
+
+```{r predicted population and rename}
+#predicted population = predicted density x observed total building count
+metrics_data <- metrics_data %>% 
+  mutate(predicted_population = predicted_density * Total_Building_Count)
+
+#rename variables in proper format
+metrics_data <- metrics_data %>% 
+  rename(observed_population = Total_Pop, observed_density = Density)
+```
+
+Finally, the model performance metrics can be computed for both the density and total population. Similar to as in Module 9, metrics such as the bias, MSE, RMSE and correlation are of interest, in addition to the inaccuracy and imprecision. 
+
+```{r perfomance metrics}
+#density metrics
+density_metrics <- metrics_data %>% 
+  mutate(residual = observed_density - predicted_density) %>% 
+  summarise(
+    Bias= mean(residual),
+    Imprecision = sd(residual),
+    Inaccuracy = mean(abs(residual)),
+    mse = mean((residual)^2),
+    rmse = sqrt(mse),
+    Corr = cor(observed_density, predicted_density))
+
+density_metrics %>% 
+  kable()
+
+#total population metrics
+pop_metrics <- metrics_data %>% 
+  mutate(residual = observed_population - predicted_population) %>% 
+  summarise(
+    Bias= mean(residual),
+    Imprecision = sd(residual),
+    Inaccuracy = mean(abs(residual)),
+    mse = mean((residual)^2),
+    rmse = sqrt(mse),
+    Corr = cor(observed_population, predicted_population))
+
+pop_metrics %>% 
+  kable()
+```
+
+Later in this section, the chosen fitted model will be used to make predictions for the whole of Cameroon at 100m resolution. In order to do this, the stacked covariates at the grid cell level are required and hence need to be loaded first. 
+
+```{r load stacked covariates}
+#load our stacked covariate
+pred_covs <-  readRDS(paste0(data_path, "CMR_prediction_stack.rds"))
+
+#check variable names
+names(pred_covs)
+```
+
+Once the stacked covariates are loaded, they need to be scaled. This can be done using the `stdsize()` function created earlier. 
+
+```{r standardise cov}
+#scale stacked covariates.
+vars <- c("x3", "x4",  "x7",  "x16", "x20", "x31", "x37", "x40")
+pred_covs[, vars] <- apply(pred_covs[,vars], 2, stdise)
+
+#check scaled covariates
+head(pred_covs)
+```
+
+### Posterior distribution simulation
+
+
+Whilst it is possible to make predictions within INLA through adding covariates to the observed data as seen in Module 8, in this case, the dataset is very large and it is then preferable to make predictions outside of INLA to save computational time. 
+
+In order to perform grid cell level prediction, first posterior distribution simulation must take place, simulating posteriors from the parameter estimates from the chosen fitted model above. For demonstrative purposes, here only 100 posteriors will be simulated, however, the default in INLA is to sample 1000 posteriors which takes notably more computational time. 
+
+Samples can be taken from the posterior distribution through using the function `inla.posterior.sample()` with arguments `n` (the number of samples to be taken), `result` (the `inla` object, in this case the `inla` model `res`), `seed` (for reproducible results) and `num.threads` (the number of outer and inner threads).
+
+```{r sample from the posterior}
+#sample from posterior in model
+samples <- inla.posterior.sample(n = 100, result = res, seed = 1234,
+                                 num.threads = "1:1")
+```
+
+To easily store the various model parameters, a function can be created with the functions `inla.posterior.sample.eval()` and `function()`. Within the function, `get()` can be used, which searches by name for an object, in this case, it is used to search for the covariates of interest. 
+
+```{r created function}
+#create a function to store the various model parameters
+sam.extract <- inla.posterior.sample.eval(
+  (function(...) {
+    beta.1 <- get("x3")
+    beta.2 <- get("x4")
+    beta.3 <- get("x7")
+    beta.4 <- get("x16")
+    beta.5 <- get("x20")
+    beta.6 <- get("x31")
+    beta.7 <- get("x37")
+    beta.8 <- get("x40")
+    prec.1 <- get("Settlement_Type")
+    return(c(Intercept, beta.1, beta.2,beta.3, beta.4, beta.5, beta.6, beta.7,
+             beta.8, prec.1))
+  }), samples)
+```
+Once the function has been created, it can be used to return the summarised posteriors as follows.
+
+```{r summarised posteriors}
+#summarised posteriors
+print(round(dig = 4, rowMeans(sam.extract)))  
+```
+The posteriors can then be saved as new objects which will make them easier to identify and use in the later steps. For the random effect for settlement types, an index can be assigned to the posteriors for the 4 different settlement types available in the data. 
+
+```{r save posteriors and assign index}
+#save posteriors as new object to make them easier to identify
+Intercept <- sam.extract[1, ]#intercept
+betas <- sam.extract[2:9, ]#betas
+alpha_settlement_type <- sam.extract[10:13, ]#random effect for settlement types
+
+#assign index to the posteriors for the settlement type
+alpha_settlement_type <- alpha_settlement_type %>%  
+  as_tibble() %>% 
+  mutate(Settlement_Type = c(1, 2, 3, 4))
+```
+
+To make the predictions, posteriors are assigned to `Settlement_Type` using the `select()` function from the `dpylr` package and the `left_join()` function. 
+
+```{r assign posteriors}
+#assign posteriors to Settlement_Type
+predict_settlement_type <- pred_covs %>% 
+  dplyr::select(Settlement_Type)%>% 
+  left_join(alpha_settlement_type, by = c("Settlement_Type")) %>% 
+  dplyr::select(-Settlement_Type) 
+```
+The spatial random component also needs to be obtained from the chosen fitted model. In order to obtain this component, the longitude (`Long`) and Latitude (`Lat`) need to be obtained from the predicted covariates (`pred_covs`) and then project the mesh (`meshb`) that was created earlier to these locations.
+
+```{r obtain spatial effect component}
+#get the spatial effect parameter in the SPDE xy coordinate of predictions
+coord1 <- cbind(pred_covs$Long, pred_covs$Lat)
+
+#remake the A matrix for prediction
+Aprediction <- inla.spde.make.A(mesh = meshb, loc = as.matrix(coord1))
+dim(Aprediction)
+```
+
+The next step is to get the spatial effect parameter from the model through, this can be done through extracting the `spatial_effect` from the `summary.random` part of the model and specifying that the `mean` will be subset. 
+
+```{r get spatial effect}
+#get the spatial effect parameter from the model
+sfield_nodes <- res$summary.random$spatial_effect['mean']
+dim(sfield_nodes)
+``` 
+The resulting spatial effect parameter can be given as a data frame and combined with the projected matrix `Aprediction` to estimate the values for the spatial component.
+
+```{r estimate spatial comp}
+#estimate the values for the spatial component in the prediction covs
+spatial_field <- (Aprediction %*% as.data.frame(sfield_nodes)[, 1])
+```
+
+Predictions for the covariates using their coefficients (the betas) that were extracted above can then be made, once again through using the `select()` function to obtain the covariate information. It is important to replace the NA values with 0 as otherwise numerical issues can occur given that R often works better with zeroes than with missing values. Given that anything (the betas in this case) multiplied by 0 is still 0, the final result is not changed by changing the missing values to zero.
+
+```{r extract covariates}
+#extract covariates and convert it to a matrix
+cov_fixed <- pred_covs %>% 
+  dplyr::select(x3, x4, x7, x16, x20, x31, x37, x40) %>% 
+  #avoid numerical issues with the following line
+  mutate_at(vars(starts_with("x")), ~replace(., is.na(.), 0)) %>%  
+  as.matrix() 
+
+dim(cov_fixed)
+```
+
+To predict the (fixed effect) covariates, the estimated beta parameters can be multiplied with their respective covariates and then converted to a data frame with the `as_tibble()` function.
+
+```{r fixed effect covariates}
+#predict fixed effect covariates
+cov_fixed <- cov_fixed %*% betas 
+
+#convert to data frame
+cov_fixed <- as_tibble(cov_fixed) 
+```
+
+
+Given that there is now a value for the intercept, fixed effect (based on the covariates), random effect for the settlement type and the spatial random effect, the model component can be added for the prediction.
+
+Since a gamma distribution was used in the fitting of the model, for the predicted posterior density estimates, the predicted density must be back transformed with the exponential function.
+
+```{r predicted posterior density estimates}
+#predicted posterior density
+predicted_density <- exp(Intercept + cov_fixed + predict_settlement_type + 
+                           spatial_field[,1])    
+```
+The `mutate()` function is then used to add the building count for each grid, followed by estimating the predicted population.
+
+```{r building count and estimated population}
+#add building count for each grid
+predicted_density <- predicted_density %>% 
+  mutate(buidling_count = pred_covs$CMR_buildings_count)
+
+#estimate predicted population
+predicted_pop <- predicted_density %>%
+  mutate_at(vars(starts_with("sample")), ~ . * buidling_count) %>% 
+  dplyr::select(-buidling_count)
+```
+In order to compute the predicted population for the entire study, the predicted population using the mean needs to be summarised, as well as finding the quantiles which correspond to the uncertainty, where the summarising can be done using the `summarise()` function. 
+
+```{r predicted pop and uncert}
+#total predicted population and uncertainty
+CMR_Total_Pop <- predicted_pop %>% 
+  apply(2, sum, na.rm = TRUE) %>% 
+  as_tibble()%>% 
+  summarise(mean_population = round(mean(value)),
+            upper_quantile = round(quantile(value, probs=0.975)),
+            lower_quantile = round(quantile(value, probs =0.025)))
+
+CMR_Total_Pop %>% 
+  kable()
+```
+
+## Aggregation to area units of interest and uncertainty quantification
+
+The focus of this section is on quantifying the uncertainty resulting from high-resolution population estimates through using a Bayesian hierarchical modelling framework. In addition to providing the point estimates, the model generates full posterior distributions for each 100 grid cell which enables a probabilistic understanding of the population size. These uncertainty measures are able to be aggregated across any spatial scale and are crucial for informed decision-making, particularly in regions where the census data is sparse or outdated. Traditional census-based estimates often overlook or fail to report their inherent uncertainties, which may lead users into assuming false precision. 
+
+To estimate the population totals and uncertainty at the various admin levels, the following code can be used. 
+
+First, obtain the region names and `cbind()` them to the predicted population.
+```{r region names}
+#get region names
+region_names <- pred_covs %>% 
+  dplyr::select(Regions_libelle)
+
+#cbind names to predictions
+region_estimates <- cbind(predicted_pop, region_names) %>% 
+  as_tibble()
+```
+
+Then, for easy processing, the names of the regions can be grouped with the `group_by()` function and split the data with the `group_split()` function.
+```{r group and split data}
+#group and split the data
+region_estimates <- region_estimates %>% 
+  group_by(Regions_libelle) %>% 
+  group_split()
+```
+
+The following for loop is then used to get the estimates and and the credible intervals for each of the regions. 
+```{r estimates and intervals of regions}
+#get estimates and credible intervals 
+OUT <- list()
+for(dd in 1:length(region_estimates)){
+  df <- region_estimates[[dd]]
+  
+  #get the ID of the current region being processed
+  typro <- unique(df$Regions_libelle)
+  print(typro)
+  
+  df <- df %>% 
+    dplyr::select(starts_with("sample")) %>% 
+    apply(2, sum, na.rm = TRUE)  
+  
+  OUT[[dd]] <- c(Health_Area_Names = typro, mean = mean(df),
+                 lower_quantile = quantile(df, 0.025),
+                 upper_quantile = quantile(df, 0.975),
+                 median = quantile(df, 0.500))
+  
+  #print(OUT)
+}
+
+region_population <- do.call(rbind, OUT)
+region_population %>% 
+  kable()
+```
+
+Finally, the regional estimates can be exported as a `.csv` file with the `write.csv()` function.
+```{r export regional estimates}
+#export the regional estimate as a .csv file
+write.csv(region_population, paste0(output_path, "Regional Estimate.csv"))
+```
+
+### Rasterising the predictions at grid cell level 
+
+The final stage of grid cell level prediction is to rasterise the resulting predicted population to a 100m resolution and find the corresponding credible intervals for the uncertainty quantification before exporting the results. 
+
+To begin with this final stage, the pixel level predictions are summarised as follows.
+
+```{r summarise pixel level predictions}
+#summarise pixel level predictions
+
+#mean population
+mean_population <- rowMeans(predicted_pop, na.rm = TRUE)
+#median population
+median_population <- apply(predicted_pop, 1, 
+                           FUN = function(x) quantile(x, probs = 0.5, 
+                                                      na.rm = TRUE))
+#standard deviation of population
+std_population <- apply(predicted_pop, 1, sd)
+#lower quantile for credible interval
+lower_quantile <- apply(predicted_pop, 1,
+                        FUN = function(x) quantile(x, probs = 0.025, 
+                                                   na.rm = TRUE))
+#upper quantile for credible interval
+upper_quantile <- apply(predicted_pop, 1, 
+                        FUN = function(x) quantile(x, probs = 0.975,
+                                                   na.rm = TRUE))
+#uncertainty quantification
+uncertainty = (upper_quantile - lower_quantile)/mean_population
+#coefficient of variation
+coe_var = std_population/mean_population
+```
+
+The resulting mean and median populations can be summed for the overall population size estimates.
+```{r summed population}
+#sum predictions
+sum(median_population, na.rm = TRUE)
+sum(mean_population, na.rm = TRUE)
+```
+Before the rasterisation, the predictions must be combined with the `cbind()` function to the xy coordinates. 
+```{r cbind predictions to coordinates}
+#cbind predictions to xy coordinates
+pixel_predictions <- cbind(mean_population, median_population, std_population,
+                           lower_quantile, upper_quantile, 
+                           uncertainty, coe_var) %>% 
+  as_tibble() %>% 
+  mutate(x = pred_covs$Long, y = pred_covs$Lat)
+```
+
+The country raster can then be loaded and used as a mastergrid for the rasterisation process. It is important to note that this is just one method of carrying out the rasterisation process, and there are other methods available. 
+```{r load country raster}
+#load country raster
+r1 <- rast(paste0(data_path, "CMR_Regions.tif"))
+plot(r1)
+```
+
+The above predictions are then converted with the `st_as_st()` function to an sf object and the `st_crs()` function is used to set the CRS of the resulting sf object. 
+```{r convert to sf and set crs}
+#convert pixel_predictions to an sf object
+pop_sf <- st_as_sf(pixel_predictions, coords = c("x", "y"))
+
+#set the CRS of the sf object
+st_crs(pop_sf) <- 4326
+```
+The final step before the rasterisation is to re-project to the raster spatial reference with the `st_transform()` object.
+```{r reproject}
+#re-project to raster spatial reference
+pop_sf <- st_transform(pop_sf, crs = st_crs(r1))
+```
+
+Finally, the `rasterise()` function is used to rasterise the mean population as well as the upper and lower limits contained within the sf object. For each result, the function `writeRaster()` is used to export the results. Whilst only the mean population and credible interval limits are rasterised here, other population measures such as the standard deviation, coefficient of variation and median population can also be rasterised in the same way, 
+
+```{r rasterise}
+#rasterise mean population
+mean_pop_raster <- rasterize(pop_sf, r1, field = "mean_population")
+plot(mean_pop_raster)
+
+
+writeRaster(mean_pop_raster, paste0(output_path, "total_population_raster.tif"), 
+            overwrite = TRUE, names = "Population")
+
+#rasterise Upper
+upper_pop_raster <- rasterize(pop_sf, r1, field = "upper_quantile")
+plot(upper_pop_raster)
+
+writeRaster(upper_pop_raster, paste0(output_path, "population_Upper.tif"), 
+            overwrite = TRUE, names = "Population_Upper")
+
+#rasterise lower
+lower_pop_raster <- rasterize(pop_sf, r1, field = "lower_quantile")
+plot(lower_pop_raster)
+
+writeRaster(lower_pop_raster, paste0(output_path, "population_Lower.tif"), 
+            overwrite = TRUE, names = "Population_Lower")
+```
+
+It is good practice to check whether the rasters have the resolution, extent and coordinate reference, this can be done simply by printing the rasters themselves and checking their summaries as seen below. For these two rasters, the resolution, extent and coordinate references are identical, and therefore the rasters are spatially aligned and can be used for the predictions. 
+
+```{r check raster resolution}
+#mean population raster
+mean_pop_raster
+
+#country raster
+r1
+```
+
+## Useful resources
+
+  - Overall: [Bayesian Modelling of Spatio Temporal Data with R](https://www.southampton.ac.uk/~sks/bmbook/bmstdr.pdf)
+  - Handling raster data: [R as GIS for Economists](https://tmieno2.github.io/R-as-GIS-for-Economists/raster-basics.html)
+  - INLA-SPDE approach: [Introduction to INLA for geospatial modelling](https://punama.github.io/BDI_INLA/)
+  - Posterior distribution simulation: [Geospatial Health Data: Modeling and Visualization with R-INLA and Shiny](https://www.paulamoraga.com/book-geospatial/sec-inla.html)
+  - Uncertainty quantification: [National population mapping from sparse survey data: A hierarchical Bayesian modeling framework to account for uncertainty](https://www.pnas.org/doi/pdf/10.1073/pnas.1913050117)
+
+<!-- ### Age/sex-structured gridded population estimates -->
+
+<!-- Age-structured population estimates are particularly important for planning age-specific services, for example, school age population or children under 1 year of age for vaccination. Through accounting for the proportion of total population in each age/sex class with the gridded (total) population, the gridded population for each age/sex class can be achieved. -->
+
+
+<!-- ## Other small area units predictions  -->

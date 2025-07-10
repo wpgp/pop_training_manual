@@ -1,0 +1,18 @@
+
+bookdown::gitbook:
+  css: style.css
+  toc_depth: 4
+  number_sections: true
+  split_by: "chapter"     #"rmd"
+  config:
+    toc: 
+      collapse: section
+      scroll_highlight: true
+      
+bookdown::pdf_book:
+  includes:
+    in_header: preamble.tex
+  latex_engine: xelatex
+  citation_package: natbib
+  keep_tex: yes
+bookdown::epub_book: default

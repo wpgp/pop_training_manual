@@ -1,0 +1,23 @@
+h1:bayesian-statistical-inference Bayesian Statistical Inference
+h2:introduction Introduction
+h2:bayes-theorem Bayes’ theorem
+h3:bayes-theorem-for-random-variables Bayes’ theorem for random variables
+h2:the-likelihood-function The likelihood function
+h3:different-types-and-structures Different types and structures
+h4:count-data Count data
+h4:binary-data Binary data
+h4:proportional-data Proportional data
+h4:continuous-data Continuous data
+h2:prior-distribution Prior distribution
+h3:conjugate-priors Conjugate priors
+h3:flat-improper-and-non-informative-priors Flat, improper and non-informative priors
+h3:informative-prior Informative prior
+h2:overview-of-posterior-inference Overview of posterior inference
+h3:markov-chain-monte-carlo-approach Markov Chain Monte Carlo approach
+h3:integrated-nested-laplace-approximation-approach Integrated Nested Laplace Approximation approach
+h2:elicitation-of-priors Elicitation of priors
+h3:priors-inla Priors INLA
+h4:penalised-complexity-priors Penalised Complexity priors
+h2:sampling-and-evaluating-the-posterior-density Sampling and evaluating the posterior density
+h2:useful-resources Useful resources
+

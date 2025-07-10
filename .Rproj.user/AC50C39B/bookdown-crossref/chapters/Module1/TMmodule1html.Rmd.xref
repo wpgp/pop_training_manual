@@ -1,0 +1,30 @@
+h1:basics-of-r-programming Basics of R Programming
+h2:overview-of-r Overview of R
+h3:getting-started-with-r Getting started with R
+h4:downloading-r-and-rstudio Downloading R and RStudio
+h4:features-of-the-r-gui-environment Features of the R GUI environment
+h4:features-of-the-rstudio-environment Features of the RStudio environment
+h3:creating-opening-and-saving-r-scripts Creating, opening and saving R scripts
+h3:getting-and-setting-the-working-directory Getting and setting the working directory
+h3:creating-opening-and-saving-r-projects Creating, opening and saving R projects
+h3:getting-help-in-r Getting help in R
+h3:r-coding-best-practices R coding best practices
+h4:commenting Commenting
+h4:naming-conventions Naming conventions
+h4:spacing Spacing
+h4:punctuation Punctuation
+h2:data-types-and-key-components Data types and key components
+h3:basic-operations-in-r Basic operations in R
+h4:arithmetic-operators Arithmetic operators
+h4:logical-operators Logical operators
+h4:other-operators Other operators
+h2:key-functions-in-r Key functions in R
+h2:data-structures Data structures
+h3:vectors Vectors
+h3:matrices Matrices
+h3:arrays Arrays
+h3:data-frames Data frames
+h3:list List
+h2:end-of-module-exercises End of module exercises
+h2:useful-resources Useful resources
+
