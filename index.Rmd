@@ -1,7 +1,7 @@
 ---
 title: "WorldPop Population Modelling Training Manual, Vol. I"
 author: "WorldPop, University of Southampton"
-date: "`r Sys.Date()`"
+date: "2025-07-10"
 description: "An open book of WorldPop methods to produce gridded population estimates."
 
 site: bookdown::bookdown_site
