@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6 Bayesian Statistical Inference | WorldPop Population Modelling Training Manual, Vol. I</title>
+  <meta name="description" content="An open book of WorldPop methods to produce gridded population estimates." />
+  <meta name="generator" content="bookdown 0.43 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6 Bayesian Statistical Inference | WorldPop Population Modelling Training Manual, Vol. I" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="An open book of WorldPop methods to produce gridded population estimates." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6 Bayesian Statistical Inference | WorldPop Population Modelling Training Manual, Vol. I" />
+  
+  <meta name="twitter:description" content="An open book of WorldPop methods to produce gridded population estimates." />
+  
+
+<meta name="author" content="WorldPop, University of Southampton" />
+
+
+<meta name="date" content="2025-07-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="probability-theory-and-applications.html"/>
+<link rel="next" href="introduction-to-small-area-population-estimation-and-modelling-sapem.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.2.2/leaflet.js"></script>
+<script src="libs/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.2.2/leaflet-providers-plugin.js"></script>
+<script src="libs/HomeButton-0.0.1/home-button.js"></script>
+<script src="libs/HomeButton-0.0.1/easy-button-src.min.js"></script>
+<link href="libs/health_facilities - type-CSS-0.0.1/health_facilities - type_home-button.css" rel="stylesheet" />
+<script src="libs/clipboard-0.0.1/setClipboardText.js"></script>
+<link href="libs/mapviewCSS-0.0.1/mapview-popup.css" rel="stylesheet" />
+<link href="libs/mapviewCSS-0.0.1/mapview.css" rel="stylesheet" />
+<link href="libs/states-CSS-0.0.1/states_home-button.css" rel="stylesheet" />
+<link href="libs/states_utm-CSS-0.0.1/states_utm_home-button.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#book-contents"><i class="fa fa-check"></i>Book Contents</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html"><i class="fa fa-check"></i><b>1</b> Basics of R Programming</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#overview-of-r"><i class="fa fa-check"></i><b>1.1</b> Overview of R</a>
+<ul>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#getting-started-with-r"><i class="fa fa-check"></i>Getting started with R</a>
+<ul>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#downloading-r-and-rstudio"><i class="fa fa-check"></i>Downloading R and RStudio</a></li>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#features-of-the-r-gui-environment"><i class="fa fa-check"></i>Features of the R GUI environment</a></li>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#features-of-the-rstudio-environment"><i class="fa fa-check"></i>Features of the RStudio environment</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#creating-opening-and-saving-r-scripts"><i class="fa fa-check"></i>Creating, opening and saving R scripts</a></li>
+<li class="chapter" data-level="1.1.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#getting-and-setting-the-working-directory"><i class="fa fa-check"></i><b>1.1.1</b> Getting and setting the working directory</a></li>
+<li class="chapter" data-level="1.1.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#creating-opening-and-saving-r-projects"><i class="fa fa-check"></i><b>1.1.2</b> Creating, opening and saving R projects</a></li>
+<li class="chapter" data-level="1.1.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#getting-help-in-r"><i class="fa fa-check"></i><b>1.1.3</b> Getting help in R</a></li>
+<li class="chapter" data-level="1.1.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#r-coding-best-practices"><i class="fa fa-check"></i><b>1.1.4</b> R coding best practices</a>
+<ul>
+<li class="chapter" data-level="1.1.4.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#commenting"><i class="fa fa-check"></i><b>1.1.4.1</b> Commenting</a></li>
+<li class="chapter" data-level="1.1.4.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#naming-conventions"><i class="fa fa-check"></i><b>1.1.4.2</b> Naming conventions</a></li>
+<li class="chapter" data-level="1.1.4.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#spacing"><i class="fa fa-check"></i><b>1.1.4.3</b> Spacing</a></li>
+<li class="chapter" data-level="1.1.4.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#punctuation"><i class="fa fa-check"></i><b>1.1.4.4</b> Punctuation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#data-types-and-key-components"><i class="fa fa-check"></i><b>1.2</b> Data types and key components</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#basic-operations-in-r"><i class="fa fa-check"></i><b>1.2.1</b> Basic operations in R</a>
+<ul>
+<li class="chapter" data-level="1.2.1.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#arithmetic-operators"><i class="fa fa-check"></i><b>1.2.1.1</b> Arithmetic operators</a></li>
+<li class="chapter" data-level="1.2.1.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#logical-operators"><i class="fa fa-check"></i><b>1.2.1.2</b> Logical operators</a></li>
+<li class="chapter" data-level="1.2.1.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#other-operators"><i class="fa fa-check"></i><b>1.2.1.3</b> Other operators</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#key-functions-in-r"><i class="fa fa-check"></i><b>1.3</b> Key functions in R</a></li>
+<li class="chapter" data-level="1.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#data-structures"><i class="fa fa-check"></i><b>1.4</b> Data structures</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#vectors"><i class="fa fa-check"></i><b>1.4.1</b> Vectors</a></li>
+<li class="chapter" data-level="1.4.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#matrices"><i class="fa fa-check"></i><b>1.4.2</b> Matrices</a></li>
+<li class="chapter" data-level="1.4.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#arrays"><i class="fa fa-check"></i><b>1.4.3</b> Arrays</a></li>
+<li class="chapter" data-level="1.4.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#data-frames"><i class="fa fa-check"></i><b>1.4.4</b> Data frames</a></li>
+<li class="chapter" data-level="1.4.5" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#list"><i class="fa fa-check"></i><b>1.4.5</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#end-of-module-exercises"><i class="fa fa-check"></i><b>1.5</b> End of module exercises</a></li>
+<li class="chapter" data-level="1.6" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#useful-resources"><i class="fa fa-check"></i><b>1.6</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html"><i class="fa fa-check"></i><b>2</b> Working with Data Frames</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#importing-and-exporting-data-in-and-from-r"><i class="fa fa-check"></i><b>2.1</b> Importing and exporting data in and from R</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#installing-and-loading-packages"><i class="fa fa-check"></i><b>2.1.1</b> Installing and loading packages</a></li>
+<li class="chapter" data-level="2.1.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#reading-data-into-the-r-environment"><i class="fa fa-check"></i><b>2.1.2</b> Reading data into the R environment</a></li>
+<li class="chapter" data-level="2.1.3" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#creating-work-paths"><i class="fa fa-check"></i><b>2.1.3</b> Creating work paths</a></li>
+<li class="chapter" data-level="2.1.4" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#exploring-data-attributes"><i class="fa fa-check"></i><b>2.1.4</b> Exploring data attributes</a></li>
+<li class="chapter" data-level="2.1.5" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#viewing-data"><i class="fa fa-check"></i><b>2.1.5</b> Viewing data</a></li>
+<li class="chapter" data-level="2.1.6" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#extracting-data"><i class="fa fa-check"></i><b>2.1.6</b> Extracting data</a></li>
+<li class="chapter" data-level="2.1.7" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#attaching-data"><i class="fa fa-check"></i><b>2.1.7</b> Attaching data</a></li>
+<li class="chapter" data-level="2.1.8" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#writing-data-to-external-repositories"><i class="fa fa-check"></i><b>2.1.8</b> Writing data to external repositories</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#basic-data-wrangling-methods-for-data-preparation-and-handling-in-r"><i class="fa fa-check"></i><b>2.2</b> Basic data wrangling methods for data preparation and handling in R</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#dealing-with-na-not-available-values"><i class="fa fa-check"></i><b>2.2.1</b> Dealing with NA (‘Not Available’) values</a></li>
+<li class="chapter" data-level="2.2.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#key-data-wrangling-methods"><i class="fa fa-check"></i><b>2.2.2</b> Key data wrangling methods</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#data-visualisation"><i class="fa fa-check"></i><b>2.3</b> Data visualisation</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#bar-plots"><i class="fa fa-check"></i><b>2.3.1</b> Bar plots</a></li>
+<li class="chapter" data-level="2.3.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#box-plots"><i class="fa fa-check"></i><b>2.3.2</b> Box plots</a></li>
+<li class="chapter" data-level="2.3.3" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#histograms"><i class="fa fa-check"></i><b>2.3.3</b> Histograms</a></li>
+<li class="chapter" data-level="2.3.4" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#density-plots"><i class="fa fa-check"></i><b>2.3.4</b> Density plots</a></li>
+<li class="chapter" data-level="2.3.5" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#scatter-plots"><i class="fa fa-check"></i><b>2.3.5</b> Scatter plots</a></li>
+<li class="chapter" data-level="2.3.6" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#violin-plots"><i class="fa fa-check"></i><b>2.3.6</b> Violin plots</a></li>
+<li class="chapter" data-level="2.3.7" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#line-graphs"><i class="fa fa-check"></i><b>2.3.7</b> Line graphs</a></li>
+<li class="chapter" data-level="2.3.8" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#population-pyramids"><i class="fa fa-check"></i><b>2.3.8</b> Population pyramids</a></li>
+<li class="chapter" data-level="2.3.9" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#lollipop-plots"><i class="fa fa-check"></i><b>2.3.9</b> Lollipop plots</a></li>
+<li class="chapter" data-level="2.3.10" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#plots-with-an-image-background"><i class="fa fa-check"></i><b>2.3.10</b> Plots with an image background</a></li>
+<li class="chapter" data-level="2.3.11" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#viewing-and-saving-plots"><i class="fa fa-check"></i><b>2.3.11</b> Viewing and saving plots</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#end-of-module-exercises-1"><i class="fa fa-check"></i><b>2.4</b> End of module exercises</a></li>
+<li class="chapter" data-level="2.5" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#useful-resources-1"><i class="fa fa-check"></i><b>2.5</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html"><i class="fa fa-check"></i><b>3</b> Working with Spatial Data in R</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#spatial-data-overview-and-types"><i class="fa fa-check"></i><b>3.1</b> Spatial data: Overview and types</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#points-data"><i class="fa fa-check"></i><b>3.1.1</b> Points data</a></li>
+<li class="chapter" data-level="3.1.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#areal-data"><i class="fa fa-check"></i><b>3.1.2</b> Areal data</a></li>
+<li class="chapter" data-level="3.1.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#vector-data"><i class="fa fa-check"></i><b>3.1.3</b> Vector data</a>
+<ul>
+<li class="chapter" data-level="3.1.3.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#points"><i class="fa fa-check"></i><b>3.1.3.1</b> Points</a></li>
+<li class="chapter" data-level="3.1.3.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#polylines"><i class="fa fa-check"></i><b>3.1.3.2</b> Polylines</a></li>
+<li class="chapter" data-level="3.1.3.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#polygons"><i class="fa fa-check"></i><b>3.1.3.3</b> Polygons</a></li>
+</ul></li>
+<li class="chapter" data-level="3.1.4" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#raster-data"><i class="fa fa-check"></i><b>3.1.4</b> Raster data</a></li>
+<li class="chapter" data-level="3.1.5" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#sources-of-spatial-data"><i class="fa fa-check"></i><b>3.1.5</b> Sources of spatial data</a></li>
+<li class="chapter" data-level="3.1.6" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#geospatial-covariates"><i class="fa fa-check"></i><b>3.1.6</b> Geospatial covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#basic-gis-concepts"><i class="fa fa-check"></i><b>3.2</b> Basic GIS concepts</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#geoprocessing"><i class="fa fa-check"></i><b>3.2.1</b> Geoprocessing</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#using-gis-in-r"><i class="fa fa-check"></i><b>3.3</b> Using GIS in R</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#importing-spatial-data-in-r"><i class="fa fa-check"></i><b>3.3.1</b> Importing spatial data in R</a></li>
+<li class="chapter" data-level="3.3.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#handling-spatial-data-in-r"><i class="fa fa-check"></i><b>3.3.2</b> Handling spatial data in R</a>
+<ul>
+<li class="chapter" data-level="3.3.2.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#converting-between-vectors-and-rasters-in-r"><i class="fa fa-check"></i><b>3.3.2.1</b> Converting between vectors and rasters in R</a></li>
+<li class="chapter" data-level="3.3.2.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#checking-the-resolution-and-number-of-cells"><i class="fa fa-check"></i><b>3.3.2.2</b> Checking the resolution and number of cells</a></li>
+<li class="chapter" data-level="3.3.2.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#exporting-spatial-data-in-various-formats"><i class="fa fa-check"></i><b>3.3.2.3</b> Exporting spatial data in various formats</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-of-spatial-data"><i class="fa fa-check"></i><b>3.4</b> Visualisation of spatial data</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#static-maps"><i class="fa fa-check"></i><b>3.4.1</b> Static maps</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#interactive-maps"><i class="fa fa-check"></i><b>3.5</b> Interactive maps</a>
+<ul>
+<li class="chapter" data-level="" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-with-tmap-1"><i class="fa fa-check"></i>Visualisation with <code>tmap</code></a></li>
+<li class="chapter" data-level="" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-with-leaflet"><i class="fa fa-check"></i>Visualisation with <code>leaflet</code></a></li>
+<li class="chapter" data-level="" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-with-mapview"><i class="fa fa-check"></i>Visualisation with <code>mapview</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#basic-geoprocessing"><i class="fa fa-check"></i><b>3.6</b> Basic geoprocessing</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#coordinate-reference-systems-crs"><i class="fa fa-check"></i><b>3.6.1</b> Coordinate reference systems (CRS)</a></li>
+<li class="chapter" data-level="3.6.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#converting-between-latlong-and-the-universal-transverse-mercator-utm-coordinate-system"><i class="fa fa-check"></i><b>3.6.2</b> Converting between Lat/Long and the Universal Transverse Mercator (UTM) coordinate system</a></li>
+<li class="chapter" data-level="3.6.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#subsetting-clipping-and-masking"><i class="fa fa-check"></i><b>3.6.3</b> Subsetting, clipping and masking</a></li>
+<li class="chapter" data-level="3.6.4" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#buffer-analysis"><i class="fa fa-check"></i><b>3.6.4</b> Buffer analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#end-of-module-exercises-2"><i class="fa fa-check"></i><b>3.7</b> End of module exercises</a></li>
+<li class="chapter" data-level="3.8" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#useful-resources-2"><i class="fa fa-check"></i><b>3.8</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html"><i class="fa fa-check"></i><b>4</b> Introduction to Statistical Modelling with Implementation in R</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#concept-of-statistical-modelling"><i class="fa fa-check"></i><b>4.1</b> Concept of statistical modelling</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#overview-of-statistical-modelling"><i class="fa fa-check"></i><b>4.1.1</b> Overview of statistical modelling</a></li>
+<li class="chapter" data-level="4.1.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#correlation"><i class="fa fa-check"></i><b>4.1.2</b> Correlation</a></li>
+<li class="chapter" data-level="4.1.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#scaled-covariates"><i class="fa fa-check"></i><b>4.1.3</b> Scaled covariates</a></li>
+<li class="chapter" data-level="4.1.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#uncertainty"><i class="fa fa-check"></i><b>4.1.4</b> Uncertainty</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#simple-regression"><i class="fa fa-check"></i><b>4.2</b> Simple regression</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#linear-regression"><i class="fa fa-check"></i><b>4.2.1</b> Linear regression</a></li>
+<li class="chapter" data-level="4.2.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#polynomial-regression"><i class="fa fa-check"></i><b>4.2.2</b> Polynomial regression</a></li>
+<li class="chapter" data-level="4.2.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#non-linear-regression"><i class="fa fa-check"></i><b>4.2.3</b> Non-linear regression</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#multiple-regression"><i class="fa fa-check"></i><b>4.3</b> Multiple regression</a></li>
+<li class="chapter" data-level="4.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#generalised-linear-regression"><i class="fa fa-check"></i><b>4.4</b> Generalised linear regression</a></li>
+<li class="chapter" data-level="4.5" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#model-predictions"><i class="fa fa-check"></i><b>4.5</b> Model predictions</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#predictions-with-the-formula-and-coefficients"><i class="fa fa-check"></i><b>4.5.1</b> Predictions with the formula and coefficients</a></li>
+<li class="chapter" data-level="4.5.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#predictions-with-functions"><i class="fa fa-check"></i><b>4.5.2</b> Predictions with functions</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#model-selection"><i class="fa fa-check"></i><b>4.6</b> Model selection</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#accuracy-and-precision"><i class="fa fa-check"></i><b>4.6.1</b> Accuracy and precision</a></li>
+<li class="chapter" data-level="4.6.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#akaike-information-criterion"><i class="fa fa-check"></i><b>4.6.2</b> Akaike information criterion</a></li>
+<li class="chapter" data-level="4.6.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#bayesian-information-criterion"><i class="fa fa-check"></i><b>4.6.3</b> Bayesian information criterion</a></li>
+<li class="chapter" data-level="4.6.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#r-squared-statistic"><i class="fa fa-check"></i><b>4.6.4</b> R-squared statistic</a></li>
+<li class="chapter" data-level="4.6.5" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#analysis-of-variance"><i class="fa fa-check"></i><b>4.6.5</b> Analysis of variance</a></li>
+<li class="chapter" data-level="4.6.6" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#likelihood-ratio-testing"><i class="fa fa-check"></i><b>4.6.6</b> Likelihood ratio testing</a></li>
+</ul></li>
+<li class="chapter" data-level="4.7" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#stepwise-regression"><i class="fa fa-check"></i><b>4.7</b> Stepwise regression</a>
+<ul>
+<li class="chapter" data-level="4.7.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#forward-stepwise-regression"><i class="fa fa-check"></i><b>4.7.1</b> Forward stepwise regression</a></li>
+<li class="chapter" data-level="4.7.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#backward-stepwise-regression"><i class="fa fa-check"></i><b>4.7.2</b> Backward stepwise regression</a></li>
+<li class="chapter" data-level="4.7.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#both-ways-stepwise-regression"><i class="fa fa-check"></i><b>4.7.3</b> Both ways stepwise regression</a></li>
+</ul></li>
+<li class="chapter" data-level="4.8" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#cross-validation"><i class="fa fa-check"></i><b>4.8</b> Cross-validation</a>
+<ul>
+<li class="chapter" data-level="4.8.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#k-fold-cross-validation"><i class="fa fa-check"></i><b>4.8.1</b> <em>k</em>-fold cross-validation</a></li>
+<li class="chapter" data-level="4.8.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#leave-one-out-cross-validation"><i class="fa fa-check"></i><b>4.8.2</b> Leave-one-out cross-validation</a></li>
+</ul></li>
+<li class="chapter" data-level="4.9" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#hierarchical-regression"><i class="fa fa-check"></i><b>4.9</b> Hierarchical regression</a>
+<ul>
+<li class="chapter" data-level="4.9.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#data-structure"><i class="fa fa-check"></i><b>4.9.1</b> Data structure</a></li>
+<li class="chapter" data-level="4.9.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#variance-partition-coefficient"><i class="fa fa-check"></i><b>4.9.2</b> Variance partition coefficient</a></li>
+<li class="chapter" data-level="4.9.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#random-intercepts-modelling"><i class="fa fa-check"></i><b>4.9.3</b> Random intercepts modelling</a></li>
+<li class="chapter" data-level="4.9.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#random-intercepts-mixed-effects-modelling"><i class="fa fa-check"></i><b>4.9.4</b> Random intercepts mixed-effects modelling</a></li>
+<li class="chapter" data-level="4.9.5" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#random-slope-mixed-effects-modelling"><i class="fa fa-check"></i><b>4.9.5</b> Random slope mixed-effects modelling</a></li>
+<li class="chapter" data-level="4.9.6" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#adding-an-extra-level"><i class="fa fa-check"></i><b>4.9.6</b> Adding an extra level</a></li>
+</ul></li>
+<li class="chapter" data-level="4.10" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#useful-resources-3"><i class="fa fa-check"></i><b>4.10</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html"><i class="fa fa-check"></i><b>5</b> Probability Theory and Applications</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#introduction-to-probability"><i class="fa fa-check"></i><b>5.1</b> Introduction to probability</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#theoretical-and-experimental-probability"><i class="fa fa-check"></i><b>5.1.1</b> Theoretical and experimental probability</a></li>
+<li class="chapter" data-level="5.1.2" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#keywords"><i class="fa fa-check"></i><b>5.1.2</b> Keywords</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#axioms-of-probability"><i class="fa fa-check"></i><b>5.2</b> Axioms of probability</a></li>
+<li class="chapter" data-level="5.3" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#joint-probability"><i class="fa fa-check"></i><b>5.3</b> Joint probability</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#joint-probability-table"><i class="fa fa-check"></i><b>5.3.1</b> Joint probability table</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#conditional-probability"><i class="fa fa-check"></i><b>5.4</b> Conditional probability</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#multiplication-rule-of-conditional-probability"><i class="fa fa-check"></i><b>5.4.1</b> Multiplication rule of conditional probability</a></li>
+<li class="chapter" data-level="5.4.2" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#law-of-total-probability"><i class="fa fa-check"></i><b>5.4.2</b> Law of total probability</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#contingency-tables"><i class="fa fa-check"></i><b>5.5</b> Contingency tables</a></li>
+<li class="chapter" data-level="5.6" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#useful-resources-4"><i class="fa fa-check"></i><b>5.6</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html"><i class="fa fa-check"></i><b>6</b> Bayesian Statistical Inference</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#introduction"><i class="fa fa-check"></i><b>6.1</b> Introduction</a></li>
+<li class="chapter" data-level="6.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#bayes-theorem"><i class="fa fa-check"></i><b>6.2</b> Bayes’ theorem</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#bayes-theorem-for-random-variables"><i class="fa fa-check"></i><b>6.2.1</b> Bayes’ theorem for random variables</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#the-likelihood-function"><i class="fa fa-check"></i><b>6.3</b> The likelihood function</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#different-types-and-structures"><i class="fa fa-check"></i><b>6.3.1</b> Different types and structures</a>
+<ul>
+<li class="chapter" data-level="6.3.1.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#count-data"><i class="fa fa-check"></i><b>6.3.1.1</b> Count data</a></li>
+<li class="chapter" data-level="6.3.1.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#binary-data"><i class="fa fa-check"></i><b>6.3.1.2</b> Binary data</a></li>
+<li class="chapter" data-level="6.3.1.3" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#proportional-data"><i class="fa fa-check"></i><b>6.3.1.3</b> Proportional data</a></li>
+<li class="chapter" data-level="6.3.1.4" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#continuous-data"><i class="fa fa-check"></i><b>6.3.1.4</b> Continuous data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#prior-distribution"><i class="fa fa-check"></i><b>6.4</b> Prior distribution</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#conjugate-priors"><i class="fa fa-check"></i><b>6.4.1</b> Conjugate priors</a></li>
+<li class="chapter" data-level="6.4.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#flat-improper-and-non-informative-priors"><i class="fa fa-check"></i><b>6.4.2</b> Flat, improper and non-informative priors</a></li>
+<li class="chapter" data-level="6.4.3" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#informative-prior"><i class="fa fa-check"></i><b>6.4.3</b> Informative prior</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#overview-of-posterior-inference"><i class="fa fa-check"></i><b>6.5</b> Overview of posterior inference</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#markov-chain-monte-carlo-approach"><i class="fa fa-check"></i><b>6.5.1</b> Markov Chain Monte Carlo approach</a></li>
+<li class="chapter" data-level="6.5.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#integrated-nested-laplace-approximation-approach"><i class="fa fa-check"></i><b>6.5.2</b> Integrated Nested Laplace Approximation approach</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#elicitation-of-priors"><i class="fa fa-check"></i><b>6.6</b> Elicitation of priors</a>
+<ul>
+<li class="chapter" data-level="6.6.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#priors-inla"><i class="fa fa-check"></i><b>6.6.1</b> Priors INLA</a>
+<ul>
+<li class="chapter" data-level="6.6.1.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#penalised-complexity-priors"><i class="fa fa-check"></i><b>6.6.1.1</b> Penalised Complexity priors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6.7" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#sampling-and-evaluating-the-posterior-density"><i class="fa fa-check"></i><b>6.7</b> Sampling and evaluating the posterior density</a></li>
+<li class="chapter" data-level="6.8" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#useful-resources-5"><i class="fa fa-check"></i><b>6.8</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><i class="fa fa-check"></i><b>7</b> Introduction to Small Area Population Estimation and Modelling (SAPEM)</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#small-area-population-estimation"><i class="fa fa-check"></i><b>7.1</b> Small area population estimation</a></li>
+<li class="chapter" data-level="7.2" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#direct-estimation"><i class="fa fa-check"></i><b>7.2</b> Direct estimation</a></li>
+<li class="chapter" data-level="7.3" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#indirect-estimation"><i class="fa fa-check"></i><b>7.3</b> Indirect estimation</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#approaches-for-creating-gridded-population-datasets"><i class="fa fa-check"></i><b>7.3.1</b> Approaches for creating gridded population datasets</a>
+<ul>
+<li class="chapter" data-level="7.3.1.1" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#top-down"><i class="fa fa-check"></i><b>7.3.1.1</b> Top-down</a></li>
+<li class="chapter" data-level="7.3.1.2" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#bottom-up"><i class="fa fa-check"></i><b>7.3.1.2</b> Bottom-up</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#useful-resources-6"><i class="fa fa-check"></i><b>7.4</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html"><i class="fa fa-check"></i><b>8</b> Bayesian Hierarchical Population Modelling in R</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#data-sources"><i class="fa fa-check"></i><b>8.1</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#population-data"><i class="fa fa-check"></i><b>8.1.1</b> Population data</a></li>
+<li class="chapter" data-level="8.1.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#settlement-data"><i class="fa fa-check"></i><b>8.1.2</b> Settlement data</a></li>
+<li class="chapter" data-level="8.1.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#other-sources"><i class="fa fa-check"></i><b>8.1.3</b> Other sources</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#data-cleaning-and-covariates-extraction"><i class="fa fa-check"></i><b>8.2</b> Data cleaning and covariates extraction</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#extracting-continuous-rasters"><i class="fa fa-check"></i><b>8.2.1</b> Extracting continuous rasters</a></li>
+<li class="chapter" data-level="8.2.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#extracting-categorical-rasters"><i class="fa fa-check"></i><b>8.2.2</b> Extracting categorical rasters</a></li>
+<li class="chapter" data-level="8.2.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#extracting-building-count"><i class="fa fa-check"></i><b>8.2.3</b> Extracting building count</a></li>
+<li class="chapter" data-level="8.2.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#exracting-building-total-area"><i class="fa fa-check"></i><b>8.2.4</b> Exracting building total area</a></li>
+<li class="chapter" data-level="8.2.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#adding-admin-area-names-to-the-data"><i class="fa fa-check"></i><b>8.2.5</b> Adding admin area names to the data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#exploratory-analysis"><i class="fa fa-check"></i><b>8.3</b> Exploratory analysis</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#basic-visualisation"><i class="fa fa-check"></i><b>8.3.1</b> Basic visualisation</a></li>
+<li class="chapter" data-level="8.3.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#geospatial-visualisation"><i class="fa fa-check"></i><b>8.3.2</b> Geospatial visualisation</a></li>
+<li class="chapter" data-level="8.3.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#checking-for-nas"><i class="fa fa-check"></i><b>8.3.3</b> Checking for NAs</a></li>
+<li class="chapter" data-level="8.3.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#checking-for-minimum-and-maximum-values"><i class="fa fa-check"></i><b>8.3.4</b> Checking for minimum and maximum values</a></li>
+<li class="chapter" data-level="8.3.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#checking-the-distribution-of-categorical-variables"><i class="fa fa-check"></i><b>8.3.5</b> Checking the distribution of categorical variables</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#model-set-up"><i class="fa fa-check"></i><b>8.4</b> Model set-up</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#simple-linear-regression"><i class="fa fa-check"></i><b>8.4.1</b> Simple linear regression</a></li>
+<li class="chapter" data-level="8.4.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#multiple-regression-1"><i class="fa fa-check"></i><b>8.4.2</b> Multiple regression</a></li>
+<li class="chapter" data-level="8.4.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#generalised-linear-regression-1"><i class="fa fa-check"></i><b>8.4.3</b> Generalised linear regression</a></li>
+<li class="chapter" data-level="8.4.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#fitting-fixed-effects-models-in-r-inla"><i class="fa fa-check"></i><b>8.4.4</b> Fitting fixed effects models in <code>R-INLA</code></a></li>
+<li class="chapter" data-level="8.4.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#fitting-bayesian-hierarchical-mixed-effects-models-in-r-inla"><i class="fa fa-check"></i><b>8.4.5</b> Fitting Bayesian hierarchical mixed effects models in <code>R-INLA</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#stan-mcmc-approach"><i class="fa fa-check"></i><b>8.5</b> STAN (MCMC) approach</a>
+<ul>
+<li class="chapter" data-level="8.5.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#metropolis-hastings-algorithm"><i class="fa fa-check"></i><b>8.5.1</b> Metropolis-Hastings algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="8.6" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#inla-and-inla-spde-approach"><i class="fa fa-check"></i><b>8.6</b> INLA and INLA-SPDE approach</a>
+<ul>
+<li class="chapter" data-level="8.6.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#mesh-construction"><i class="fa fa-check"></i><b>8.6.1</b> Mesh construction</a></li>
+<li class="chapter" data-level="8.6.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#building-the-spde"><i class="fa fa-check"></i><b>8.6.2</b> Building the SPDE</a></li>
+<li class="chapter" data-level="8.6.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#projection-matrix"><i class="fa fa-check"></i><b>8.6.3</b> Projection matrix</a></li>
+<li class="chapter" data-level="8.6.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#data-location-indexing"><i class="fa fa-check"></i><b>8.6.4</b> Data location indexing</a></li>
+<li class="chapter" data-level="8.6.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#projection-data"><i class="fa fa-check"></i><b>8.6.5</b> Projection data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html"><i class="fa fa-check"></i><b>9</b> Model Fit Checks and Cross-Validation</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#model-assumption-checking"><i class="fa fa-check"></i><b>9.1</b> Model assumption checking</a></li>
+<li class="chapter" data-level="9.2" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#model-selection-1"><i class="fa fa-check"></i><b>9.2</b> Model selection</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#watanabe-akaike-information-criterion-waic"><i class="fa fa-check"></i><b>9.2.1</b> Watanabe-Akaike Information Criterion (WAIC)</a></li>
+<li class="chapter" data-level="9.2.2" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#deviance-information-criterion-dic"><i class="fa fa-check"></i><b>9.2.2</b> Deviance Information Criterion (DIC)</a></li>
+<li class="chapter" data-level="9.2.3" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#conditional-predictive-ordinate-cpo"><i class="fa fa-check"></i><b>9.2.3</b> Conditional predictive ordinate (CPO)</a></li>
+<li class="chapter" data-level="9.2.4" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#probability-integral-transform-pit"><i class="fa fa-check"></i><b>9.2.4</b> Probability Integral Transform (PIT)</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#cross-validation-1"><i class="fa fa-check"></i><b>9.3</b> Cross-validation</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#basic-cross-validation"><i class="fa fa-check"></i><b>9.3.1</b> Basic cross-validation</a></li>
+<li class="chapter" data-level="9.3.2" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#k-fold-cross-validation-1"><i class="fa fa-check"></i><b>9.3.2</b> K-Fold Cross-Validation</a></li>
+<li class="chapter" data-level="9.3.3" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#useful-resources-7"><i class="fa fa-check"></i><b>9.3.3</b> Useful resources</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html"><i class="fa fa-check"></i><b>10</b> Population Prediction and Uncertainty Quantification</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#covariate-stacking"><i class="fa fa-check"></i><b>10.1</b> Covariate stacking</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#admin-names"><i class="fa fa-check"></i><b>10.1.1</b> Admin names</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#grid-cellpixel-level-prediction"><i class="fa fa-check"></i><b>10.2</b> Grid cell/pixel level prediction</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#pre-processing"><i class="fa fa-check"></i><b>10.2.1</b> Pre-processing</a></li>
+<li class="chapter" data-level="10.2.2" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#inla-spde-approach"><i class="fa fa-check"></i><b>10.2.2</b> INLA-SPDE approach</a>
+<ul>
+<li class="chapter" data-level="10.2.2.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#predictions"><i class="fa fa-check"></i><b>10.2.2.1</b> Predictions</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2.3" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#posterior-distribution-simulation"><i class="fa fa-check"></i><b>10.2.3</b> Posterior distribution simulation</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#aggregation-to-area-units-of-interest-and-uncertainty-quantification"><i class="fa fa-check"></i><b>10.3</b> Aggregation to area units of interest and uncertainty quantification</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#rasterising-the-predictions-at-grid-cell-level"><i class="fa fa-check"></i><b>10.3.1</b> Rasterising the predictions at grid cell level</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#useful-resources-8"><i class="fa fa-check"></i><b>10.4</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html"><i class="fa fa-check"></i><b>11</b> Age-Sex Disaggregation</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#disaggregation-of-population-totals-by-age-sex-proportions"><i class="fa fa-check"></i><b>11.1</b> Disaggregation of population totals by age-sex proportions</a>
+<ul>
+<li class="chapter" data-level="11.1.1" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#unavailable-age-sex-data"><i class="fa fa-check"></i><b>11.1.1</b> Unavailable age-sex data</a></li>
+<li class="chapter" data-level="11.1.2" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#available-age-sex-data"><i class="fa fa-check"></i><b>11.1.2</b> Available age-sex data</a>
+<ul>
+<li class="chapter" data-level="11.1.2.1" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#age-sex-disaggregation-1"><i class="fa fa-check"></i><b>11.1.2.1</b> Age-sex disaggregation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#useful-resources-9"><i class="fa fa-check"></i><b>11.2</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html"><i class="fa fa-check"></i><b>12</b> Exercise Solutions by Module</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-1"><i class="fa fa-check"></i><b>12.1</b> Module 1</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises"><i class="fa fa-check"></i><b>12.1.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.1.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#end-of-module-exercises-3"><i class="fa fa-check"></i><b>12.1.2</b> End of module exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-2"><i class="fa fa-check"></i><b>12.2</b> Module 2</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-1"><i class="fa fa-check"></i><b>12.2.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.2.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#end-of-module-exercises-4"><i class="fa fa-check"></i><b>12.2.2</b> End of module exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-3"><i class="fa fa-check"></i><b>12.3</b> Module 3</a>
+<ul>
+<li class="chapter" data-level="12.3.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-2"><i class="fa fa-check"></i><b>12.3.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.3.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#end-of-module-exercises-5"><i class="fa fa-check"></i><b>12.3.2</b> End of module exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-4"><i class="fa fa-check"></i><b>12.4</b> Module 4</a>
+<ul>
+<li class="chapter" data-level="12.4.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-3"><i class="fa fa-check"></i><b>12.4.1</b> General exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.5" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-5"><i class="fa fa-check"></i><b>12.5</b> Module 5</a>
+<ul>
+<li class="chapter" data-level="12.5.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-4"><i class="fa fa-check"></i><b>12.5.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.5.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-5"><i class="fa fa-check"></i><b>12.5.2</b> General exercises</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">WorldPop Population Modelling Training Manual, Vol. I</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="bayesian-statistical-inference" class="section level1 hasAnchor" number="6">
+<h1><span class="header-section-number">6</span> Bayesian Statistical Inference<a href="bayesian-statistical-inference.html#bayesian-statistical-inference" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>This module covers the basics to more in-depth Bayesian statistical inference, including Bayes’ rule (also called Bayes’ theorem), likelihoods, the prior distribution and the posterior distribution.</p>
+<div id="introduction" class="section level2 hasAnchor" number="6.1">
+<h2><span class="header-section-number">6.1</span> Introduction<a href="bayesian-statistical-inference.html#introduction" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>In the previous modules, the focus has been on the frequentist (or classical) approach, wherein all the values of the unknown parameter <span class="math inline">\(\theta\)</span> in the parameter space <span class="math inline">\(\Theta\)</span> are treated as if they are equally important and whilst the true value of <span class="math inline">\(\theta\)</span> is unknown, it is considered to be constant. In this paradigm, the only information on <span class="math inline">\(\theta\)</span> available comes from the data <span class="math inline">\(X_1, \cdots, X_n\)</span>.</p>
+<p>The alternative approach that will now be the focus is <strong>Bayesian inference</strong> where it is assumed that there is <em>prior</em> knowledge available through use of subject probability statements. In this approach, it is assumed that <span class="math inline">\(\theta\)</span> is a random variable and that there is some knowledge or information about <span class="math inline">\(\theta\)</span> (for example, some values of <span class="math inline">\(\theta\)</span> given in the parameter space <span class="math inline">\(\Theta\)</span> might be more likely to be the true value of <span class="math inline">\(\theta\)</span>) prior to observing the data <span class="math inline">\(D_n = {X_1, \cdots, X_n}\)</span>. The information about <span class="math inline">\(\theta\)</span> that is contained in the data is then combined with the prior knowledge about <span class="math inline">\(\theta\)</span>, where the combined information is then the current total information about <span class="math inline">\(\theta\)</span>.</p>
+<p>The three main components to Bayesian inference are then as follows.</p>
+<ol style="list-style-type: decimal">
+<li>The <strong>prior distribution</strong>, <span class="math inline">\(p(\theta)\)</span>, expresses any existing beliefs about the parameter <span class="math inline">\(\theta\)</span> before any information on the observed data is available. The prior distribution indicates the probability that each value in the parameter space <span class="math inline">\(\Theta\)</span> is the true value of <span class="math inline">\(\theta\)</span>.</li>
+<li>The <strong>joint probability density</strong>, <span class="math inline">\(p(\textbf{x}|\theta) = p(D_n|\theta)\)</span>, is chosen which represents the conditional density of X conditioned on the parameter <span class="math inline">\(\theta\)</span>.</li>
+<li>The <strong>normalising constant</strong> (or proportionality constant), also known as the evidence, is then given as <span class="math display">\[p(D_n)=\int_{\theta \in \Theta}p(\theta)p(D_n|\theta)d\theta \]</span> for a given observed dataset <span class="math inline">\(D_n = \{X_1, \cdots, X_n\}\)</span>.</li>
+</ol>
+<p>These components are then used to update the existing beliefs and calculate the <strong>posterior distribution</strong> <span class="math inline">\(p(\theta|D_n)\)</span>, where the posterior distribution is the conditional distribution of <span class="math inline">\(\theta\)</span> given the observed data.</p>
+<p>It is important to distinguish between the probability of events and the probability distribution or density function for a random variable. In this manual, this difference is distinguished with notation where <span class="math inline">\(P(.)\)</span> is used to denote the probability of an event and <span class="math inline">\(p(.)\)</span> is used to denote the probability distribution or density function.</p>
+</div>
+<div id="bayes-theorem" class="section level2 hasAnchor" number="6.2">
+<h2><span class="header-section-number">6.2</span> Bayes’ theorem<a href="bayesian-statistical-inference.html#bayes-theorem" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Bayes’ theorem (also known as Bayes’ rule) is a mathematical formula that describes the likelihood of an event occurring based on prior knowledge of a previous outcome in similar circumstances.</p>
+<p>The most basic form of Bayes’ theorem is for events A and B. Let <span class="math inline">\(A\)</span> be an event and let <span class="math inline">\(B_1, B_2, \cdots, B_k\)</span> be a set of mutually exclusive and exhaustive events (for clarification on mutually exclusive and exhaustive events, see Module 5). Then for <span class="math inline">\(i= 1, \cdots, k\)</span>, Bayes’ theorem is given as follows.</p>
+<p><span class="math display">\[P(B_i|A) = \frac{P(B_i \cap A)}{P(A)} = \frac{P(B_i)P(A|B_i)}{P(A)}.\]</span>
+where <span class="math inline">\(P(A) = \sum_{j=1}^kP(B_j)P(A|B_j)\)</span> is the law of total probability (seen in Module 5).</p>
+<p>This theorem can also be thought of as updating the probability of <span class="math inline">\(B_i\)</span> occurring using the information about another event (<span class="math inline">\(A\)</span>) that has already occurred.</p>
+<div class="boxed" style="background-color: #e7ffc7; text-align: left; padding: 10px;">
+<div class="columns">
+<div class="column" style="width:55%;">
+<p><strong>Example:</strong> Following on from the last example given in Module 5, where it was assumed that there are 3 regions in a country, regions A, B and C, with area proportions 50%, 20% and 30% respectively. Also, in the year 20X5, respectively, 68%, 83% and 74% of the population will be vaccinated. This information is given in a table below.</p>
+<table style="width:75%;">
+<colgroup>
+<col width="18%" />
+<col width="23%" />
+<col width="33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th></th>
+<th></th>
+</tr>
+<tr class="even">
+<th>Region</th>
+<th>Area Proportion</th>
+<th>Percentage Vaccinated</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>A</td>
+<td>50%</td>
+<td>68%</td>
+</tr>
+<tr class="even">
+<td>B</td>
+<td>20%</td>
+<td>83%</td>
+</tr>
+<tr class="odd">
+<td>C</td>
+<td>30%</td>
+<td>74%</td>
+</tr>
+<tr class="even">
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div><div class="column" style="width:45%;">
+<p><img src="figures/6_images/regionsABCvacc.png" width="80%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<p>Bayes’ theorem can be used to work out the probability that someone is from region A given that they are vaccinated. In Module 5, using the law of total probability, it was found that the probability of someone being vaccinated was <span class="math inline">\(P(Vaccinated)=0.728\)</span>, use this value in the formula for Bayes’ theorem.</p>
+<p><span class="math display">\[P(A|Vaccinated) = \frac{P(A)P(Vaccinated|A)}{P(Vaccinated)} = \frac{0.5 \times 0.68}{0.728} = 0.467\]</span></p>
+<p>Therefore, the probability of someone who is vaccinated being from region A is 46.7%.</p>
+</div>
+<div class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;">
+<p><strong>Exercise:</strong> Following on from the example above, what is the probability that someone who is vaccinated is from region C?</p>
+</div>
+<p><em>Note:</em> For another example of Bayes’ theorem, see <a href="https://onlinelibrary.wiley.com/doi/book/10.1002/9781118950203">Spatial and Spatio-temporal Bayesian Models with R-INLA</a>, page 57.</p>
+<div id="bayes-theorem-for-random-variables" class="section level3 hasAnchor" number="6.2.1">
+<h3><span class="header-section-number">6.2.1</span> Bayes’ theorem for random variables<a href="bayesian-statistical-inference.html#bayes-theorem-for-random-variables" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<!-- https://cpb-us-w2.wpmucdn.com/sites.gatech.edu/dist/2/436/files/2017/08/16_BayesRVs-su14.pdf -->
+<!-- https://www.mas.ncl.ac.uk/~nlf8/teaching/mas2317/notes/chapter2.pdf -->
+<p>When it is assumed that <span class="math inline">\(\theta\)</span> is a random variable, Bayes’ theorem can be adjusted to allow for the computation of the posterior distribution.</p>
+<p>Consider the model parameters <span class="math inline">\(\theta\)</span> and a given dataset <span class="math inline">\(D_n = \{X_1, \cdots, X_n\}\)</span>, where <span class="math inline">\(\theta\)</span> is random and <span class="math inline">\(D_n\)</span> is fixed. The posterior distribution can then be written as follows.</p>
+<p><span class="math display">\[p(\theta| D_n) = \frac{p(\theta)p(D_n|\theta)}{p(D_n)}, \]</span>
+where the proportionality constant is given as</p>
+<p><span class="math display">\[
+p(D_n) =
+\begin{cases}
+\sum_{\theta \in \Theta}p(\theta)p(D_n|\theta) &amp; \text{ if } \theta \text{ is discrete,}\\
+\int_{\theta \in \Theta}p(\theta)p(D_n|\theta)d\theta &amp; \text{ if } \theta \text{ is continuous}.
+\end{cases}
+\]</span></p>
+<p>In Bayes’ theorem, <span class="math inline">\(p(D_n)\)</span> does not depend on <span class="math inline">\(\theta\)</span>, only <span class="math inline">\(X\)</span> given that it is a proportionality constant, and so is often written as</p>
+<p><span class="math display">\[p(\theta| D_n) \propto p(\theta)p(D_n|\theta),\]</span>
+therefore,</p>
+<p><span class="math display">\[\text{posterior} \propto \text{prior}\times \text{likelihood},\]</span>
+where <span class="math inline">\(\propto\)</span> means <strong>proportional to</strong>.</p>
+<p>More information on likelihoods, prior and posterior probabilities is given in the next section.</p>
+</div>
+</div>
+<div id="the-likelihood-function" class="section level2 hasAnchor" number="6.3">
+<h2><span class="header-section-number">6.3</span> The likelihood function<a href="bayesian-statistical-inference.html#the-likelihood-function" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>The likelihood function is introduced in Module 4 with likelihood ratio testing for model selection. However, this section will go into more detail of what the likelihood function actually is and how it is related to the data.</p>
+<p>The likelihood function is a function of the parameters statistical model and given by the joint probability mass function (PMF) of discrete observed data or the joint probability density function (PDF) of continuous data. It is important to note that the likelihood function is different from a PMF or PDF, and is instead characterised by the joint distribution of the observed variables. The likelihood function of <span class="math inline">\(\theta\)</span> is defined as <span class="math inline">\(L(\theta) = L(\theta|x) = p(\textbf{x}|\theta)\)</span>, evaluated at <span class="math inline">\(x\)</span> and considered a function of <span class="math inline">\(\theta\)</span>. It is also an important component to both frequentist (for example the LRT for model selection) and Bayesian approaches.</p>
+<p>The likelihood function is calculated by finding the joint distribution of the observed variables, found through finding the product of the PMF/PDF as follows.
+<span class="math display">\[L(\theta) = \prod_{i=1}^n p(x_i;\theta)= p(x_1;\theta) \times p(x_2;\theta) \times \cdots \times p(x_n;\theta),\]</span>
+where <span class="math inline">\(p(x;\theta)\)</span> is the PMF if each <span class="math inline">\(X_i\)</span> has discrete distribution and <span class="math inline">\(p(x;\theta)\)</span> is the PDF if each <span class="math inline">\(X_i\)</span> has continuous distribution. Given that the observations <span class="math inline">\(x_1,...,x_n\)</span> are known since they are observed, the likelihood function can be described as a function of the unknown <span class="math inline">\(\theta\)</span>.</p>
+<p>It is common to need to maximise the likelihood function, for example, to find the maximum likelihood estimate (the estimated value of the parameter of interest that is most likely to be the true value), however, it can be challenging to maximise a product. Therefore, the log-likelihood is often used, since it is typically easier to maximise a sum than a product. The log-likelihood is given as follows.</p>
+<p><span class="math display">\[\log L(\theta) = \ell (\theta) = \sum_{i=1}^n \log p(x_i;\theta). \]</span></p>
+<p>The log-likelihood of a model in <code>R</code> can be found through using the <code>logLik()</code> function with the model of interest as an argument. This is demonstrated in Module 4 for use in the likelihood ratio test.</p>
+<div id="different-types-and-structures" class="section level3 hasAnchor" number="6.3.1">
+<h3><span class="header-section-number">6.3.1</span> Different types and structures<a href="bayesian-statistical-inference.html#different-types-and-structures" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>The likelihood function varies dependent on the data type and structure, as it depends on the distribution of the data itself.</p>
+<p>To choose which likelihood function to use, it is important to look at the data itself and check for the data type and assumptions, using statistical tests or plots such as box plots and histograms for model assumption checking. For example, starting by looking at whether the data is discrete or continuous. If the data is discrete, look at the properties of the data. Are there many outcomes or only two outcomes? Are there repeated trials or only one trial conducted? If the data is continuous, it is important to look at whether the data is strictly positive or whether there are negative values.</p>
+<p>The main data types are given below, with examples for possible distributions given for each data type to help identify which likelihood function to use and when.</p>
+<div id="count-data" class="section level4 hasAnchor" number="6.3.1.1">
+<h4><span class="header-section-number">6.3.1.1</span> Count data<a href="bayesian-statistical-inference.html#count-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>For count data, the most common distributions are <strong>binomial</strong>, <strong>Poisson</strong>, <strong>negative-binomial</strong> and <strong>geometric</strong>. Given that count data is discrete, the probability mass function of each of the distributions is used in the construction of the likelihood function. An important note for count data is that the counts are always non-negative, <span class="math inline">\(X=\{0,1,2,\cdots\}\)</span>.</p>
+<p>The binomial distribution is used in the case where there are only two possible outcomes and the data is collected over a series of repeated trials. In this distribution, the two outcomes are labelled as either a success or a failure, where the focus is on the number of successes in <span class="math inline">\(n\)</span> trials. An example of when this distribution is used is when the data contains information on a series 100 births, there are two possible outcomes, male or female. The associated probability mass function is given as
+<span class="math display">\[X \sim binomial(n, p), \text{ } p(x;n,p) = {}^nC_x p^x(1-p)^{n-x}.\]</span>
+For more information on the binomial distribution, see <a href="https://www.investopedia.com/terms/b/binomialdistribution.asp">Investopedia</a>.</p>
+<p>The Poisson distribution is used to identify how likely a given count of times an event is to occur within/over a specified period of time. The corresponding probability mass function is given as follows.</p>
+<p><span class="math display">\[ X \sim Poisson(\theta),\text { } p(x;\theta) = \frac{\theta^x \exp(-\theta)}{x!}.\]</span></p>
+<p>For more information on the Poisson distribution, see <a href="https://www.investopedia.com/terms/p/poisson-distribution.asp">Investopedia</a>.</p>
+<p>An important assumption of the Poisson distribution is that the mean is equal to the variance. If this assumption cannot be met, often the negative-binomial distribution is used as an alternative to the Poisson distribution. It has an additional (dispersion) parameter, which allows for more flexibility than the Poisson distribution. The focus of the negative-binomial distribution is on the number of failures before the <span class="math inline">\(r\)</span>th success, where the associated probability mass function is given as follows.</p>
+<p><span class="math display">\[X \sim negbin(r,p), \text{ } p(x;r,p) = \frac{\Gamma(x+r)}{x!\Gamma(r)}p^r(1-p)^{x}\]</span>
+For more information on the negative-binomial distribution, see <a href="https://mathworld.wolfram.com/NegativeBinomialDistribution.html">Wolfram</a>.</p>
+<p>The geometric distribution is a special case of the negative-binomial distribution where the focus is on the number of failures before the first success, with the corresponding probability mass function given as follows.</p>
+<p><span class="math display">\[ X \sim geometric(p),\text { } p(x;p) = p(1-p)^{x-1}.\]</span>
+For more information on the geometric distribution, see <a href="https://www.britannica.com/topic/geometric-distribution">Britannica</a>.</p>
+</div>
+<div id="binary-data" class="section level4 hasAnchor" number="6.3.1.2">
+<h4><span class="header-section-number">6.3.1.2</span> Binary data<a href="bayesian-statistical-inference.html#binary-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>The most common distribution for binary data is the <strong>Bernoulli</strong> distribution. It is similar to the binomial distribution in that there are only two possible outcomes, however, instead of repeated trials, only one trial is conducted. For a Bernoulli trial, outcomes are either labelled as <span class="math inline">\(k=0\)</span> indicating a failure or <span class="math inline">\(k=1\)</span> indicating a success. The probability mass function of the Bernoulli distribution is given as follows.</p>
+<p>For more information on the Bernoulli distribution, see <a href="https://reference.wolfram.com/language/ref/BernoulliDistribution.html.en">Wolfram</a>.</p>
+</div>
+<div id="proportional-data" class="section level4 hasAnchor" number="6.3.1.3">
+<h4><span class="header-section-number">6.3.1.3</span> Proportional data<a href="bayesian-statistical-inference.html#proportional-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>For proportions, the <strong>beta-binomial</strong> distributions is the most commonly used distribution type. In this discrete distribution, the probability <span class="math inline">\(p\)</span> for a binomial distribution is chosen from a beta distribution, leading to the number of successes being a beta-binomial random variable. The corresponding probability mass function is given as follows.</p>
+<p><span class="math display">\[X \sim beta-binomial(n, \alpha, \beta), \text{ } {}^nC_x \frac{B(x+\alpha, n-x+\beta)}{B(\alpha, \beta)},\]</span>
+where <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> are shape parameters, <span class="math inline">\(n\)</span> is the number of trials and <span class="math inline">\(B\)</span> is the <strong>Beta function</strong> given as
+<span class="math display">\[
+\begin{aligned}
+B(\alpha, \beta) &amp;= \frac{\Gamma(\alpha)\Gamma(\beta)}{\Gamma(\alpha+\beta)} \\
+&amp;= \frac{(\alpha-1)!(\beta-1)!}{(\alpha+\beta-1)!},
+\end{aligned}
+\]</span></p>
+<p>For more information on the beta-binomial distribution see <a href="https://www.acsu.buffalo.edu/~adamcunn/probability/betabinomial.html">Buffalo</a>.</p>
+</div>
+<div id="continuous-data" class="section level4 hasAnchor" number="6.3.1.4">
+<h4><span class="header-section-number">6.3.1.4</span> Continuous data<a href="bayesian-statistical-inference.html#continuous-data" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Unlike with the discrete distributions where the probability of an exact outcome can be computed, for a continuous distribution, the focus is on computing the probability for a range of outcomes. The most common distributions for continuous data are the <strong>normal</strong>, <strong>log-normal</strong>, <strong>gamma</strong> and <strong>log-logistic</strong> distributions.</p>
+<p>The normal distribution relies on symmetry around the mean, with its ‘bell curve’ shape when plotted well known. This distribution is used when there is a high frequency of data points near the mean with few data points further away from the mean. It is important to note that for the normal distribution, the data can be negative, so is not suitable for data that is strictly non-negative. To test the relevant assumptions associated with the normal distribution, plots such as histograms can be used. This is covered in Module 4. The probability density function for the normal distribution is given as follows.</p>
+<p><span class="math display">\[X \sim normal(\mu, \sigma^2), \text{ } p(x;\mu, \sigma)=\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(x-\mu)^2}{2\sigma^2}\right).\]</span>
+For more information on the normal distribution see <a href="https://www.investopedia.com/terms/n/normaldistribution.asp">Investopedia</a>.</p>
+<p>As mentioned in Module 4, if the assumptions are not met, the data can be transformed, for example using the logarithm function. If the logarithm of the random variable is normally distributed, then the log-normal distribution may be used. In this case, if X is log-normally distributed then <span class="math inline">\(Y=\log(X)\)</span>. The corresponding probability density function is given as</p>
+<p><span class="math display">\[X \sim lognormal(\mu, \sigma^2), \text{ } p(x;\mu, \sigma)=\frac{1}{x\sqrt{2\pi\sigma^2}}\exp\left(-\frac{(\log(x)-\mu)^2}{2\sigma^2}\right).\]</span>
+For more information on the log-normal distribution see <a href="https://www.investopedia.com/terms/l/log-normal-distribution.asp">Investopedia</a>.</p>
+<p>Information on alternative continuous distributions is given here <a href="https://www.knime.com/blog/continuous-probability-distribution">Knime</a>.</p>
+</div>
+</div>
+</div>
+<div id="prior-distribution" class="section level2 hasAnchor" number="6.4">
+<h2><span class="header-section-number">6.4</span> Prior distribution<a href="bayesian-statistical-inference.html#prior-distribution" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>As mentioned in the introduction, the prior distribution <span class="math inline">\(p(\theta)\)</span>, is a probability distribution that expresses beliefs about the parameter <span class="math inline">\(\theta\)</span> that exist before, or <em>prior</em> to, conducting the experiment.</p>
+<p>There are different types of prior distributions, and the choice of which type is important. There are a few main things to consider when choosing the prior distribution.</p>
+<p>Firstly, as with choosing the likelihood function, the type of distribution should be considered as the prior distribution chosen needs to be representative of the parameters. There is often an instinctive choice for the prior distribution given the type of distribution. Some examples are given below.</p>
+<ul>
+<li>If the parameter of the model for the underlying system is continuous and symmetric, then the prior distribution chosen should be able to vary between either <span class="math inline">\(-\infty\)</span> and <span class="math inline">\(\infty\)</span> or <span class="math inline">\(0\)</span> and <span class="math inline">\(\infty\)</span>.</li>
+<li>If the parameter of the model for the underlying system is continuous and positive, then the prior distribution chosen should be able to vary only between <span class="math inline">\(0\)</span> and <span class="math inline">\(\infty\)</span>.</li>
+<li>If the parameter of the model for the underlying system is a proportion, then the prior distribution chosen should be able to vary between <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>.</li>
+</ul>
+<p>Secondly, the <strong>hyperparameters</strong> should be considered as they can make the prior distribution either more or less informative, where hyperparameters are the parameters of the prior distribution (this terminology is used to help distinguish between the parameters of the model for the underlying system and the parameters for the prior distribution).</p>
+<p>Lastly, you should always check the sensitivity and robustness of the posterior distribution to different choices of priors.</p>
+<div id="conjugate-priors" class="section level3 hasAnchor" number="6.4.1">
+<h3><span class="header-section-number">6.4.1</span> Conjugate priors<a href="bayesian-statistical-inference.html#conjugate-priors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In some cases, the posterior distribution can be solved through using a closed-form solution, meaning that there is not a need for more complex approximation methods. In most of these cases, the posterior density belongs to the same (parametric) family as the prior distribution. If this is the case, then the prior distribution, <span class="math inline">\(p(\theta)\)</span>, is called a <strong>conjugate prior</strong> of <span class="math inline">\(\theta\)</span> under the likelihood <span class="math inline">\(p(D_n|\theta)\)</span>. Some examples of conjugate prior distributions are given below.</p>
+<div style="width: 100%; text-align: center; display: flex; justify-content: center;">
+<table style="width:50%;">
+<colgroup>
+<col width="19%" />
+<col width="30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th></th>
+</tr>
+<tr class="even">
+<th>Likelihood</th>
+<th>Conjugate Prior</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Binomial</td>
+<td>Beta</td>
+</tr>
+<tr class="even">
+<td>Poisson</td>
+<td>Gamma</td>
+</tr>
+<tr class="odd">
+<td>Normal</td>
+<td>Normal</td>
+</tr>
+<tr class="even">
+<td>Exponential</td>
+<td>Gamma</td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>It is important to note that the conjugate models have limited flexibility, for example, conjugacy can be broken when a GLM is specified, or not all of the likelihoods available have an associated conjugate prior. As a result of this, these models are not frequently used in practice.</p>
+<p>To demonstrate what a conjugate prior means, the Poisson-gamma model will be used. The Poisson distribution can only have non-negative integer values. Since the parameter of a Poisson distribution can take any positive real number, the prior distribution chosen should be able to vary between <span class="math inline">\(0\)</span> and <span class="math inline">\(\infty\)</span>. In this case, since there is no upper bound, although a uniform distribution can be chosen such that it is non-negative, an upper bound must be set, for example, <span class="math inline">\(X \sim Uniform(0, 1000)\)</span>. Therefore, the uniform distribution would not be an appropriate choice for prior distribution. Instead, a gamma distribution is a good choice, since the ‘tail’ of the distribution goes to infinity and the ‘peak’ of the distribution is close to zero, which are similar characteristics to the Poisson distribution. This is demonstrated in the plots below.</p>
+<p><img src="WorldPop_Training_Manual_files/figure-html/poisson%20v%20gamma-1.png" width="672" /></p>
+<p>For more information see <a href="https://www.statlect.com/fundamentals-of-statistics/conjugate-prior">StatLect</a>.</p>
+</div>
+<div id="flat-improper-and-non-informative-priors" class="section level3 hasAnchor" number="6.4.2">
+<h3><span class="header-section-number">6.4.2</span> Flat, improper and non-informative priors<a href="bayesian-statistical-inference.html#flat-improper-and-non-informative-priors" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>One of the ways of selecting the prior is to use subjectivism. This method follows the belief that the prior should reflect the subjective opinion of <span class="math inline">\(\theta\)</span> (subjective beliefs about <span class="math inline">\(\theta\)</span> before the data is collected). However, this approach is not only not possible in many situations, it is also not appropriate in many cases, especially since it is often a goal to keep the inference objective. This is typically when a non-informative prior is used instead.</p>
+<p>In situations where there isn’t a preference for any given value in <span class="math inline">\(\Theta\)</span>, meaning that the values in <span class="math inline">\(\Theta\)</span> are equally likely to be the true value of <span class="math inline">\(\theta\)</span>, there is a lack of information about <span class="math inline">\(\theta\)</span>. A prior distribution that reflects this is called a <strong>non-informative prior</strong>.</p>
+<p>One type of non-informative prior is a <strong>flat prior</strong>, where <span class="math inline">\(p(\theta) \propto k\)</span>, where <span class="math inline">\(k\)</span> is a constant, for example, <span class="math inline">\(p(\theta)=1\)</span>. Given the relationship between the prior, likelihood and the posterior distribution, when the prior is constant, the posterior becomes some fraction of the likelihood. This means that the posterior is then only affected by the likelihood function.</p>
+<p>A probability density function should integrate to 1, <span class="math inline">\(\int_{-\infty}^\infty p(\theta)d\theta=1\)</span> and a probability mass function should sum to 1 <span class="math inline">\(\sum_{-\infty}^{\infty} p(\theta)=1\)</span>. However, when the prior distribution is constant, this basic property of the PDF or PMF is violated. For example, if the data is continuous and <span class="math inline">\(p(\theta)=k\)</span> for all <span class="math inline">\(-\infty &lt; \theta &lt; \infty\)</span>, then the integral
+<span class="math display">\[\int_{-\infty}^\infty p(\theta)d\theta = k \int_{-\infty}^\infty d\theta\]</span>
+does not exist, no matter how small <span class="math inline">\(k\)</span> is since <span class="math inline">\(k&gt;0\)</span>.</p>
+<p>When this is the case, it is called an <strong>improper prior</strong>, and the distribution can only be assumed if the resulting posterior distribution is proper, <span class="math inline">\(\int_{-\infty}^\infty p(\theta|D_n)d\theta=&lt; \infty\)</span>.</p>
+<p>If <span class="math inline">\(p(\theta)=k\)</span> for values of <span class="math inline">\(\theta\)</span> where the likelihood function has appreciable value (a value that is not insignificant) and <span class="math inline">\(p(\theta)=0\)</span> otherwise, then the prior distribution is called a <strong>locally uniform prior</strong>.</p>
+<p>One of the most commonly used non-informative priors is that of <strong>Jeffreys’ prior</strong>, given by the square root of the Fisher information matrix as follows.
+<span class="math display">\[p(\theta) \propto \sqrt{I(\theta))},\]</span>
+where
+<span class="math display">\[I(\theta) = -E\left[\frac{\partial^2}{\partial \theta^2}\log(p(\theta|D_n))\right].\]</span></p>
+<p>For example, the Jeffreys’ prior for <span class="math inline">\(\theta\)</span> when a binomial distribution is assumed is as follows.
+<span class="math display">\[p(\theta)\propto {\theta(1-\theta)}^{-1/2}.\]</span></p>
+<p>For more information on non-informative priors and prior selection, see <a href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/9781118033197">Box and Tiao</a>, Section 1.3.</p>
+</div>
+<div id="informative-prior" class="section level3 hasAnchor" number="6.4.3">
+<h3><span class="header-section-number">6.4.3</span> Informative prior<a href="bayesian-statistical-inference.html#informative-prior" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In the instance that there is prior information available, typically from existing results from prior experiments focused on the same area or topic, an <strong>informative prior</strong> should be used to incorporate this information into the model. For example, when looking at the success rates of a new drug in testing, if previous experiments focused on the success rate of a similar drug have occurred, then this existing information can be used to construct an informative prior distribution. For a more in depth example, an example of this kind is demonstrated in the book <a href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/9781118950203">Spatial and Spatio-temporal Bayesian Models with R-INLA</a> on page 69.</p>
+</div>
+</div>
+<div id="overview-of-posterior-inference" class="section level2 hasAnchor" number="6.5">
+<h2><span class="header-section-number">6.5</span> Overview of posterior inference<a href="bayesian-statistical-inference.html#overview-of-posterior-inference" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>As previously mentioned, in Bayesian statistics, the likelihood and prior distribution are combined to get the posterior distribution. Unlike with classical statistics, where simply the mean and standard deviation can be used to make inference on the parameter of interest, in order to make inference from the posterior distribution, samples need to be generated from the posterior distribution.</p>
+<div id="markov-chain-monte-carlo-approach" class="section level3 hasAnchor" number="6.5.1">
+<h3><span class="header-section-number">6.5.1</span> Markov Chain Monte Carlo approach<a href="bayesian-statistical-inference.html#markov-chain-monte-carlo-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>To generate the samples required, Markov Chain Monte Carlo methods (discussed in more detail in Module 8) can be utilised, where the type of MCMC approach used depends on what the posterior distribution itself looks like. In the closed form case where the posterior distribution looks like a recognisable probability distribution, such as the normal or Poisson distributions, the MCMC approach known as <strong>Gibbs sampler</strong> can be used. However, a closed form solution is not always available. If this is the case, then other Metropolis-Hastings algorithms are required, such as Random Walk and Independence Sampler.</p>
+<p>Once the samples have been generated from the posterior distribution, it needs to be checked whether the samples are drawn from the <strong>target</strong> (or <strong>stationary</strong>) distribution, which is the distribution that is desired when the likelihood and the prior distribution are multiplied together. To check this, when MCMC approaches are used, a <strong>trace plot</strong> can be created. Trace plots are useful for assessing whether a chain is well-mixed or not. If the chain is well-mixed, after the <strong>burn-in</strong> period, the trace plot won’t have any flat sections, which would indicate that the chain remains stationary for too long, and the plot won’t have too many consecutive steps in the same direction. Overall, you do not want the trace plot to show any obvious correlation.</p>
+<p>To demonstrate what the plot should look like, the function <code>plot.ts()</code> can be used to plot a time series plot with randomly sampled data.</p>
+<p>Below, 1000 numbers are randomly sampled from a normal distribution with mean 10 and standard deviation 10. The corresponding time series plot shows oscillation around the central value (mean) of 10, with good mixing.</p>
+<div class="sourceCode" id="cb538"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb538-1"><a href="bayesian-statistical-inference.html#cb538-1" tabindex="-1"></a><span class="co">#set seed for reproducibility</span></span>
+<span id="cb538-2"><a href="bayesian-statistical-inference.html#cb538-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb538-3"><a href="bayesian-statistical-inference.html#cb538-3" tabindex="-1"></a></span>
+<span id="cb538-4"><a href="bayesian-statistical-inference.html#cb538-4" tabindex="-1"></a><span class="co">#randomly sample numbers </span></span>
+<span id="cb538-5"><a href="bayesian-statistical-inference.html#cb538-5" tabindex="-1"></a>post1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="dv">10</span>, <span class="dv">10</span>)</span>
+<span id="cb538-6"><a href="bayesian-statistical-inference.html#cb538-6" tabindex="-1"></a></span>
+<span id="cb538-7"><a href="bayesian-statistical-inference.html#cb538-7" tabindex="-1"></a><span class="co">#plot the sampled numbers</span></span>
+<span id="cb538-8"><a href="bayesian-statistical-inference.html#cb538-8" tabindex="-1"></a><span class="fu">plot.ts</span>(post1)</span></code></pre></div>
+<p><img src="WorldPop_Training_Manual_files/figure-html/rnorm%20ts%20plot%201-1.png" width="672" /></p>
+<p>To contrast this well-mixed plot, the data sampled below comes from the same normal distribution but only has 100 values, leading to a plot that is quite sparse. It is a lot harder to identify a central value and as a result, a larger sample size is required.</p>
+<div class="sourceCode" id="cb539"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb539-1"><a href="bayesian-statistical-inference.html#cb539-1" tabindex="-1"></a><span class="co">#set seed for reproducibility</span></span>
+<span id="cb539-2"><a href="bayesian-statistical-inference.html#cb539-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb539-3"><a href="bayesian-statistical-inference.html#cb539-3" tabindex="-1"></a></span>
+<span id="cb539-4"><a href="bayesian-statistical-inference.html#cb539-4" tabindex="-1"></a><span class="co">#randomly sample numbers </span></span>
+<span id="cb539-5"><a href="bayesian-statistical-inference.html#cb539-5" tabindex="-1"></a>post2 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">100</span>, <span class="dv">10</span>, <span class="dv">10</span>)</span>
+<span id="cb539-6"><a href="bayesian-statistical-inference.html#cb539-6" tabindex="-1"></a></span>
+<span id="cb539-7"><a href="bayesian-statistical-inference.html#cb539-7" tabindex="-1"></a><span class="co">#plot the sampled numbers</span></span>
+<span id="cb539-8"><a href="bayesian-statistical-inference.html#cb539-8" tabindex="-1"></a><span class="fu">plot.ts</span>(post2)</span></code></pre></div>
+<p><img src="WorldPop_Training_Manual_files/figure-html/rnorm%20ts%20plot%202-1.png" width="672" /></p>
+<p>In contrast with the samples taken from a normal distribution, the below (1000) values are sampled from a gamma distribution. Whilst the sample size is large, there is poor convergence, given that the central value changes after the first 500 observations. If this chain was obtained from an MCMC approach, the chain would be poorly mixed.</p>
+<div class="sourceCode" id="cb540"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb540-1"><a href="bayesian-statistical-inference.html#cb540-1" tabindex="-1"></a><span class="co">#set seed for reproducibility</span></span>
+<span id="cb540-2"><a href="bayesian-statistical-inference.html#cb540-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb540-3"><a href="bayesian-statistical-inference.html#cb540-3" tabindex="-1"></a></span>
+<span id="cb540-4"><a href="bayesian-statistical-inference.html#cb540-4" tabindex="-1"></a><span class="co">#randomly sample numbers </span></span>
+<span id="cb540-5"><a href="bayesian-statistical-inference.html#cb540-5" tabindex="-1"></a>post3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rgamma</span>(<span class="dv">500</span>, <span class="dv">10</span>, <span class="dv">2</span>), <span class="fu">rgamma</span>(<span class="dv">500</span>, <span class="dv">10</span>, <span class="dv">1</span>))</span>
+<span id="cb540-6"><a href="bayesian-statistical-inference.html#cb540-6" tabindex="-1"></a></span>
+<span id="cb540-7"><a href="bayesian-statistical-inference.html#cb540-7" tabindex="-1"></a><span class="co">#plot the sampled numbers</span></span>
+<span id="cb540-8"><a href="bayesian-statistical-inference.html#cb540-8" tabindex="-1"></a><span class="fu">plot.ts</span>(post3)</span></code></pre></div>
+<p><img src="WorldPop_Training_Manual_files/figure-html/rgamma%20ts%20plot%201-1.png" width="672" /></p>
+<p>Another diagnostic measure of the MCMC approach is the use of R-hat values. Ideally, you want all of the chains to be sampling from the same underlying distribution which can be identified by the R-hat values being close to 1, where a value close to 1 indicates convergence. However, if the R-hat values are notably larger than 1.1, there is indication that convergence has not been achieved and there may be an issue.</p>
+<p>The R-hat value can be found using the <code>Rhat()</code> function from the <code>rstan</code> package. This is demonstrated in the example below where the resulting value is close to 1.</p>
+<div class="sourceCode" id="cb541"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb541-1"><a href="bayesian-statistical-inference.html#cb541-1" tabindex="-1"></a><span class="co">#install rstan package</span></span>
+<span id="cb541-2"><a href="bayesian-statistical-inference.html#cb541-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;rstan&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb542"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb542-1"><a href="bayesian-statistical-inference.html#cb542-1" tabindex="-1"></a><span class="co">#load the rstan package</span></span>
+<span id="cb542-2"><a href="bayesian-statistical-inference.html#cb542-2" tabindex="-1"></a><span class="fu">library</span>(rstan)</span></code></pre></div>
+<div class="sourceCode" id="cb543"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb543-1"><a href="bayesian-statistical-inference.html#cb543-1" tabindex="-1"></a><span class="co">#set seed for reproducibility</span></span>
+<span id="cb543-2"><a href="bayesian-statistical-inference.html#cb543-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>)</span>
+<span id="cb543-3"><a href="bayesian-statistical-inference.html#cb543-3" tabindex="-1"></a></span>
+<span id="cb543-4"><a href="bayesian-statistical-inference.html#cb543-4" tabindex="-1"></a><span class="co">#sample numbers</span></span>
+<span id="cb543-5"><a href="bayesian-statistical-inference.html#cb543-5" tabindex="-1"></a>post4 <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">100</span>, <span class="dv">1</span>, <span class="fl">1.2</span>)</span>
+<span id="cb543-6"><a href="bayesian-statistical-inference.html#cb543-6" tabindex="-1"></a></span>
+<span id="cb543-7"><a href="bayesian-statistical-inference.html#cb543-7" tabindex="-1"></a><span class="co">#compute R-hat statistic</span></span>
+<span id="cb543-8"><a href="bayesian-statistical-inference.html#cb543-8" tabindex="-1"></a><span class="fu">Rhat</span>(post4)</span></code></pre></div>
+<pre><code>## [1] 0.9997899</code></pre>
+<p>R-hat values can also be plotted with the <code>mcmc_rhat()</code> function (or as a histogram with the <code>mcmc_rhat_hist()</code> function) from the <code>bayesplot</code> package. These plots are colour-coded by default, clearly visualising the proportion of values within different ranges (<span class="math inline">\(\leq1.05\)</span>, <span class="math inline">\(1.05&lt;\hat{r}\leq 1.1\)</span> and <span class="math inline">\(&gt;1.1\)</span>).</p>
+<div class="sourceCode" id="cb545"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb545-1"><a href="bayesian-statistical-inference.html#cb545-1" tabindex="-1"></a><span class="co">#install bayesplot package</span></span>
+<span id="cb545-2"><a href="bayesian-statistical-inference.html#cb545-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;bayesplot&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb546"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb546-1"><a href="bayesian-statistical-inference.html#cb546-1" tabindex="-1"></a><span class="co">#load the bayesplot package</span></span>
+<span id="cb546-2"><a href="bayesian-statistical-inference.html#cb546-2" tabindex="-1"></a><span class="fu">library</span>(bayesplot)</span></code></pre></div>
+<div class="sourceCode" id="cb547"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb547-1"><a href="bayesian-statistical-inference.html#cb547-1" tabindex="-1"></a><span class="co">#sample R-hat values</span></span>
+<span id="cb547-2"><a href="bayesian-statistical-inference.html#cb547-2" tabindex="-1"></a>rhat <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">runif</span>(<span class="dv">100</span>, <span class="dv">1</span>, <span class="fl">1.2</span>))</span>
+<span id="cb547-3"><a href="bayesian-statistical-inference.html#cb547-3" tabindex="-1"></a></span>
+<span id="cb547-4"><a href="bayesian-statistical-inference.html#cb547-4" tabindex="-1"></a><span class="co">#plot the values</span></span>
+<span id="cb547-5"><a href="bayesian-statistical-inference.html#cb547-5" tabindex="-1"></a><span class="fu">mcmc_rhat</span>(rhat)</span></code></pre></div>
+<p><img src="WorldPop_Training_Manual_files/figure-html/rhat%20plot-1.png" width="672" /></p>
+<div class="sourceCode" id="cb548"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb548-1"><a href="bayesian-statistical-inference.html#cb548-1" tabindex="-1"></a><span class="fu">mcmc_rhat_hist</span>(rhat)</span></code></pre></div>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="WorldPop_Training_Manual_files/figure-html/rhat%20plot-2.png" width="672" /></p>
+</div>
+<div id="integrated-nested-laplace-approximation-approach" class="section level3 hasAnchor" number="6.5.2">
+<h3><span class="header-section-number">6.5.2</span> Integrated Nested Laplace Approximation approach<a href="bayesian-statistical-inference.html#integrated-nested-laplace-approximation-approach" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Integrated Nested Laplace Approximation (INLA) provides a faster, more efficient approach to using MCMC for posterior inference through using approximation. It approximates the posterior distribution with the posterior marginal distribution through using an evolution approach that is based on Laplace approximation. It does not involve sampling and is deterministic, accurate and fast. The corresponding R package, <code>INLA</code> can be used for modelling. For more information on the <code>INLA</code> package, see <a href="https://www.r-inla.org/home"><code>R-INLA Project</code></a>.</p>
+<p>To perform modelling with INLA in R as an alternative approach to the methods discussed in Module 4, the function <code>inla()</code> can be used with the following arguments.</p>
+<ul>
+<li><code>formula</code>: a formula object that specifies the linear predictor.</li>
+<li><code>data</code>: a data frame with the data. If you wish to predict the response variable for some observations, you need to specify the response variable of these observations as NA.</li>
+<li><code>family</code>: a string or vector of strings that indicate the likelihood family such as Gaussian, Poisson or binomial. The default family for this argument is Gaussian. A list of alternatives can be seen by running the code <code>names(inla.models()$likelihood)</code> and details for individual families can be seen with the code <code>inla.doc("familyname")</code>.</li>
+<li><code>control.compute</code>: a list with the specification of several computing variables such as <code>dic</code>, which is a Boolean variable indicating whether the Deviance information criterion (DIC, explored further in Module 9) of the model should be computed.</li>
+<li><code>control.predictor</code>: a list with the specification of several predictor variables such as a link which is the link function of the model, and compute which is a Boolean variable that indicates whether the marginal densities for the linear predictor should be computed.</li>
+</ul>
+<p>It is important to note that the formula should be specified first, outside the function, and specified in the form <code>formula &lt;- response ∼ x1 + x2 + ... xM</code>.</p>
+<div class="sourceCode" id="cb550"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb550-1"><a href="bayesian-statistical-inference.html#cb550-1" tabindex="-1"></a><span class="co">#install the INLA package from the code given on the website</span></span>
+<span id="cb550-2"><a href="bayesian-statistical-inference.html#cb550-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;INLA&quot;</span>,<span class="at">repos=</span><span class="fu">c</span>(<span class="fu">getOption</span>(<span class="st">&quot;repos&quot;</span>),<span class="at">INLA=</span><span class="st">&quot;https://inla.r-inla-download.org/R/stable&quot;</span>), <span class="at">dep=</span><span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb551"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb551-1"><a href="bayesian-statistical-inference.html#cb551-1" tabindex="-1"></a><span class="co">#template for using inla() function</span></span>
+<span id="cb551-2"><a href="bayesian-statistical-inference.html#cb551-2" tabindex="-1"></a>formula <span class="ot">&lt;-</span> response <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> ... xM <span class="co">#the nominal form of the model</span></span>
+<span id="cb551-3"><a href="bayesian-statistical-inference.html#cb551-3" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">inla</span>(formula,      </span>
+<span id="cb551-4"><a href="bayesian-statistical-inference.html#cb551-4" tabindex="-1"></a>              <span class="at">data =</span> <span class="fu">data.frame</span>(data), <span class="co">#your data frame            </span></span>
+<span id="cb551-5"><a href="bayesian-statistical-inference.html#cb551-5" tabindex="-1"></a>              <span class="at">family =</span> <span class="st">&quot;poisson&quot;</span>, <span class="co">#the probability distribution of the response   </span></span>
+<span id="cb551-6"><a href="bayesian-statistical-inference.html#cb551-6" tabindex="-1"></a>              <span class="at">control.predictor =</span> <span class="fu">list</span>(<span class="at">compute =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb551-7"><a href="bayesian-statistical-inference.html#cb551-7" tabindex="-1"></a>              <span class="at">control.compute =</span> <span class="fu">list</span>(<span class="at">dic =</span> <span class="cn">TRUE</span>) <span class="sc">+</span> )  </span>
+<span id="cb551-8"><a href="bayesian-statistical-inference.html#cb551-8" tabindex="-1"></a><span class="fu">summary</span>(res) <span class="co">#produces summaries of the posterior parameter estimates </span></span></code></pre></div>
+<p>To demonstrate the posterior estimation, (standardised) population data from Cameroon is used. Information on how to standardise the dataset first is given in Module 8, however, for now the focus is on the modelling. Firstly, the dataset needs to be imported into the R environment.</p>
+<div class="sourceCode" id="cb552"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb552-1"><a href="bayesian-statistical-inference.html#cb552-1" tabindex="-1"></a><span class="co">#input the data</span></span>
+<span id="cb552-2"><a href="bayesian-statistical-inference.html#cb552-2" tabindex="-1"></a>Data_CMR <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">paste0</span>(data_path, <span class="st">&quot;Data_CMR_std.csv&quot;</span>))</span>
+<span id="cb552-3"><a href="bayesian-statistical-inference.html#cb552-3" tabindex="-1"></a></span>
+<span id="cb552-4"><a href="bayesian-statistical-inference.html#cb552-4" tabindex="-1"></a><span class="co">#load the variable names file</span></span>
+<span id="cb552-5"><a href="bayesian-statistical-inference.html#cb552-5" tabindex="-1"></a>var_names <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">paste0</span>(data_path, <span class="st">&quot;var_names.csv&quot;</span>)) </span></code></pre></div>
+<p>y ~ x2 + x16 + x20 + x24 + x31 + x36 + x40</p>
+<p>As an example, if the model <span class="math inline">\(\log(\lambda) = intercept + \beta_1*x_2 + \beta_2*x_{16} + \beta_3*x_{20}  + \beta_4*x_{24} + \beta_5*x_{36} + \beta_6x_{40}\)</span> is the chosen model, the <code>inla()</code> function can be used to fit this model as follows.</p>
+<div class="sourceCode" id="cb553"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb553-1"><a href="bayesian-statistical-inference.html#cb553-1" tabindex="-1"></a><span class="co">#nominal form of the model</span></span>
+<span id="cb553-2"><a href="bayesian-statistical-inference.html#cb553-2" tabindex="-1"></a>density <span class="ot">&lt;-</span> (Data_CMR<span class="sc">$</span>Total_Pop<span class="sc">/</span>Data_CMR<span class="sc">$</span>Total_Building_Count)</span>
+<span id="cb553-3"><a href="bayesian-statistical-inference.html#cb553-3" tabindex="-1"></a>form_pop1a <span class="ot">&lt;-</span>  density <span class="sc">~</span> x2 <span class="sc">+</span> x16 <span class="sc">+</span> x20 <span class="sc">+</span> x24 <span class="sc">+</span> x31 <span class="sc">+</span> x36 <span class="sc">+</span> x40</span>
+<span id="cb553-4"><a href="bayesian-statistical-inference.html#cb553-4" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">inla</span>(form_pop1a,</span>
+<span id="cb553-5"><a href="bayesian-statistical-inference.html#cb553-5" tabindex="-1"></a>              <span class="at">data =</span> <span class="fu">data.frame</span>(Data_CMR),</span>
+<span id="cb553-6"><a href="bayesian-statistical-inference.html#cb553-6" tabindex="-1"></a>              <span class="at">family =</span> <span class="st">&quot;gamma&quot;</span>, <span class="co">#the probability distribution of the </span></span>
+<span id="cb553-7"><a href="bayesian-statistical-inference.html#cb553-7" tabindex="-1"></a>                                  <span class="co">#response variable</span></span>
+<span id="cb553-8"><a href="bayesian-statistical-inference.html#cb553-8" tabindex="-1"></a>              <span class="at">control.predictor =</span> <span class="fu">list</span>(<span class="at">compute =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb553-9"><a href="bayesian-statistical-inference.html#cb553-9" tabindex="-1"></a>              <span class="at">control.compute =</span> <span class="fu">list</span>(<span class="at">dic =</span> <span class="cn">TRUE</span>, <span class="at">waic =</span> <span class="cn">TRUE</span>, <span class="at">cpo =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb553-10"><a href="bayesian-statistical-inference.html#cb553-10" tabindex="-1"></a>                                     <span class="at">config =</span> <span class="cn">TRUE</span>) <span class="co">#necessary to to draw </span></span>
+<span id="cb553-11"><a href="bayesian-statistical-inference.html#cb553-11" tabindex="-1"></a>                                                    <span class="co">#samples from the posterior</span></span>
+<span id="cb553-12"><a href="bayesian-statistical-inference.html#cb553-12" tabindex="-1"></a>             )</span>
+<span id="cb553-13"><a href="bayesian-statistical-inference.html#cb553-13" tabindex="-1"></a>             </span>
+<span id="cb553-14"><a href="bayesian-statistical-inference.html#cb553-14" tabindex="-1"></a><span class="co">#summary of the INLA model</span></span>
+<span id="cb553-15"><a href="bayesian-statistical-inference.html#cb553-15" tabindex="-1"></a><span class="fu">summary</span>(mod1)</span></code></pre></div>
+<pre><code>## Time used:
+##     Pre = 0.909, Running = 1.35, Post = 0.185, Total = 2.45 
+## Fixed effects:
+##               mean    sd 0.025quant 0.5quant 0.975quant   mode kld
+## (Intercept)  1.479 0.020      1.440    1.479      1.518  1.479   0
+## x2          -0.197 0.024     -0.243   -0.197     -0.150 -0.197   0
+## x16         -0.204 0.020     -0.244   -0.204     -0.165 -0.204   0
+## x20          0.299 0.026      0.248    0.299      0.351  0.299   0
+## x24          0.119 0.020      0.081    0.119      0.158  0.119   0
+## x31         -0.003 0.023     -0.048   -0.003      0.041 -0.003   0
+## x36         -0.359 0.024     -0.405   -0.359     -0.312 -0.359   0
+## x40         -0.067 0.027     -0.119   -0.067     -0.015 -0.067   0
+## 
+## Model hyperparameters:
+##                                                mean    sd 0.025quant 0.5quant 0.975quant mode
+## Precision-parameter for the Gamma observations 1.58 0.051       1.48     1.58       1.68 1.58
+## 
+## Deviance Information Criterion (DIC) ...............: 7275.40
+## Deviance Information Criterion (DIC, saturated) ....: 1340.67
+## Effective number of parameters .....................: -209.98
+## 
+## Watanabe-Akaike information criterion (WAIC) ...: 8268.99
+## Effective number of parameters .................: 397.68
+## 
+## Marginal log-Likelihood:  -3908.32 
+## CPO, PIT is computed 
+## Posterior summaries for the linear predictor and the fitted values are computed
+## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
+<p>Once the chosen model has been fitted, the desired information can be extracted. Firstly, to obtain the fixed effects estimates, the argument <code>summary.fixed</code> can be extracted from the model as follows.</p>
+<div class="sourceCode" id="cb555"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb555-1"><a href="bayesian-statistical-inference.html#cb555-1" tabindex="-1"></a><span class="co">#obtain fixed effects estimates</span></span>
+<span id="cb555-2"><a href="bayesian-statistical-inference.html#cb555-2" tabindex="-1"></a><span class="fu">round</span>(mod1<span class="sc">$</span>summary.fixed, <span class="dv">4</span>)</span></code></pre></div>
+<pre><code>##                mean     sd 0.025quant 0.5quant 0.975quant    mode kld
+## (Intercept)  1.4788 0.0200     1.4396   1.4788     1.5180  1.4788   0
+## x2          -0.1968 0.0237    -0.2433  -0.1968    -0.1503 -0.1968   0
+## x16         -0.2042 0.0202    -0.2437  -0.2042    -0.1646 -0.2042   0
+## x20          0.2994 0.0261     0.2481   0.2994     0.3507  0.2994   0
+## x24          0.1192 0.0197     0.0805   0.1192     0.1579  0.1192   0
+## x31         -0.0031 0.0227    -0.0476  -0.0031     0.0414 -0.0031   0
+## x36         -0.3588 0.0236    -0.4051  -0.3588    -0.3124 -0.3588   0
+## x40         -0.0669 0.0267    -0.1192  -0.0669    -0.0146 -0.0669   0</code></pre>
+<p>To obtain the predicted values, the argument <code>summary.fitted.values</code> can be extracted from the model. There are different predicted values available however within this argument, so for completeness, it is important to extract the predicted means with the <code>mean</code> argument, as well as the upper and lower bounds of the 95% credible intervals with the <code>0.025quant</code> and <code>0.975quant</code> arguments respectively. It is important to exponentiate the results given that the logarithm transformed population was used in the model.</p>
+<div class="sourceCode" id="cb557"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb557-1"><a href="bayesian-statistical-inference.html#cb557-1" tabindex="-1"></a><span class="co">#obtain the predicted values </span></span>
+<span id="cb557-2"><a href="bayesian-statistical-inference.html#cb557-2" tabindex="-1"></a>pred1 <span class="ot">&lt;-</span> mod1<span class="sc">$</span>summary.fitted.values<span class="sc">$</span>mean <span class="co">#predicted means</span></span>
+<span id="cb557-3"><a href="bayesian-statistical-inference.html#cb557-3" tabindex="-1"></a>pred1L <span class="ot">&lt;-</span> mod1<span class="sc">$</span>summary.fitted.values<span class="sc">$</span><span class="st">`</span><span class="at">0.025quant</span><span class="st">`</span> <span class="co">#lower bounds of 95% </span></span>
+<span id="cb557-4"><a href="bayesian-statistical-inference.html#cb557-4" tabindex="-1"></a>                                                  <span class="co">#credible intervals</span></span>
+<span id="cb557-5"><a href="bayesian-statistical-inference.html#cb557-5" tabindex="-1"></a>pred1U <span class="ot">&lt;-</span> mod1<span class="sc">$</span>summary.fitted.values<span class="sc">$</span><span class="st">`</span><span class="at">0.975quant</span><span class="st">`</span> <span class="co">#upper bounds of 95% </span></span>
+<span id="cb557-6"><a href="bayesian-statistical-inference.html#cb557-6" tabindex="-1"></a>                                                  <span class="co">#credible intervals</span></span></code></pre></div>
+<!-- It is important to look at how the predicted values compare with the observed values. This can be done through combining the results into a data frame and producing a scatter plot of the results. -->
+<!-- ```{r comparing results} -->
+<!-- full_df<- data.frame(observed = density, mean=round(pred1),  -->
+<!--                      lower=round(pred1L), upper=round(pred1U)) -->
+<!-- plot(full_df$observed, full_df$mean, ylab="Mean predicted values", -->
+<!--      xlab="Observed total population") -->
+<!-- abline(lm(full_df$mean~full_df$observed), col="red", lwd=2) -->
+<!-- ``` -->
+<p>Arguably the most important part of this estimation is the posterior estimates, which can be obtained through extracting <code>summary.linear.predictor$mean</code> from the model, and exponentiating the results given that the logarithm transformed population was used in the model.</p>
+<div class="sourceCode" id="cb558"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb558-1"><a href="bayesian-statistical-inference.html#cb558-1" tabindex="-1"></a><span class="co">#obtain posterior estimates</span></span>
+<span id="cb558-2"><a href="bayesian-statistical-inference.html#cb558-2" tabindex="-1"></a>post_est <span class="ot">&lt;-</span> <span class="fu">exp</span>(mod1<span class="sc">$</span>summary.linear.predictor<span class="sc">$</span>mean) </span></code></pre></div>
+<p>The predicted values can then be compared to the posterior estimates, where it can be seen that they are almost identical.</p>
+<div class="sourceCode" id="cb559"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb559-1"><a href="bayesian-statistical-inference.html#cb559-1" tabindex="-1"></a><span class="co">#comparing predicted values to posterior estimates</span></span>
+<span id="cb559-2"><a href="bayesian-statistical-inference.html#cb559-2" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">cbind</span>(pred1, post_est)) <span class="co">#almost identical</span></span></code></pre></div>
+<pre><code>##         pred1 post_est
+## [1,] 1.781561 1.765761
+## [2,] 3.192312 3.176338
+## [3,] 7.618386 7.603349
+## [4,] 6.947705 6.915962
+## [5,] 4.095951 4.093035
+## [6,] 3.868976 3.866658</code></pre>
+<!-- ### Give examples  of posterior inference using the module 4 examples based on INLA and STAN packages -->
+</div>
+</div>
+<div id="elicitation-of-priors" class="section level2 hasAnchor" number="6.6">
+<h2><span class="header-section-number">6.6</span> Elicitation of priors<a href="bayesian-statistical-inference.html#elicitation-of-priors" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>There is a lot of flexibility when choosing a prior, but there are some things that should be kept in mind that should not be done.</p>
+<p>Firstly, the prior should not be chosen based on the observed data. Instead, the prior should be chosen to reflect the uncertainty of the parameters <em>prior</em> to observing the data. It is classed as “data snooping” or “p-hacking” when the prior is chosen based on the observed data in order to elicit a desired result.</p>
+<p>Additionally, if a prior assigns 0 probability to the values of the parameter, this prior should not be chosen. It is important to consider the range of possible values of the parameter, as if the prior density is 0 over the range of values of the parameter, no amount of data can turn that probability into a positive posterior probability. Therefore, always check that the prior density is non-zero over the range of parameter values.</p>
+<p>Lastly, do not focus solely on finding the “perfect” prior. The prior is an assumption of the model and as with many aspects of statistics, assumptions are rarely perfectly satisfied. The focus instead should be to find a prior which results in a suitable model for which the assumptions are <em>reasonably</em> satisfied. It should also be kept in mind that if you feel that a singular prior is not suitable enough, more than one model can be considered, where each model has a different prior, and the average of the chosen models used for computing the results.</p>
+<div id="priors-inla" class="section level3 hasAnchor" number="6.6.1">
+<h3><span class="header-section-number">6.6.1</span> Priors INLA<a href="bayesian-statistical-inference.html#priors-inla" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>In <code>R-INLA</code>, the function <code>inla.models()$prior</code> returns a list with the names of each of the available priors. If this code is used in the <code>names()</code> function as <code>names(inla.models()$prior)</code>, then the names of the priors available will be returned. If you wish to see documentation regarding a specific prior, then the function <code>inla.doc("priorname")</code> can be used.</p>
+<p>By default, the intercept of the model is assigned a Gaussian prior with mean and precision equal to 0. The rest of the fixed effects are assigned Gaussian priors with mean equal to 0 and precision equal to 0.001. These values can be seen with the code <code>inla.set.control.fixed.default()[c("mean.intercept", "prec.intercept", "mean", "prec")]</code>. The values of these priors can be changed in the <code>control.fixed</code> argument of the function <code>inla()</code> by assigning a list with the mean and precision of the Gaussian distributions. Specifically, the list contains <code>mean.intercept</code> and <code>prec.intercept</code> which represent the prior mean and precision for the intercept respectively, as well as <code>mean</code> and <code>prec</code> which represent the prior mean and precision for all fixed effects except the intercept respectively. The below code is a template of how to change these values in the <code>inla()</code> function.</p>
+<div class="sourceCode" id="cb561"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb561-1"><a href="bayesian-statistical-inference.html#cb561-1" tabindex="-1"></a><span class="co">#template for inla with prior fixed</span></span>
+<span id="cb561-2"><a href="bayesian-statistical-inference.html#cb561-2" tabindex="-1"></a>prior.fixed <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">mean.intercept =</span> <span class="sc">&lt;</span><span class="er">&gt;</span>, <span class="at">prec.intercept =</span> <span class="sc">&lt;</span><span class="er">&gt;</span>,</span>
+<span id="cb561-3"><a href="bayesian-statistical-inference.html#cb561-3" tabindex="-1"></a>                    <span class="at">mean =</span> <span class="sc">&lt;</span><span class="er">&gt;</span>, <span class="at">prec =</span> <span class="sc">&lt;</span><span class="er">&gt;</span>)</span>
+<span id="cb561-4"><a href="bayesian-statistical-inference.html#cb561-4" tabindex="-1"></a></span>
+<span id="cb561-5"><a href="bayesian-statistical-inference.html#cb561-5" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">inla</span>(formula,</span>
+<span id="cb561-6"><a href="bayesian-statistical-inference.html#cb561-6" tabindex="-1"></a>  <span class="at">data =</span> d,</span>
+<span id="cb561-7"><a href="bayesian-statistical-inference.html#cb561-7" tabindex="-1"></a>  <span class="at">control.fixed =</span> prior.fixed)</span></code></pre></div>
+<p>Alternatively, to specify a prior on the hyperparameters of the latent effects, a list that defines the prior can be passed through the <code>hyper</code> parameter within the <code>f()</code> function, where the list contains the following arguments.</p>
+<ul>
+<li><code>prior</code>: the name of the given prior distribution</li>
+<li><code>param</code>: the values of the parameters for the given prior distribution</li>
+<li><code>initial</code>: (optional) the initial value(s) of the hyperparameters. If no <code>initial</code> argument is given, the initial value(s) will be set to their default value(s).</li>
+<li><code>fixed</code>: (optional) a logical argument defining whether the <code>initial</code> value(s) are kept fixed or allowed to change. If no <code>fixed</code> argument is given, it will be set to <code>FALSE</code> by default.</li>
+</ul>
+<p>In the example below, a gamma prior is defined with parameter values of 0.01 and 0.01. Here, the arguments of <code>initial</code> and <code>fixed</code> are also included, but are set to their default values.</p>
+<div class="sourceCode" id="cb562"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb562-1"><a href="bayesian-statistical-inference.html#cb562-1" tabindex="-1"></a><span class="co">#example of gamma prior</span></span>
+<span id="cb562-2"><a href="bayesian-statistical-inference.html#cb562-2" tabindex="-1"></a>prec.prior1 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">prec =</span> <span class="fu">list</span>(<span class="at">prior =</span> <span class="st">&quot;loggamma&quot;</span>, </span>
+<span id="cb562-3"><a href="bayesian-statistical-inference.html#cb562-3" tabindex="-1"></a>                                <span class="at">param =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.01</span>)),</span>
+<span id="cb562-4"><a href="bayesian-statistical-inference.html#cb562-4" tabindex="-1"></a>                    <span class="at">initial =</span> <span class="dv">4</span>,</span>
+<span id="cb562-5"><a href="bayesian-statistical-inference.html#cb562-5" tabindex="-1"></a>                    <span class="at">fixed =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb562-6"><a href="bayesian-statistical-inference.html#cb562-6" tabindex="-1"></a></span>
+<span id="cb562-7"><a href="bayesian-statistical-inference.html#cb562-7" tabindex="-1"></a>formula1 <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fu">f</span>(set_type, <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> prec.prior1)</span></code></pre></div>
+<p><code>loggamma</code> is just one example of the different priors that can be implemented in <code>INLA</code>. For a comprehensive list of the different priors, run the code <code>names(inla.models()$prior)</code>. If you wish to have more detailed information on a specific prior from this list, the code <code>inla.doc("prior")</code> can be used, where <code>"prior"</code> is the prior you wish to have more information on, for example, use <code>inla.doc("loggamma")</code> for more information on the gamma prior.</p>
+<div id="penalised-complexity-priors" class="section level4 hasAnchor" number="6.6.1.1">
+<h4><span class="header-section-number">6.6.1.1</span> Penalised Complexity priors<a href="bayesian-statistical-inference.html#penalised-complexity-priors" class="anchor-section" aria-label="Anchor link to header"></a></h4>
+<p>Penalised Complexity priors or <em>PC priors</em> were designed to suit additive models that are defined by different components, and get their name from the fact that the priors penalise any departure from the base model. To follow parsimony (preferring the simplest model that still fits the data well), the base model is always preferred for PC priors, as long as there is no evidence provided against this base model. As a result of this, they improve the predictive performance and can reduce over-fitting. For more information on PC priors, with a more in-depth explanation, see <a href="https://becarioprecario.bitbucket.io/inla-gitbook/ch-priors.html#sec:pcpriors">Bayesian inference with INLA</a>.</p>
+<p>In the example code seen below, a penalised complexity prior is defined through specifying <code>prior = "pc.prec"</code>, with parameters 1 and 0.01. To change the prior, the values of the parameters in the <code>param</code> argument simply need to be changed.</p>
+<div class="sourceCode" id="cb563"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb563-1"><a href="bayesian-statistical-inference.html#cb563-1" tabindex="-1"></a><span class="co">#example of PC prior</span></span>
+<span id="cb563-2"><a href="bayesian-statistical-inference.html#cb563-2" tabindex="-1"></a>prec.prior2 <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">prec =</span> <span class="fu">list</span>(<span class="at">prior =</span> <span class="st">&quot;pc.prec&quot;</span>,</span>
+<span id="cb563-3"><a href="bayesian-statistical-inference.html#cb563-3" tabindex="-1"></a>                               <span class="at">param =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.01</span>))) </span>
+<span id="cb563-4"><a href="bayesian-statistical-inference.html#cb563-4" tabindex="-1"></a></span>
+<span id="cb563-5"><a href="bayesian-statistical-inference.html#cb563-5" tabindex="-1"></a>formula2 <span class="ot">&lt;-</span> y <span class="sc">~</span> <span class="fu">f</span>(set_type, <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> prec.prior2)</span></code></pre></div>
+<p>To demonstrate this methodology, an example from <a href="https://www.paulamoraga.com/book-geospatial/sec-inla.html">Geospatial Health Data</a> is used, where data from 12 hospitals on surgical mortality rates is modelled in order to assess the performance of each of the hospitals. Here, the focus is on the code, however, to see more information on the modelling process itself, see Chapter 4 in the book itself. In this dataset, <code>n</code> refers to the total number of operations undertook within a one-year period for each hospital, <code>r</code> refers to the number of deaths within a 30-day period of surgery for each hospital and <code>hospital</code> refers to each of the hospitals in the data.</p>
+<div class="sourceCode" id="cb564"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb564-1"><a href="bayesian-statistical-inference.html#cb564-1" tabindex="-1"></a><span class="co">#create surgery dataset</span></span>
+<span id="cb564-2"><a href="bayesian-statistical-inference.html#cb564-2" tabindex="-1"></a>Surg <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">n =</span> <span class="fu">c</span>(<span class="dv">47</span>, <span class="dv">148</span>, <span class="dv">119</span>, <span class="dv">810</span>, <span class="dv">211</span>, <span class="dv">196</span>, <span class="dv">148</span>, <span class="dv">215</span>, <span class="dv">207</span>, <span class="dv">97</span>, <span class="dv">256</span>, </span>
+<span id="cb564-3"><a href="bayesian-statistical-inference.html#cb564-3" tabindex="-1"></a>                         <span class="dv">360</span>), </span>
+<span id="cb564-4"><a href="bayesian-statistical-inference.html#cb564-4" tabindex="-1"></a>                   <span class="at">r =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">18</span>, <span class="dv">8</span>, <span class="dv">46</span>, <span class="dv">8</span>, <span class="dv">13</span>, <span class="dv">9</span>, <span class="dv">31</span>, <span class="dv">14</span>, <span class="dv">8</span>, <span class="dv">29</span>, <span class="dv">24</span>), </span>
+<span id="cb564-5"><a href="bayesian-statistical-inference.html#cb564-5" tabindex="-1"></a>                   <span class="at">hospital =</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>, <span class="st">&quot;E&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;G&quot;</span>, <span class="st">&quot;H&quot;</span>, <span class="st">&quot;I&quot;</span>,</span>
+<span id="cb564-6"><a href="bayesian-statistical-inference.html#cb564-6" tabindex="-1"></a>                                <span class="st">&quot;J&quot;</span>, <span class="st">&quot;K&quot;</span>, <span class="st">&quot;L&quot;</span>))</span></code></pre></div>
+<p>Below, a Penalised Complexity prior is set by selecting <code>prior = "pc.prec"</code> and specifying that the probability of the standard deviation being greater than 1 is equal to 0.01 by setting the parameters to <code>param = c(1, 0.01)</code>.</p>
+<div class="sourceCode" id="cb565"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb565-1"><a href="bayesian-statistical-inference.html#cb565-1" tabindex="-1"></a><span class="co">#set PC prior for surgery dataset</span></span>
+<span id="cb565-2"><a href="bayesian-statistical-inference.html#cb565-2" tabindex="-1"></a>prior.prec <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">prec =</span> <span class="fu">list</span>(<span class="at">prior =</span> <span class="st">&quot;pc.prec&quot;</span>,</span>
+<span id="cb565-3"><a href="bayesian-statistical-inference.html#cb565-3" tabindex="-1"></a>                               <span class="at">param =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="fl">0.01</span>)))</span></code></pre></div>
+<p>Once the prior is set, it can be used in the model formula, input into the <code>hyper</code> argument, before calling the <code>inla()</code> function and specifying the given formula. In the <code>inla()</code> function, to compute the posterior marginals of the parameters, <code>control.predictor = list(compute = TRUE)</code> is included as an argument. Similarly, for model comparison purposes, to compute the DIC, the argument <code>control.compute = list(dic = TRUE)</code> can be added. Finally, to compute the marginals, the logical statement <code>return.marginals.predictor = TRUE</code> is included in the list for the <code>control.compute</code> argument as <code>control.compute = list(dic = TRUE, return.marginals.predictor = TRUE)</code>.</p>
+<div class="sourceCode" id="cb566"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb566-1"><a href="bayesian-statistical-inference.html#cb566-1" tabindex="-1"></a><span class="co">#create INLA model for PC prior</span></span>
+<span id="cb566-2"><a href="bayesian-statistical-inference.html#cb566-2" tabindex="-1"></a>formula <span class="ot">&lt;-</span> r <span class="sc">~</span> <span class="fu">f</span>(hospital, <span class="at">model =</span> <span class="st">&quot;iid&quot;</span>, <span class="at">hyper =</span> prior.prec)</span>
+<span id="cb566-3"><a href="bayesian-statistical-inference.html#cb566-3" tabindex="-1"></a>surg.mod <span class="ot">&lt;-</span> <span class="fu">inla</span>(formula,</span>
+<span id="cb566-4"><a href="bayesian-statistical-inference.html#cb566-4" tabindex="-1"></a>  <span class="at">data =</span> Surg,</span>
+<span id="cb566-5"><a href="bayesian-statistical-inference.html#cb566-5" tabindex="-1"></a>  <span class="at">family =</span> <span class="st">&quot;binomial&quot;</span>,</span>
+<span id="cb566-6"><a href="bayesian-statistical-inference.html#cb566-6" tabindex="-1"></a>  <span class="at">Ntrials =</span> n,</span>
+<span id="cb566-7"><a href="bayesian-statistical-inference.html#cb566-7" tabindex="-1"></a>  <span class="at">control.predictor =</span> <span class="fu">list</span>(<span class="at">compute =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb566-8"><a href="bayesian-statistical-inference.html#cb566-8" tabindex="-1"></a>  <span class="at">control.compute =</span> <span class="fu">list</span>(<span class="at">dic =</span> <span class="cn">TRUE</span>, <span class="at">return.marginals.predictor =</span> <span class="cn">TRUE</span>, </span>
+<span id="cb566-9"><a href="bayesian-statistical-inference.html#cb566-9" tabindex="-1"></a>                         <span class="at">config =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb566-10"><a href="bayesian-statistical-inference.html#cb566-10" tabindex="-1"></a>)</span></code></pre></div>
+<p>As with standard modelling in R, the <code>summary()</code> function can be used to obtain the results from an INLA model as follows.</p>
+<div class="sourceCode" id="cb567"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb567-1"><a href="bayesian-statistical-inference.html#cb567-1" tabindex="-1"></a><span class="co">#summary for INLA model</span></span>
+<span id="cb567-2"><a href="bayesian-statistical-inference.html#cb567-2" tabindex="-1"></a><span class="fu">summary</span>(surg.mod)</span></code></pre></div>
+<pre><code>## Time used:
+##     Pre = 0.386, Running = 0.311, Post = 0.163, Total = 0.859 
+## Fixed effects:
+##               mean    sd 0.025quant 0.5quant 0.975quant   mode kld
+## (Intercept) -2.547 0.141     -2.841   -2.542      -2.28 -2.543   0
+## 
+## Random effects:
+##   Name     Model
+##     hospital IID model
+## 
+## Model hyperparameters:
+##                         mean    sd 0.025quant 0.5quant 0.975quant mode
+## Precision for hospital 11.41 11.85       2.36     8.26      38.41 5.34
+## 
+## Deviance Information Criterion (DIC) ...............: 74.47
+## Deviance Information Criterion (DIC, saturated) ....: 24.70
+## Effective number of parameters .....................: 8.08
+## 
+## Marginal log-Likelihood:  -41.16 
+##  is computed 
+## Posterior summaries for the linear predictor and the fitted values are computed
+## (Posterior marginals needs also &#39;control.compute=list(return.marginals.predictor=TRUE)&#39;)</code></pre>
+<!-- Additionally, the results can be given visually using `plot(surg.mod)`.  -->
+<!-- ```{r surg plot} -->
+<!-- plot(surg.mod) -->
+<!-- ``` -->
+<!-- Alternatively, to plot both the prior and posterior distributions in the same plot, the argument `plot.prior = TRUE` can be added as follows.  -->
+<!-- ```{r plot prior and posterior surgery} -->
+<!-- plot(surg.mod, plot.prior = TRUE) -->
+<!-- ``` -->
+</div>
+</div>
+</div>
+<div id="sampling-and-evaluating-the-posterior-density" class="section level2 hasAnchor" number="6.7">
+<h2><span class="header-section-number">6.7</span> Sampling and evaluating the posterior density<a href="bayesian-statistical-inference.html#sampling-and-evaluating-the-posterior-density" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Once the model has been fitted, the predicted values can be obtained and compared to the observed values with a scatter plot. To obtain the predicted values, the argument <code>summary.fitted.values</code> can be extracted from the model.</p>
+<div class="sourceCode" id="cb569"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb569-1"><a href="bayesian-statistical-inference.html#cb569-1" tabindex="-1"></a><span class="co">#obtain predicted values</span></span>
+<span id="cb569-2"><a href="bayesian-statistical-inference.html#cb569-2" tabindex="-1"></a>results <span class="ot">&lt;-</span> surg.mod<span class="sc">$</span>summary.fitted.values</span></code></pre></div>
+<p>The observed values can be added to this results variable as follows.</p>
+<div class="sourceCode" id="cb570"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb570-1"><a href="bayesian-statistical-inference.html#cb570-1" tabindex="-1"></a><span class="co">#install tidyverse package</span></span>
+<span id="cb570-2"><a href="bayesian-statistical-inference.html#cb570-2" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">&quot;tidyverse&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb571"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb571-1"><a href="bayesian-statistical-inference.html#cb571-1" tabindex="-1"></a><span class="co">#load the tidyverse package</span></span>
+<span id="cb571-2"><a href="bayesian-statistical-inference.html#cb571-2" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div>
+<div class="sourceCode" id="cb572"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb572-1"><a href="bayesian-statistical-inference.html#cb572-1" tabindex="-1"></a><span class="co">#add observed values</span></span>
+<span id="cb572-2"><a href="bayesian-statistical-inference.html#cb572-2" tabindex="-1"></a>results <span class="ot">&lt;-</span> results <span class="sc">%&gt;%</span> </span>
+<span id="cb572-3"><a href="bayesian-statistical-inference.html#cb572-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">observed =</span> Surg<span class="sc">$</span>r<span class="sc">/</span>Surg<span class="sc">$</span>n) <span class="sc">%&gt;%</span>   <span class="co">#proportion</span></span>
+<span id="cb572-4"><a href="bayesian-statistical-inference.html#cb572-4" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">predicted =</span> mean) <span class="sc">%&gt;%</span>   <span class="co">#predicted</span></span>
+<span id="cb572-5"><a href="bayesian-statistical-inference.html#cb572-5" tabindex="-1"></a>  <span class="fu">as_tibble</span>()</span></code></pre></div>
+<p>Then the scatter plot comparing the observed and predicted values can be created. For a basic scatter plot with a smooth curve, the function <code>scatter.smooth()</code> from the <code>stats</code> package can be utilised, inputting the observed and predicted values as arguments.</p>
+<div class="sourceCode" id="cb573"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb573-1"><a href="bayesian-statistical-inference.html#cb573-1" tabindex="-1"></a><span class="co">#scatter plot with smooth curve</span></span>
+<span id="cb573-2"><a href="bayesian-statistical-inference.html#cb573-2" tabindex="-1"></a><span class="fu">scatter.smooth</span>(results<span class="sc">$</span>observed, results<span class="sc">$</span>predicted)</span></code></pre></div>
+<p><img src="WorldPop_Training_Manual_files/figure-html/basic%20scatter%20plot-1.png" width="672" />
+Alternatively, the <code>geom_point()</code> function within the <code>ggplot()</code> function from the <code>ggplot2</code> package can be utilised as follows (see Module 2 for more help with scatter plots).</p>
+<div class="sourceCode" id="cb574"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb574-1"><a href="bayesian-statistical-inference.html#cb574-1" tabindex="-1"></a><span class="co">#scatter plot using ggplot</span></span>
+<span id="cb574-2"><a href="bayesian-statistical-inference.html#cb574-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> results, <span class="fu">aes</span>(<span class="at">x =</span> observed, <span class="at">y =</span> predicted))<span class="sc">+</span></span>
+<span id="cb574-3"><a href="bayesian-statistical-inference.html#cb574-3" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb574-4"><a href="bayesian-statistical-inference.html#cb574-4" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">&quot;red&quot;</span>)<span class="sc">+</span> <span class="co">#geom_smooth is used </span></span>
+<span id="cb574-5"><a href="bayesian-statistical-inference.html#cb574-5" tabindex="-1"></a>                    <span class="co">#to draw a line </span></span>
+<span id="cb574-6"><a href="bayesian-statistical-inference.html#cb574-6" tabindex="-1"></a>  <span class="fu">theme_bw</span>()<span class="sc">+</span></span>
+<span id="cb574-7"><a href="bayesian-statistical-inference.html#cb574-7" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Scatter Plot&quot;</span>,</span>
+<span id="cb574-8"><a href="bayesian-statistical-inference.html#cb574-8" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Observed&quot;</span>,</span>
+<span id="cb574-9"><a href="bayesian-statistical-inference.html#cb574-9" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Predicted&quot;</span>)</span></code></pre></div>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="WorldPop_Training_Manual_files/figure-html/ggplot%20scatter%20plot-1.png" width="672" /></p>
+<p>To plot histograms and density plots using the posterior results, the first step is to sample from the posterior using the <code>inla.posterior.sample()</code> function.</p>
+<div class="sourceCode" id="cb576"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb576-1"><a href="bayesian-statistical-inference.html#cb576-1" tabindex="-1"></a><span class="co">#sample from posterior in model</span></span>
+<span id="cb576-2"><a href="bayesian-statistical-inference.html#cb576-2" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">inla.posterior.sample</span>(<span class="at">n =</span> <span class="dv">100</span>, <span class="at">result =</span> surg.mod,</span>
+<span id="cb576-3"><a href="bayesian-statistical-inference.html#cb576-3" tabindex="-1"></a>                                 <span class="at">num.threads =</span> <span class="st">&quot;1:1&quot;</span>)</span></code></pre></div>
+<p>To work with the data, the variable containing the sampled data needs to be transposed.</p>
+<div class="sourceCode" id="cb577"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb577-1"><a href="bayesian-statistical-inference.html#cb577-1" tabindex="-1"></a><span class="co">#transpose samples and select the first 12 columns </span></span>
+<span id="cb577-2"><a href="bayesian-statistical-inference.html#cb577-2" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">sapply</span>(samples, <span class="cf">function</span>(x) x<span class="sc">$</span>latent))</span></code></pre></div>
+<p>The first 12 columns of the transposed sampled data correspond to the predicted values for each of the hospitals, and can therefore be subset for a new variable.</p>
+<div class="sourceCode" id="cb578"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb578-1"><a href="bayesian-statistical-inference.html#cb578-1" tabindex="-1"></a><span class="co">#first 12 columns are predicted values</span></span>
+<span id="cb578-2"><a href="bayesian-statistical-inference.html#cb578-2" tabindex="-1"></a>predicted_values <span class="ot">&lt;-</span> samples[, <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>] </span></code></pre></div>
+<p>The predicted values need to be transformed to be in the correct scale. This is done with the inverse logit function for back transformation, and to make it simpler, a function is first created then applied to the predicted values.</p>
+<div class="sourceCode" id="cb579"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb579-1"><a href="bayesian-statistical-inference.html#cb579-1" tabindex="-1"></a><span class="co">#inverse logit function for back transformation</span></span>
+<span id="cb579-2"><a href="bayesian-statistical-inference.html#cb579-2" tabindex="-1"></a>inverse_logit <span class="ot">&lt;-</span> <span class="cf">function</span>(aa) {</span>
+<span id="cb579-3"><a href="bayesian-statistical-inference.html#cb579-3" tabindex="-1"></a>  out <span class="ot">=</span> <span class="fu">exp</span>(aa)<span class="sc">/</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fu">exp</span>(aa))</span>
+<span id="cb579-4"><a href="bayesian-statistical-inference.html#cb579-4" tabindex="-1"></a>  <span class="fu">return</span>(out)</span>
+<span id="cb579-5"><a href="bayesian-statistical-inference.html#cb579-5" tabindex="-1"></a>}</span>
+<span id="cb579-6"><a href="bayesian-statistical-inference.html#cb579-6" tabindex="-1"></a></span>
+<span id="cb579-7"><a href="bayesian-statistical-inference.html#cb579-7" tabindex="-1"></a><span class="co">#apply function</span></span>
+<span id="cb579-8"><a href="bayesian-statistical-inference.html#cb579-8" tabindex="-1"></a>predicted_values <span class="ot">&lt;-</span> <span class="fu">inverse_logit</span>(predicted_values)</span></code></pre></div>
+<p>Given that the values for each hospital are of interest, to make the results easier to interpret, the columns of the predicted values can be named to correspond with each of the hospital labels.</p>
+<div class="sourceCode" id="cb580"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb580-1"><a href="bayesian-statistical-inference.html#cb580-1" tabindex="-1"></a><span class="co">#add hospitals labels to the posteriors</span></span>
+<span id="cb580-2"><a href="bayesian-statistical-inference.html#cb580-2" tabindex="-1"></a>hospitals <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>, <span class="st">&quot;E&quot;</span>, <span class="st">&quot;F&quot;</span>, <span class="st">&quot;G&quot;</span>, <span class="st">&quot;H&quot;</span>, <span class="st">&quot;I&quot;</span>, <span class="st">&quot;J&quot;</span>, <span class="st">&quot;K&quot;</span>, <span class="st">&quot;L&quot;</span>)</span>
+<span id="cb580-3"><a href="bayesian-statistical-inference.html#cb580-3" tabindex="-1"></a></span>
+<span id="cb580-4"><a href="bayesian-statistical-inference.html#cb580-4" tabindex="-1"></a><span class="co">#label the columns</span></span>
+<span id="cb580-5"><a href="bayesian-statistical-inference.html#cb580-5" tabindex="-1"></a><span class="fu">colnames</span>(predicted_values) <span class="ot">&lt;-</span> <span class="fu">c</span>(hospitals) </span></code></pre></div>
+<p>Finally, the predicted values variable needs to be converted from a matrix to a data frame so that the values can be plotted as usual.</p>
+<div class="sourceCode" id="cb581"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb581-1"><a href="bayesian-statistical-inference.html#cb581-1" tabindex="-1"></a><span class="co">#convert the matrix to a data frame</span></span>
+<span id="cb581-2"><a href="bayesian-statistical-inference.html#cb581-2" tabindex="-1"></a>predicted_values_df <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(predicted_values)</span></code></pre></div>
+<p>To visualise the posterior values for each hospital, histograms and density plots are utilised. To demonstrate these methods, only hospital A is plotted at first.</p>
+<p>For the histogram, <code>ggplot()</code> is used, specifying the data frame for the predicted values and specifying which hospital (A) using <code>aes(x=A)</code>, with the additional function <code>geom_hisogram()</code> as follows.</p>
+<div class="sourceCode" id="cb582"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb582-1"><a href="bayesian-statistical-inference.html#cb582-1" tabindex="-1"></a><span class="co">#histogram of posterior values for hospital A</span></span>
+<span id="cb582-2"><a href="bayesian-statistical-inference.html#cb582-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> predicted_values_df , <span class="fu">aes</span>(<span class="at">x =</span> A)) <span class="sc">+</span></span>
+<span id="cb582-3"><a href="bayesian-statistical-inference.html#cb582-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>, <span class="at">color =</span> <span class="st">&quot;#00b4d8&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">&quot;#1d3557&quot;</span>) <span class="sc">+</span></span>
+<span id="cb582-4"><a href="bayesian-statistical-inference.html#cb582-4" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb582-5"><a href="bayesian-statistical-inference.html#cb582-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Posterior Predicted values for A&quot;</span>,</span>
+<span id="cb582-6"><a href="bayesian-statistical-inference.html#cb582-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Posteriors&quot;</span>,</span>
+<span id="cb582-7"><a href="bayesian-statistical-inference.html#cb582-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Frequency&quot;</span>)</span></code></pre></div>
+<p><img src="WorldPop_Training_Manual_files/figure-html/plot%20the%20hisogram-1.png" width="672" /></p>
+<p>The same approach is used for the density plot, but using the additional function <code>geom_density()</code> as follows.</p>
+<div class="sourceCode" id="cb583"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb583-1"><a href="bayesian-statistical-inference.html#cb583-1" tabindex="-1"></a><span class="co">#density plot of posterior values for hospital A</span></span>
+<span id="cb583-2"><a href="bayesian-statistical-inference.html#cb583-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> predicted_values_df , <span class="fu">aes</span>(<span class="at">x =</span> A)) <span class="sc">+</span></span>
+<span id="cb583-3"><a href="bayesian-statistical-inference.html#cb583-3" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">&quot;#1d3557&quot;</span>) <span class="sc">+</span></span>
+<span id="cb583-4"><a href="bayesian-statistical-inference.html#cb583-4" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb583-5"><a href="bayesian-statistical-inference.html#cb583-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Posterior predicted Values for A&quot;</span>,</span>
+<span id="cb583-6"><a href="bayesian-statistical-inference.html#cb583-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Posteriors&quot;</span>,</span>
+<span id="cb583-7"><a href="bayesian-statistical-inference.html#cb583-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Density&quot;</span>)</span></code></pre></div>
+<img src="WorldPop_Training_Manual_files/figure-html/plot%20the%20density-1.png" width="672" />
+<div class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;">
+<p><strong>Exercise:</strong> Create a histogram of the posterior values for hospital D.</p>
+</div>
+<div class="boxed" style="background-color: lightyellow; text-align: left; padding: 10px;">
+<p><strong>Exercise:</strong> Create a density plot of the posterior values for hospital G.</p>
+</div>
+<p>Given that there are 12 hospitals, it can be beneficial for comparison purposes to plot the histograms or density plots for each hospitals side-by-side. To do this within <code>ggplot()</code>, a new variable needs to be specified which contains the the predicted values with the corresponding hospital label in a long table.</p>
+<div class="sourceCode" id="cb584"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb584-1"><a href="bayesian-statistical-inference.html#cb584-1" tabindex="-1"></a><span class="co">#long table for predicted values and hospital labels</span></span>
+<span id="cb584-2"><a href="bayesian-statistical-inference.html#cb584-2" tabindex="-1"></a>predicted_long <span class="ot">&lt;-</span> predicted_values_df  <span class="sc">%&gt;%</span> </span>
+<span id="cb584-3"><a href="bayesian-statistical-inference.html#cb584-3" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb584-4"><a href="bayesian-statistical-inference.html#cb584-4" tabindex="-1"></a>               <span class="at">names_to =</span> <span class="st">&quot;Hospitals&quot;</span>,</span>
+<span id="cb584-5"><a href="bayesian-statistical-inference.html#cb584-5" tabindex="-1"></a>               <span class="at">values_to =</span> <span class="st">&quot;Posteriors&quot;</span>)</span></code></pre></div>
+<p>Then, the function <code>facet_wrap()</code> can be used within the <code>ggplot()</code> function to plot either the histogram or the density plot for each hospital at the same time on the same panel.</p>
+<div class="sourceCode" id="cb585"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb585-1"><a href="bayesian-statistical-inference.html#cb585-1" tabindex="-1"></a><span class="co">#histogram for posterior values for each hospital</span></span>
+<span id="cb585-2"><a href="bayesian-statistical-inference.html#cb585-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> predicted_long, <span class="fu">aes</span>(<span class="at">x =</span> Posteriors)) <span class="sc">+</span></span>
+<span id="cb585-3"><a href="bayesian-statistical-inference.html#cb585-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>, <span class="at">color =</span> <span class="st">&quot;#00b4d8&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">&quot;#1d3557&quot;</span>) <span class="sc">+</span></span>
+<span id="cb585-4"><a href="bayesian-statistical-inference.html#cb585-4" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb585-5"><a href="bayesian-statistical-inference.html#cb585-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Posterior Values&quot;</span>,</span>
+<span id="cb585-6"><a href="bayesian-statistical-inference.html#cb585-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Posteriors&quot;</span>,</span>
+<span id="cb585-7"><a href="bayesian-statistical-inference.html#cb585-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Frequency&quot;</span>) <span class="sc">+</span></span>
+<span id="cb585-8"><a href="bayesian-statistical-inference.html#cb585-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>( <span class="sc">~</span> Hospitals, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>)</span></code></pre></div>
+<p><img src="WorldPop_Training_Manual_files/figure-html/facet_wrap-1.png" width="672" /></p>
+<div class="sourceCode" id="cb586"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb586-1"><a href="bayesian-statistical-inference.html#cb586-1" tabindex="-1"></a><span class="co">#density plot for posterior values for each hospital</span></span>
+<span id="cb586-2"><a href="bayesian-statistical-inference.html#cb586-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> predicted_long , <span class="fu">aes</span>(<span class="at">x =</span> Posteriors)) <span class="sc">+</span></span>
+<span id="cb586-3"><a href="bayesian-statistical-inference.html#cb586-3" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">&quot;#1d3557&quot;</span>) <span class="sc">+</span></span>
+<span id="cb586-4"><a href="bayesian-statistical-inference.html#cb586-4" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb586-5"><a href="bayesian-statistical-inference.html#cb586-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Posterior Values&quot;</span>,</span>
+<span id="cb586-6"><a href="bayesian-statistical-inference.html#cb586-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Posteriors&quot;</span>,</span>
+<span id="cb586-7"><a href="bayesian-statistical-inference.html#cb586-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Density&quot;</span>) <span class="sc">+</span></span>
+<span id="cb586-8"><a href="bayesian-statistical-inference.html#cb586-8" tabindex="-1"></a>  <span class="fu">facet_wrap</span>( <span class="sc">~</span> Hospitals, <span class="at">scales =</span> <span class="st">&quot;free&quot;</span>)</span></code></pre></div>
+<p><img src="WorldPop_Training_Manual_files/figure-html/facet_wrap-2.png" width="672" /></p>
+</div>
+<div id="useful-resources-5" class="section level2 hasAnchor" number="6.8">
+<h2><span class="header-section-number">6.8</span> Useful resources<a href="bayesian-statistical-inference.html#useful-resources-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<ul>
+<li>Overall: <a href="https://onlinelibrary.wiley.com/doi/book/10.1002/9781118950203">Spatial and Spatio-temporal Bayesian Models with R-INLA</a></li>
+<li>Binomial distribution: <a href="https://www.investopedia.com/terms/b/binomialdistribution.asp">Binomial Distribution: Definition, Formula, Analysis and Example</a></li>
+<li>Poisson distribution: <a href="https://www.investopedia.com/terms/p/poisson-distribution.asp">Poisson Distribution: Formula and Meaning in Finance</a></li>
+<li>Negative-binomial distribution: <a href="https://mathworld.wolfram.com/NegativeBinomialDistribution.html">Negative Binomial Distribution</a></li>
+<li>Geometric distribution: <a href="https://www.britannica.com/topic/geometric-distribution">Geometric Distribution</a></li>
+<li>Bernoulli distribution: <a href="https://reference.wolfram.com/language/ref/BernoulliDistribution.html.en">Binomial Distribution</a></li>
+<li>Beta-binomial distribution: <a href="https://www.acsu.buffalo.edu/~adamcunn/probability/betabinomial.html">Probability Playground: The Beta-Binomial Distribution</a></li>
+<li>Normal distribution: <a href="https://www.investopedia.com/terms/n/normaldistribution.asp">Normal Distribution: What It Is, Uses, and Formula</a></li>
+<li>Log-normal distribution: <a href="https://www.investopedia.com/terms/l/log-normal-distribution.asp">Log-Normal Distribution: Definition, Uses, and How To Calculate</a></li>
+<li>Alternative continuous distributions: <a href="https://www.knime.com/blog/continuous-probability-distribution">What are continuous probability distributions &amp; their 8 common types?</a></li>
+<li>Conjugate prior: <a href="https://www.statlect.com/fundamentals-of-statistics/conjugate-prior">Conjugate prior</a></li>
+<li>Non-informative priors and prior selection: <a href="https://onlinelibrary.wiley.com/doi/epdf/10.1002/9781118033197">Bayesian Inference in Statistical Analysis</a></li>
+<li>INLA: <a href="https://www.r-inla.org/home">R-INLA Project</a></li>
+<li>Penalised Complexity priors: <a href="https://becarioprecario.bitbucket.io/inla-gitbook/ch-priors.html#sec:pcpriors">Bayesian inference with INLA</a></li>
+<li>Penalised Complexity priors example: <a href="https://www.paulamoraga.com/book-geospatial/index.html">Geospatial Health Data: Modeling and Visualisation with R-INLA and Shiny</a></li>
+</ul>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="probability-theory-and-applications.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section",
+    "scroll_highlight": true
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

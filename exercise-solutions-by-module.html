@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>12 Exercise Solutions by Module | WorldPop Population Modelling Training Manual, Vol. I</title>
+  <meta name="description" content="An open book of WorldPop methods to produce gridded population estimates." />
+  <meta name="generator" content="bookdown 0.43 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="12 Exercise Solutions by Module | WorldPop Population Modelling Training Manual, Vol. I" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="An open book of WorldPop methods to produce gridded population estimates." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="12 Exercise Solutions by Module | WorldPop Population Modelling Training Manual, Vol. I" />
+  
+  <meta name="twitter:description" content="An open book of WorldPop methods to produce gridded population estimates." />
+  
+
+<meta name="author" content="WorldPop, University of Southampton" />
+
+
+<meta name="date" content="2025-07-10" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="age-sex-disaggregation.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<link href="libs/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet" />
+<script src="libs/htmlwidgets-1.6.4/htmlwidgets.js"></script>
+<link href="libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="libs/leaflet-binding-2.2.2/leaflet.js"></script>
+<script src="libs/leaflet-providers-2.0.0/leaflet-providers_2.0.0.js"></script>
+<script src="libs/leaflet-providers-plugin-2.2.2/leaflet-providers-plugin.js"></script>
+<script src="libs/HomeButton-0.0.1/home-button.js"></script>
+<script src="libs/HomeButton-0.0.1/easy-button-src.min.js"></script>
+<link href="libs/health_facilities - type-CSS-0.0.1/health_facilities - type_home-button.css" rel="stylesheet" />
+<script src="libs/clipboard-0.0.1/setClipboardText.js"></script>
+<link href="libs/mapviewCSS-0.0.1/mapview-popup.css" rel="stylesheet" />
+<link href="libs/mapviewCSS-0.0.1/mapview.css" rel="stylesheet" />
+<link href="libs/states-CSS-0.0.1/states_home-button.css" rel="stylesheet" />
+<link href="libs/states_utm-CSS-0.0.1/states_utm_home-button.css" rel="stylesheet" />
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Welcome</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#preface"><i class="fa fa-check"></i>Preface</a>
+<ul>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#acknowledgements"><i class="fa fa-check"></i>Acknowledgements</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html#book-contents"><i class="fa fa-check"></i>Book Contents</a></li>
+</ul></li>
+<li class="chapter" data-level="1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html"><i class="fa fa-check"></i><b>1</b> Basics of R Programming</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#overview-of-r"><i class="fa fa-check"></i><b>1.1</b> Overview of R</a>
+<ul>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#getting-started-with-r"><i class="fa fa-check"></i>Getting started with R</a>
+<ul>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#downloading-r-and-rstudio"><i class="fa fa-check"></i>Downloading R and RStudio</a></li>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#features-of-the-r-gui-environment"><i class="fa fa-check"></i>Features of the R GUI environment</a></li>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#features-of-the-rstudio-environment"><i class="fa fa-check"></i>Features of the RStudio environment</a></li>
+</ul></li>
+<li class="chapter" data-level="" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#creating-opening-and-saving-r-scripts"><i class="fa fa-check"></i>Creating, opening and saving R scripts</a></li>
+<li class="chapter" data-level="1.1.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#getting-and-setting-the-working-directory"><i class="fa fa-check"></i><b>1.1.1</b> Getting and setting the working directory</a></li>
+<li class="chapter" data-level="1.1.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#creating-opening-and-saving-r-projects"><i class="fa fa-check"></i><b>1.1.2</b> Creating, opening and saving R projects</a></li>
+<li class="chapter" data-level="1.1.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#getting-help-in-r"><i class="fa fa-check"></i><b>1.1.3</b> Getting help in R</a></li>
+<li class="chapter" data-level="1.1.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#r-coding-best-practices"><i class="fa fa-check"></i><b>1.1.4</b> R coding best practices</a>
+<ul>
+<li class="chapter" data-level="1.1.4.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#commenting"><i class="fa fa-check"></i><b>1.1.4.1</b> Commenting</a></li>
+<li class="chapter" data-level="1.1.4.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#naming-conventions"><i class="fa fa-check"></i><b>1.1.4.2</b> Naming conventions</a></li>
+<li class="chapter" data-level="1.1.4.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#spacing"><i class="fa fa-check"></i><b>1.1.4.3</b> Spacing</a></li>
+<li class="chapter" data-level="1.1.4.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#punctuation"><i class="fa fa-check"></i><b>1.1.4.4</b> Punctuation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="1.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#data-types-and-key-components"><i class="fa fa-check"></i><b>1.2</b> Data types and key components</a>
+<ul>
+<li class="chapter" data-level="1.2.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#basic-operations-in-r"><i class="fa fa-check"></i><b>1.2.1</b> Basic operations in R</a>
+<ul>
+<li class="chapter" data-level="1.2.1.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#arithmetic-operators"><i class="fa fa-check"></i><b>1.2.1.1</b> Arithmetic operators</a></li>
+<li class="chapter" data-level="1.2.1.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#logical-operators"><i class="fa fa-check"></i><b>1.2.1.2</b> Logical operators</a></li>
+<li class="chapter" data-level="1.2.1.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#other-operators"><i class="fa fa-check"></i><b>1.2.1.3</b> Other operators</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="1.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#key-functions-in-r"><i class="fa fa-check"></i><b>1.3</b> Key functions in R</a></li>
+<li class="chapter" data-level="1.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#data-structures"><i class="fa fa-check"></i><b>1.4</b> Data structures</a>
+<ul>
+<li class="chapter" data-level="1.4.1" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#vectors"><i class="fa fa-check"></i><b>1.4.1</b> Vectors</a></li>
+<li class="chapter" data-level="1.4.2" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#matrices"><i class="fa fa-check"></i><b>1.4.2</b> Matrices</a></li>
+<li class="chapter" data-level="1.4.3" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#arrays"><i class="fa fa-check"></i><b>1.4.3</b> Arrays</a></li>
+<li class="chapter" data-level="1.4.4" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#data-frames"><i class="fa fa-check"></i><b>1.4.4</b> Data frames</a></li>
+<li class="chapter" data-level="1.4.5" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#list"><i class="fa fa-check"></i><b>1.4.5</b> List</a></li>
+</ul></li>
+<li class="chapter" data-level="1.5" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#end-of-module-exercises"><i class="fa fa-check"></i><b>1.5</b> End of module exercises</a></li>
+<li class="chapter" data-level="1.6" data-path="basics-of-r-programming.html"><a href="basics-of-r-programming.html#useful-resources"><i class="fa fa-check"></i><b>1.6</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html"><i class="fa fa-check"></i><b>2</b> Working with Data Frames</a>
+<ul>
+<li class="chapter" data-level="2.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#importing-and-exporting-data-in-and-from-r"><i class="fa fa-check"></i><b>2.1</b> Importing and exporting data in and from R</a>
+<ul>
+<li class="chapter" data-level="2.1.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#installing-and-loading-packages"><i class="fa fa-check"></i><b>2.1.1</b> Installing and loading packages</a></li>
+<li class="chapter" data-level="2.1.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#reading-data-into-the-r-environment"><i class="fa fa-check"></i><b>2.1.2</b> Reading data into the R environment</a></li>
+<li class="chapter" data-level="2.1.3" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#creating-work-paths"><i class="fa fa-check"></i><b>2.1.3</b> Creating work paths</a></li>
+<li class="chapter" data-level="2.1.4" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#exploring-data-attributes"><i class="fa fa-check"></i><b>2.1.4</b> Exploring data attributes</a></li>
+<li class="chapter" data-level="2.1.5" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#viewing-data"><i class="fa fa-check"></i><b>2.1.5</b> Viewing data</a></li>
+<li class="chapter" data-level="2.1.6" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#extracting-data"><i class="fa fa-check"></i><b>2.1.6</b> Extracting data</a></li>
+<li class="chapter" data-level="2.1.7" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#attaching-data"><i class="fa fa-check"></i><b>2.1.7</b> Attaching data</a></li>
+<li class="chapter" data-level="2.1.8" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#writing-data-to-external-repositories"><i class="fa fa-check"></i><b>2.1.8</b> Writing data to external repositories</a></li>
+</ul></li>
+<li class="chapter" data-level="2.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#basic-data-wrangling-methods-for-data-preparation-and-handling-in-r"><i class="fa fa-check"></i><b>2.2</b> Basic data wrangling methods for data preparation and handling in R</a>
+<ul>
+<li class="chapter" data-level="2.2.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#dealing-with-na-not-available-values"><i class="fa fa-check"></i><b>2.2.1</b> Dealing with NA (‘Not Available’) values</a></li>
+<li class="chapter" data-level="2.2.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#key-data-wrangling-methods"><i class="fa fa-check"></i><b>2.2.2</b> Key data wrangling methods</a></li>
+</ul></li>
+<li class="chapter" data-level="2.3" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#data-visualisation"><i class="fa fa-check"></i><b>2.3</b> Data visualisation</a>
+<ul>
+<li class="chapter" data-level="2.3.1" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#bar-plots"><i class="fa fa-check"></i><b>2.3.1</b> Bar plots</a></li>
+<li class="chapter" data-level="2.3.2" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#box-plots"><i class="fa fa-check"></i><b>2.3.2</b> Box plots</a></li>
+<li class="chapter" data-level="2.3.3" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#histograms"><i class="fa fa-check"></i><b>2.3.3</b> Histograms</a></li>
+<li class="chapter" data-level="2.3.4" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#density-plots"><i class="fa fa-check"></i><b>2.3.4</b> Density plots</a></li>
+<li class="chapter" data-level="2.3.5" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#scatter-plots"><i class="fa fa-check"></i><b>2.3.5</b> Scatter plots</a></li>
+<li class="chapter" data-level="2.3.6" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#violin-plots"><i class="fa fa-check"></i><b>2.3.6</b> Violin plots</a></li>
+<li class="chapter" data-level="2.3.7" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#line-graphs"><i class="fa fa-check"></i><b>2.3.7</b> Line graphs</a></li>
+<li class="chapter" data-level="2.3.8" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#population-pyramids"><i class="fa fa-check"></i><b>2.3.8</b> Population pyramids</a></li>
+<li class="chapter" data-level="2.3.9" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#lollipop-plots"><i class="fa fa-check"></i><b>2.3.9</b> Lollipop plots</a></li>
+<li class="chapter" data-level="2.3.10" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#plots-with-an-image-background"><i class="fa fa-check"></i><b>2.3.10</b> Plots with an image background</a></li>
+<li class="chapter" data-level="2.3.11" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#viewing-and-saving-plots"><i class="fa fa-check"></i><b>2.3.11</b> Viewing and saving plots</a></li>
+</ul></li>
+<li class="chapter" data-level="2.4" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#end-of-module-exercises-1"><i class="fa fa-check"></i><b>2.4</b> End of module exercises</a></li>
+<li class="chapter" data-level="2.5" data-path="working-with-data-frames.html"><a href="working-with-data-frames.html#useful-resources-1"><i class="fa fa-check"></i><b>2.5</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html"><i class="fa fa-check"></i><b>3</b> Working with Spatial Data in R</a>
+<ul>
+<li class="chapter" data-level="3.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#spatial-data-overview-and-types"><i class="fa fa-check"></i><b>3.1</b> Spatial data: Overview and types</a>
+<ul>
+<li class="chapter" data-level="3.1.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#points-data"><i class="fa fa-check"></i><b>3.1.1</b> Points data</a></li>
+<li class="chapter" data-level="3.1.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#areal-data"><i class="fa fa-check"></i><b>3.1.2</b> Areal data</a></li>
+<li class="chapter" data-level="3.1.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#vector-data"><i class="fa fa-check"></i><b>3.1.3</b> Vector data</a>
+<ul>
+<li class="chapter" data-level="3.1.3.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#points"><i class="fa fa-check"></i><b>3.1.3.1</b> Points</a></li>
+<li class="chapter" data-level="3.1.3.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#polylines"><i class="fa fa-check"></i><b>3.1.3.2</b> Polylines</a></li>
+<li class="chapter" data-level="3.1.3.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#polygons"><i class="fa fa-check"></i><b>3.1.3.3</b> Polygons</a></li>
+</ul></li>
+<li class="chapter" data-level="3.1.4" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#raster-data"><i class="fa fa-check"></i><b>3.1.4</b> Raster data</a></li>
+<li class="chapter" data-level="3.1.5" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#sources-of-spatial-data"><i class="fa fa-check"></i><b>3.1.5</b> Sources of spatial data</a></li>
+<li class="chapter" data-level="3.1.6" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#geospatial-covariates"><i class="fa fa-check"></i><b>3.1.6</b> Geospatial covariates</a></li>
+</ul></li>
+<li class="chapter" data-level="3.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#basic-gis-concepts"><i class="fa fa-check"></i><b>3.2</b> Basic GIS concepts</a>
+<ul>
+<li class="chapter" data-level="3.2.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#geoprocessing"><i class="fa fa-check"></i><b>3.2.1</b> Geoprocessing</a></li>
+</ul></li>
+<li class="chapter" data-level="3.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#using-gis-in-r"><i class="fa fa-check"></i><b>3.3</b> Using GIS in R</a>
+<ul>
+<li class="chapter" data-level="3.3.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#importing-spatial-data-in-r"><i class="fa fa-check"></i><b>3.3.1</b> Importing spatial data in R</a></li>
+<li class="chapter" data-level="3.3.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#handling-spatial-data-in-r"><i class="fa fa-check"></i><b>3.3.2</b> Handling spatial data in R</a>
+<ul>
+<li class="chapter" data-level="3.3.2.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#converting-between-vectors-and-rasters-in-r"><i class="fa fa-check"></i><b>3.3.2.1</b> Converting between vectors and rasters in R</a></li>
+<li class="chapter" data-level="3.3.2.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#checking-the-resolution-and-number-of-cells"><i class="fa fa-check"></i><b>3.3.2.2</b> Checking the resolution and number of cells</a></li>
+<li class="chapter" data-level="3.3.2.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#exporting-spatial-data-in-various-formats"><i class="fa fa-check"></i><b>3.3.2.3</b> Exporting spatial data in various formats</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="3.4" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-of-spatial-data"><i class="fa fa-check"></i><b>3.4</b> Visualisation of spatial data</a>
+<ul>
+<li class="chapter" data-level="3.4.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#static-maps"><i class="fa fa-check"></i><b>3.4.1</b> Static maps</a></li>
+</ul></li>
+<li class="chapter" data-level="3.5" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#interactive-maps"><i class="fa fa-check"></i><b>3.5</b> Interactive maps</a>
+<ul>
+<li class="chapter" data-level="" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-with-tmap-1"><i class="fa fa-check"></i>Visualisation with <code>tmap</code></a></li>
+<li class="chapter" data-level="" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-with-leaflet"><i class="fa fa-check"></i>Visualisation with <code>leaflet</code></a></li>
+<li class="chapter" data-level="" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#visualisation-with-mapview"><i class="fa fa-check"></i>Visualisation with <code>mapview</code></a></li>
+</ul></li>
+<li class="chapter" data-level="3.6" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#basic-geoprocessing"><i class="fa fa-check"></i><b>3.6</b> Basic geoprocessing</a>
+<ul>
+<li class="chapter" data-level="3.6.1" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#coordinate-reference-systems-crs"><i class="fa fa-check"></i><b>3.6.1</b> Coordinate reference systems (CRS)</a></li>
+<li class="chapter" data-level="3.6.2" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#converting-between-latlong-and-the-universal-transverse-mercator-utm-coordinate-system"><i class="fa fa-check"></i><b>3.6.2</b> Converting between Lat/Long and the Universal Transverse Mercator (UTM) coordinate system</a></li>
+<li class="chapter" data-level="3.6.3" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#subsetting-clipping-and-masking"><i class="fa fa-check"></i><b>3.6.3</b> Subsetting, clipping and masking</a></li>
+<li class="chapter" data-level="3.6.4" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#buffer-analysis"><i class="fa fa-check"></i><b>3.6.4</b> Buffer analysis</a></li>
+</ul></li>
+<li class="chapter" data-level="3.7" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#end-of-module-exercises-2"><i class="fa fa-check"></i><b>3.7</b> End of module exercises</a></li>
+<li class="chapter" data-level="3.8" data-path="working-with-spatial-data-in-r.html"><a href="working-with-spatial-data-in-r.html#useful-resources-2"><i class="fa fa-check"></i><b>3.8</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html"><i class="fa fa-check"></i><b>4</b> Introduction to Statistical Modelling with Implementation in R</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#concept-of-statistical-modelling"><i class="fa fa-check"></i><b>4.1</b> Concept of statistical modelling</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#overview-of-statistical-modelling"><i class="fa fa-check"></i><b>4.1.1</b> Overview of statistical modelling</a></li>
+<li class="chapter" data-level="4.1.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#correlation"><i class="fa fa-check"></i><b>4.1.2</b> Correlation</a></li>
+<li class="chapter" data-level="4.1.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#scaled-covariates"><i class="fa fa-check"></i><b>4.1.3</b> Scaled covariates</a></li>
+<li class="chapter" data-level="4.1.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#uncertainty"><i class="fa fa-check"></i><b>4.1.4</b> Uncertainty</a></li>
+</ul></li>
+<li class="chapter" data-level="4.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#simple-regression"><i class="fa fa-check"></i><b>4.2</b> Simple regression</a>
+<ul>
+<li class="chapter" data-level="4.2.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#linear-regression"><i class="fa fa-check"></i><b>4.2.1</b> Linear regression</a></li>
+<li class="chapter" data-level="4.2.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#polynomial-regression"><i class="fa fa-check"></i><b>4.2.2</b> Polynomial regression</a></li>
+<li class="chapter" data-level="4.2.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#non-linear-regression"><i class="fa fa-check"></i><b>4.2.3</b> Non-linear regression</a></li>
+</ul></li>
+<li class="chapter" data-level="4.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#multiple-regression"><i class="fa fa-check"></i><b>4.3</b> Multiple regression</a></li>
+<li class="chapter" data-level="4.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#generalised-linear-regression"><i class="fa fa-check"></i><b>4.4</b> Generalised linear regression</a></li>
+<li class="chapter" data-level="4.5" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#model-predictions"><i class="fa fa-check"></i><b>4.5</b> Model predictions</a>
+<ul>
+<li class="chapter" data-level="4.5.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#predictions-with-the-formula-and-coefficients"><i class="fa fa-check"></i><b>4.5.1</b> Predictions with the formula and coefficients</a></li>
+<li class="chapter" data-level="4.5.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#predictions-with-functions"><i class="fa fa-check"></i><b>4.5.2</b> Predictions with functions</a></li>
+</ul></li>
+<li class="chapter" data-level="4.6" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#model-selection"><i class="fa fa-check"></i><b>4.6</b> Model selection</a>
+<ul>
+<li class="chapter" data-level="4.6.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#accuracy-and-precision"><i class="fa fa-check"></i><b>4.6.1</b> Accuracy and precision</a></li>
+<li class="chapter" data-level="4.6.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#akaike-information-criterion"><i class="fa fa-check"></i><b>4.6.2</b> Akaike information criterion</a></li>
+<li class="chapter" data-level="4.6.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#bayesian-information-criterion"><i class="fa fa-check"></i><b>4.6.3</b> Bayesian information criterion</a></li>
+<li class="chapter" data-level="4.6.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#r-squared-statistic"><i class="fa fa-check"></i><b>4.6.4</b> R-squared statistic</a></li>
+<li class="chapter" data-level="4.6.5" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#analysis-of-variance"><i class="fa fa-check"></i><b>4.6.5</b> Analysis of variance</a></li>
+<li class="chapter" data-level="4.6.6" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#likelihood-ratio-testing"><i class="fa fa-check"></i><b>4.6.6</b> Likelihood ratio testing</a></li>
+</ul></li>
+<li class="chapter" data-level="4.7" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#stepwise-regression"><i class="fa fa-check"></i><b>4.7</b> Stepwise regression</a>
+<ul>
+<li class="chapter" data-level="4.7.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#forward-stepwise-regression"><i class="fa fa-check"></i><b>4.7.1</b> Forward stepwise regression</a></li>
+<li class="chapter" data-level="4.7.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#backward-stepwise-regression"><i class="fa fa-check"></i><b>4.7.2</b> Backward stepwise regression</a></li>
+<li class="chapter" data-level="4.7.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#both-ways-stepwise-regression"><i class="fa fa-check"></i><b>4.7.3</b> Both ways stepwise regression</a></li>
+</ul></li>
+<li class="chapter" data-level="4.8" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#cross-validation"><i class="fa fa-check"></i><b>4.8</b> Cross-validation</a>
+<ul>
+<li class="chapter" data-level="4.8.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#k-fold-cross-validation"><i class="fa fa-check"></i><b>4.8.1</b> <em>k</em>-fold cross-validation</a></li>
+<li class="chapter" data-level="4.8.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#leave-one-out-cross-validation"><i class="fa fa-check"></i><b>4.8.2</b> Leave-one-out cross-validation</a></li>
+</ul></li>
+<li class="chapter" data-level="4.9" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#hierarchical-regression"><i class="fa fa-check"></i><b>4.9</b> Hierarchical regression</a>
+<ul>
+<li class="chapter" data-level="4.9.1" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#data-structure"><i class="fa fa-check"></i><b>4.9.1</b> Data structure</a></li>
+<li class="chapter" data-level="4.9.2" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#variance-partition-coefficient"><i class="fa fa-check"></i><b>4.9.2</b> Variance partition coefficient</a></li>
+<li class="chapter" data-level="4.9.3" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#random-intercepts-modelling"><i class="fa fa-check"></i><b>4.9.3</b> Random intercepts modelling</a></li>
+<li class="chapter" data-level="4.9.4" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#random-intercepts-mixed-effects-modelling"><i class="fa fa-check"></i><b>4.9.4</b> Random intercepts mixed-effects modelling</a></li>
+<li class="chapter" data-level="4.9.5" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#random-slope-mixed-effects-modelling"><i class="fa fa-check"></i><b>4.9.5</b> Random slope mixed-effects modelling</a></li>
+<li class="chapter" data-level="4.9.6" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#adding-an-extra-level"><i class="fa fa-check"></i><b>4.9.6</b> Adding an extra level</a></li>
+</ul></li>
+<li class="chapter" data-level="4.10" data-path="introduction-to-statistical-modelling-with-implementation-in-r.html"><a href="introduction-to-statistical-modelling-with-implementation-in-r.html#useful-resources-3"><i class="fa fa-check"></i><b>4.10</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html"><i class="fa fa-check"></i><b>5</b> Probability Theory and Applications</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#introduction-to-probability"><i class="fa fa-check"></i><b>5.1</b> Introduction to probability</a>
+<ul>
+<li class="chapter" data-level="5.1.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#theoretical-and-experimental-probability"><i class="fa fa-check"></i><b>5.1.1</b> Theoretical and experimental probability</a></li>
+<li class="chapter" data-level="5.1.2" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#keywords"><i class="fa fa-check"></i><b>5.1.2</b> Keywords</a></li>
+</ul></li>
+<li class="chapter" data-level="5.2" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#axioms-of-probability"><i class="fa fa-check"></i><b>5.2</b> Axioms of probability</a></li>
+<li class="chapter" data-level="5.3" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#joint-probability"><i class="fa fa-check"></i><b>5.3</b> Joint probability</a>
+<ul>
+<li class="chapter" data-level="5.3.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#joint-probability-table"><i class="fa fa-check"></i><b>5.3.1</b> Joint probability table</a></li>
+</ul></li>
+<li class="chapter" data-level="5.4" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#conditional-probability"><i class="fa fa-check"></i><b>5.4</b> Conditional probability</a>
+<ul>
+<li class="chapter" data-level="5.4.1" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#multiplication-rule-of-conditional-probability"><i class="fa fa-check"></i><b>5.4.1</b> Multiplication rule of conditional probability</a></li>
+<li class="chapter" data-level="5.4.2" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#law-of-total-probability"><i class="fa fa-check"></i><b>5.4.2</b> Law of total probability</a></li>
+</ul></li>
+<li class="chapter" data-level="5.5" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#contingency-tables"><i class="fa fa-check"></i><b>5.5</b> Contingency tables</a></li>
+<li class="chapter" data-level="5.6" data-path="probability-theory-and-applications.html"><a href="probability-theory-and-applications.html#useful-resources-4"><i class="fa fa-check"></i><b>5.6</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html"><i class="fa fa-check"></i><b>6</b> Bayesian Statistical Inference</a>
+<ul>
+<li class="chapter" data-level="6.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#introduction"><i class="fa fa-check"></i><b>6.1</b> Introduction</a></li>
+<li class="chapter" data-level="6.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#bayes-theorem"><i class="fa fa-check"></i><b>6.2</b> Bayes’ theorem</a>
+<ul>
+<li class="chapter" data-level="6.2.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#bayes-theorem-for-random-variables"><i class="fa fa-check"></i><b>6.2.1</b> Bayes’ theorem for random variables</a></li>
+</ul></li>
+<li class="chapter" data-level="6.3" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#the-likelihood-function"><i class="fa fa-check"></i><b>6.3</b> The likelihood function</a>
+<ul>
+<li class="chapter" data-level="6.3.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#different-types-and-structures"><i class="fa fa-check"></i><b>6.3.1</b> Different types and structures</a>
+<ul>
+<li class="chapter" data-level="6.3.1.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#count-data"><i class="fa fa-check"></i><b>6.3.1.1</b> Count data</a></li>
+<li class="chapter" data-level="6.3.1.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#binary-data"><i class="fa fa-check"></i><b>6.3.1.2</b> Binary data</a></li>
+<li class="chapter" data-level="6.3.1.3" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#proportional-data"><i class="fa fa-check"></i><b>6.3.1.3</b> Proportional data</a></li>
+<li class="chapter" data-level="6.3.1.4" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#continuous-data"><i class="fa fa-check"></i><b>6.3.1.4</b> Continuous data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6.4" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#prior-distribution"><i class="fa fa-check"></i><b>6.4</b> Prior distribution</a>
+<ul>
+<li class="chapter" data-level="6.4.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#conjugate-priors"><i class="fa fa-check"></i><b>6.4.1</b> Conjugate priors</a></li>
+<li class="chapter" data-level="6.4.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#flat-improper-and-non-informative-priors"><i class="fa fa-check"></i><b>6.4.2</b> Flat, improper and non-informative priors</a></li>
+<li class="chapter" data-level="6.4.3" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#informative-prior"><i class="fa fa-check"></i><b>6.4.3</b> Informative prior</a></li>
+</ul></li>
+<li class="chapter" data-level="6.5" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#overview-of-posterior-inference"><i class="fa fa-check"></i><b>6.5</b> Overview of posterior inference</a>
+<ul>
+<li class="chapter" data-level="6.5.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#markov-chain-monte-carlo-approach"><i class="fa fa-check"></i><b>6.5.1</b> Markov Chain Monte Carlo approach</a></li>
+<li class="chapter" data-level="6.5.2" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#integrated-nested-laplace-approximation-approach"><i class="fa fa-check"></i><b>6.5.2</b> Integrated Nested Laplace Approximation approach</a></li>
+</ul></li>
+<li class="chapter" data-level="6.6" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#elicitation-of-priors"><i class="fa fa-check"></i><b>6.6</b> Elicitation of priors</a>
+<ul>
+<li class="chapter" data-level="6.6.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#priors-inla"><i class="fa fa-check"></i><b>6.6.1</b> Priors INLA</a>
+<ul>
+<li class="chapter" data-level="6.6.1.1" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#penalised-complexity-priors"><i class="fa fa-check"></i><b>6.6.1.1</b> Penalised Complexity priors</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="6.7" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#sampling-and-evaluating-the-posterior-density"><i class="fa fa-check"></i><b>6.7</b> Sampling and evaluating the posterior density</a></li>
+<li class="chapter" data-level="6.8" data-path="bayesian-statistical-inference.html"><a href="bayesian-statistical-inference.html#useful-resources-5"><i class="fa fa-check"></i><b>6.8</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><i class="fa fa-check"></i><b>7</b> Introduction to Small Area Population Estimation and Modelling (SAPEM)</a>
+<ul>
+<li class="chapter" data-level="7.1" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#small-area-population-estimation"><i class="fa fa-check"></i><b>7.1</b> Small area population estimation</a></li>
+<li class="chapter" data-level="7.2" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#direct-estimation"><i class="fa fa-check"></i><b>7.2</b> Direct estimation</a></li>
+<li class="chapter" data-level="7.3" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#indirect-estimation"><i class="fa fa-check"></i><b>7.3</b> Indirect estimation</a>
+<ul>
+<li class="chapter" data-level="7.3.1" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#approaches-for-creating-gridded-population-datasets"><i class="fa fa-check"></i><b>7.3.1</b> Approaches for creating gridded population datasets</a>
+<ul>
+<li class="chapter" data-level="7.3.1.1" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#top-down"><i class="fa fa-check"></i><b>7.3.1.1</b> Top-down</a></li>
+<li class="chapter" data-level="7.3.1.2" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#bottom-up"><i class="fa fa-check"></i><b>7.3.1.2</b> Bottom-up</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="7.4" data-path="introduction-to-small-area-population-estimation-and-modelling-sapem.html"><a href="introduction-to-small-area-population-estimation-and-modelling-sapem.html#useful-resources-6"><i class="fa fa-check"></i><b>7.4</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html"><i class="fa fa-check"></i><b>8</b> Bayesian Hierarchical Population Modelling in R</a>
+<ul>
+<li class="chapter" data-level="8.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#data-sources"><i class="fa fa-check"></i><b>8.1</b> Data sources</a>
+<ul>
+<li class="chapter" data-level="8.1.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#population-data"><i class="fa fa-check"></i><b>8.1.1</b> Population data</a></li>
+<li class="chapter" data-level="8.1.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#settlement-data"><i class="fa fa-check"></i><b>8.1.2</b> Settlement data</a></li>
+<li class="chapter" data-level="8.1.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#other-sources"><i class="fa fa-check"></i><b>8.1.3</b> Other sources</a></li>
+</ul></li>
+<li class="chapter" data-level="8.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#data-cleaning-and-covariates-extraction"><i class="fa fa-check"></i><b>8.2</b> Data cleaning and covariates extraction</a>
+<ul>
+<li class="chapter" data-level="8.2.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#extracting-continuous-rasters"><i class="fa fa-check"></i><b>8.2.1</b> Extracting continuous rasters</a></li>
+<li class="chapter" data-level="8.2.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#extracting-categorical-rasters"><i class="fa fa-check"></i><b>8.2.2</b> Extracting categorical rasters</a></li>
+<li class="chapter" data-level="8.2.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#extracting-building-count"><i class="fa fa-check"></i><b>8.2.3</b> Extracting building count</a></li>
+<li class="chapter" data-level="8.2.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#exracting-building-total-area"><i class="fa fa-check"></i><b>8.2.4</b> Exracting building total area</a></li>
+<li class="chapter" data-level="8.2.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#adding-admin-area-names-to-the-data"><i class="fa fa-check"></i><b>8.2.5</b> Adding admin area names to the data</a></li>
+</ul></li>
+<li class="chapter" data-level="8.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#exploratory-analysis"><i class="fa fa-check"></i><b>8.3</b> Exploratory analysis</a>
+<ul>
+<li class="chapter" data-level="8.3.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#basic-visualisation"><i class="fa fa-check"></i><b>8.3.1</b> Basic visualisation</a></li>
+<li class="chapter" data-level="8.3.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#geospatial-visualisation"><i class="fa fa-check"></i><b>8.3.2</b> Geospatial visualisation</a></li>
+<li class="chapter" data-level="8.3.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#checking-for-nas"><i class="fa fa-check"></i><b>8.3.3</b> Checking for NAs</a></li>
+<li class="chapter" data-level="8.3.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#checking-for-minimum-and-maximum-values"><i class="fa fa-check"></i><b>8.3.4</b> Checking for minimum and maximum values</a></li>
+<li class="chapter" data-level="8.3.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#checking-the-distribution-of-categorical-variables"><i class="fa fa-check"></i><b>8.3.5</b> Checking the distribution of categorical variables</a></li>
+</ul></li>
+<li class="chapter" data-level="8.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#model-set-up"><i class="fa fa-check"></i><b>8.4</b> Model set-up</a>
+<ul>
+<li class="chapter" data-level="8.4.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#simple-linear-regression"><i class="fa fa-check"></i><b>8.4.1</b> Simple linear regression</a></li>
+<li class="chapter" data-level="8.4.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#multiple-regression-1"><i class="fa fa-check"></i><b>8.4.2</b> Multiple regression</a></li>
+<li class="chapter" data-level="8.4.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#generalised-linear-regression-1"><i class="fa fa-check"></i><b>8.4.3</b> Generalised linear regression</a></li>
+<li class="chapter" data-level="8.4.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#fitting-fixed-effects-models-in-r-inla"><i class="fa fa-check"></i><b>8.4.4</b> Fitting fixed effects models in <code>R-INLA</code></a></li>
+<li class="chapter" data-level="8.4.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#fitting-bayesian-hierarchical-mixed-effects-models-in-r-inla"><i class="fa fa-check"></i><b>8.4.5</b> Fitting Bayesian hierarchical mixed effects models in <code>R-INLA</code></a></li>
+</ul></li>
+<li class="chapter" data-level="8.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#stan-mcmc-approach"><i class="fa fa-check"></i><b>8.5</b> STAN (MCMC) approach</a>
+<ul>
+<li class="chapter" data-level="8.5.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#metropolis-hastings-algorithm"><i class="fa fa-check"></i><b>8.5.1</b> Metropolis-Hastings algorithm</a></li>
+</ul></li>
+<li class="chapter" data-level="8.6" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#inla-and-inla-spde-approach"><i class="fa fa-check"></i><b>8.6</b> INLA and INLA-SPDE approach</a>
+<ul>
+<li class="chapter" data-level="8.6.1" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#mesh-construction"><i class="fa fa-check"></i><b>8.6.1</b> Mesh construction</a></li>
+<li class="chapter" data-level="8.6.2" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#building-the-spde"><i class="fa fa-check"></i><b>8.6.2</b> Building the SPDE</a></li>
+<li class="chapter" data-level="8.6.3" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#projection-matrix"><i class="fa fa-check"></i><b>8.6.3</b> Projection matrix</a></li>
+<li class="chapter" data-level="8.6.4" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#data-location-indexing"><i class="fa fa-check"></i><b>8.6.4</b> Data location indexing</a></li>
+<li class="chapter" data-level="8.6.5" data-path="bayesian-hierarchical-population-modelling-in-r.html"><a href="bayesian-hierarchical-population-modelling-in-r.html#projection-data"><i class="fa fa-check"></i><b>8.6.5</b> Projection data</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html"><i class="fa fa-check"></i><b>9</b> Model Fit Checks and Cross-Validation</a>
+<ul>
+<li class="chapter" data-level="9.1" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#model-assumption-checking"><i class="fa fa-check"></i><b>9.1</b> Model assumption checking</a></li>
+<li class="chapter" data-level="9.2" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#model-selection-1"><i class="fa fa-check"></i><b>9.2</b> Model selection</a>
+<ul>
+<li class="chapter" data-level="9.2.1" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#watanabe-akaike-information-criterion-waic"><i class="fa fa-check"></i><b>9.2.1</b> Watanabe-Akaike Information Criterion (WAIC)</a></li>
+<li class="chapter" data-level="9.2.2" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#deviance-information-criterion-dic"><i class="fa fa-check"></i><b>9.2.2</b> Deviance Information Criterion (DIC)</a></li>
+<li class="chapter" data-level="9.2.3" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#conditional-predictive-ordinate-cpo"><i class="fa fa-check"></i><b>9.2.3</b> Conditional predictive ordinate (CPO)</a></li>
+<li class="chapter" data-level="9.2.4" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#probability-integral-transform-pit"><i class="fa fa-check"></i><b>9.2.4</b> Probability Integral Transform (PIT)</a></li>
+</ul></li>
+<li class="chapter" data-level="9.3" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#cross-validation-1"><i class="fa fa-check"></i><b>9.3</b> Cross-validation</a>
+<ul>
+<li class="chapter" data-level="9.3.1" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#basic-cross-validation"><i class="fa fa-check"></i><b>9.3.1</b> Basic cross-validation</a></li>
+<li class="chapter" data-level="9.3.2" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#k-fold-cross-validation-1"><i class="fa fa-check"></i><b>9.3.2</b> K-Fold Cross-Validation</a></li>
+<li class="chapter" data-level="9.3.3" data-path="model-fit-checks-and-cross-validation.html"><a href="model-fit-checks-and-cross-validation.html#useful-resources-7"><i class="fa fa-check"></i><b>9.3.3</b> Useful resources</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html"><i class="fa fa-check"></i><b>10</b> Population Prediction and Uncertainty Quantification</a>
+<ul>
+<li class="chapter" data-level="10.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#covariate-stacking"><i class="fa fa-check"></i><b>10.1</b> Covariate stacking</a>
+<ul>
+<li class="chapter" data-level="10.1.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#admin-names"><i class="fa fa-check"></i><b>10.1.1</b> Admin names</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#grid-cellpixel-level-prediction"><i class="fa fa-check"></i><b>10.2</b> Grid cell/pixel level prediction</a>
+<ul>
+<li class="chapter" data-level="10.2.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#pre-processing"><i class="fa fa-check"></i><b>10.2.1</b> Pre-processing</a></li>
+<li class="chapter" data-level="10.2.2" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#inla-spde-approach"><i class="fa fa-check"></i><b>10.2.2</b> INLA-SPDE approach</a>
+<ul>
+<li class="chapter" data-level="10.2.2.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#predictions"><i class="fa fa-check"></i><b>10.2.2.1</b> Predictions</a></li>
+</ul></li>
+<li class="chapter" data-level="10.2.3" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#posterior-distribution-simulation"><i class="fa fa-check"></i><b>10.2.3</b> Posterior distribution simulation</a></li>
+</ul></li>
+<li class="chapter" data-level="10.3" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#aggregation-to-area-units-of-interest-and-uncertainty-quantification"><i class="fa fa-check"></i><b>10.3</b> Aggregation to area units of interest and uncertainty quantification</a>
+<ul>
+<li class="chapter" data-level="10.3.1" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#rasterising-the-predictions-at-grid-cell-level"><i class="fa fa-check"></i><b>10.3.1</b> Rasterising the predictions at grid cell level</a></li>
+</ul></li>
+<li class="chapter" data-level="10.4" data-path="population-prediction-and-uncertainty-quantification.html"><a href="population-prediction-and-uncertainty-quantification.html#useful-resources-8"><i class="fa fa-check"></i><b>10.4</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html"><i class="fa fa-check"></i><b>11</b> Age-Sex Disaggregation</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#disaggregation-of-population-totals-by-age-sex-proportions"><i class="fa fa-check"></i><b>11.1</b> Disaggregation of population totals by age-sex proportions</a>
+<ul>
+<li class="chapter" data-level="11.1.1" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#unavailable-age-sex-data"><i class="fa fa-check"></i><b>11.1.1</b> Unavailable age-sex data</a></li>
+<li class="chapter" data-level="11.1.2" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#available-age-sex-data"><i class="fa fa-check"></i><b>11.1.2</b> Available age-sex data</a>
+<ul>
+<li class="chapter" data-level="11.1.2.1" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#age-sex-disaggregation-1"><i class="fa fa-check"></i><b>11.1.2.1</b> Age-sex disaggregation</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="11.2" data-path="age-sex-disaggregation.html"><a href="age-sex-disaggregation.html#useful-resources-9"><i class="fa fa-check"></i><b>11.2</b> Useful resources</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html"><i class="fa fa-check"></i><b>12</b> Exercise Solutions by Module</a>
+<ul>
+<li class="chapter" data-level="12.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-1"><i class="fa fa-check"></i><b>12.1</b> Module 1</a>
+<ul>
+<li class="chapter" data-level="12.1.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises"><i class="fa fa-check"></i><b>12.1.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.1.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#end-of-module-exercises-3"><i class="fa fa-check"></i><b>12.1.2</b> End of module exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-2"><i class="fa fa-check"></i><b>12.2</b> Module 2</a>
+<ul>
+<li class="chapter" data-level="12.2.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-1"><i class="fa fa-check"></i><b>12.2.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.2.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#end-of-module-exercises-4"><i class="fa fa-check"></i><b>12.2.2</b> End of module exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.3" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-3"><i class="fa fa-check"></i><b>12.3</b> Module 3</a>
+<ul>
+<li class="chapter" data-level="12.3.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-2"><i class="fa fa-check"></i><b>12.3.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.3.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#end-of-module-exercises-5"><i class="fa fa-check"></i><b>12.3.2</b> End of module exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.4" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-4"><i class="fa fa-check"></i><b>12.4</b> Module 4</a>
+<ul>
+<li class="chapter" data-level="12.4.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-3"><i class="fa fa-check"></i><b>12.4.1</b> General exercises</a></li>
+</ul></li>
+<li class="chapter" data-level="12.5" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#module-5"><i class="fa fa-check"></i><b>12.5</b> Module 5</a>
+<ul>
+<li class="chapter" data-level="12.5.1" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-4"><i class="fa fa-check"></i><b>12.5.1</b> General exercises</a></li>
+<li class="chapter" data-level="12.5.2" data-path="exercise-solutions-by-module.html"><a href="exercise-solutions-by-module.html#general-exercises-5"><i class="fa fa-check"></i><b>12.5.2</b> General exercises</a></li>
+</ul></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">WorldPop Population Modelling Training Manual, Vol. I</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="exercise-solutions-by-module" class="section level1 hasAnchor" number="12">
+<h1><span class="header-section-number">12</span> Exercise Solutions by Module<a href="exercise-solutions-by-module.html#exercise-solutions-by-module" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<div id="module-1" class="section level2 hasAnchor" number="12.1">
+<h2><span class="header-section-number">12.1</span> Module 1<a href="exercise-solutions-by-module.html#module-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="general-exercises" class="section level3 hasAnchor" number="12.1.1">
+<h3><span class="header-section-number">12.1.1</span> General exercises<a href="exercise-solutions-by-module.html#general-exercises" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Exercise:</strong> Which of the following will give a different output from the other 3? Hint: Look at the help file for the <code>log()</code> function.</p>
+<ol style="list-style-type: decimal">
+<li><p><code>log(x=6, base=4)</code></p></li>
+<li><p><code>log(4, 6)</code></p></li>
+<li><p><code>log(base=4, x=6)</code></p></li>
+<li><p><code>log(6, 4)</code></p></li>
+</ol>
+<p><em>Solution:</em>
+<code>?log</code>, 2. <code>log(4,6)</code></p>
+<p><strong>Exercise:</strong> Create a vector that goes from 5 to 25 by increments of 1.</p>
+<p><em>Solution:</em> <code>5:25</code> (or some variation)</p>
+<p><strong>Exercise:</strong> Create another vector that goes from 5 to 25 by increments of 1, but using a different method. Call this vector <code>V1</code>.</p>
+<p><em>Solution:</em> <code>V1 &lt;- seq(5,25,by=1)</code> (or some variation)</p>
+<p><strong>Exercise:</strong> Extract the 5th element of <code>V1</code>.</p>
+<p><em>Solution:</em> <code>V1[5]</code></p>
+<p><strong>Exercise:</strong> Remove the 7th element from the vector <code>V1</code> and call this new vector <code>V2</code>.</p>
+<p><em>Solution:</em> <code>V2 &lt;- V1[-7]</code></p>
+<p><strong>Exercise:</strong> How many elements in your vector, <code>V1</code>, are greater than 11?</p>
+<p><em>Solution:</em> <code>sum(V1&gt;11)</code> = 14</p>
+<p><strong>Exercise:</strong> Create a matrix that contains the sequence of numbers from 1 to 16, going up in increments of 1. Let the matrix have 4 rows and have the matrix elements fill by row. Call this matrix <code>M1</code>.</p>
+<p><em>Solution:</em> <code>M1 &lt;- matrix(data=1:16, nrow=4, byrow=T)</code></p>
+<p><strong>Exercise:</strong> Extract the 3rd and 4th rows and the 1st and 2nd columns of your matrix, <code>M1</code>. Call this matrix <code>M2</code>.</p>
+<p><em>Solution:</em> <code>M2 &lt;- M1[c(3,4), c(1,2)]</code></p>
+<p><strong>Exercise:</strong> Find the row sums of the matrix <code>M2</code>.</p>
+<p><em>Solution:</em> <code>apply(M2, 1, sum)</code> (or <code>rowSums(M2)</code>)</p>
+</div>
+<div id="end-of-module-exercises-3" class="section level3 hasAnchor" number="12.1.2">
+<h3><span class="header-section-number">12.1.2</span> End of module exercises<a href="exercise-solutions-by-module.html#end-of-module-exercises-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Exercise 1:</strong> Use R to find the value of the square root of 25. (<span class="math inline">\(\sqrt(25)\)</span>)
+Hint: Look at the help file for the function <code>sqrt()</code>.</p>
+<p><em>Solution 1:</em> <code>sqrt(25)</code></p>
+<p><strong>Exercise 2:</strong> Use R to find the value of the exponential of <span class="math inline">\(6\times 14 -3\)</span>. (<span class="math inline">\(\exp(6\times 14-3)\)</span>)</p>
+<p><em>Solution 2:</em> <code>exp(6*4-3)</code></p>
+<p><strong>Exercise 3:</strong> Use R to find the value of the absolute value of <span class="math inline">\(7\times 3 - 4\times 9 - 30\)</span>. (<span class="math inline">\(|7 \times 3 - 4 \times 9 - 30|\)</span>)</p>
+<p><em>Solution 3:</em> <code>abs(7*3-4*9-30)</code></p>
+<p><strong>Exercise 4:</strong> Use R to find the value of <span class="math inline">\(\frac{73-42}{3}+2\times\left(\frac{36}{4}-17\right)\)</span>. Give your answer to 2 decimal places.</p>
+<p><em>Solution 4:</em> <code>(73-42)/3+(2*((36/4)-17))</code></p>
+<p><strong>Exercise 5:</strong> How many elements does the following vector have?</p>
+<p><code>seq(from = 0, to = 100, by = 3.14)</code></p>
+<p><em>Solution 5:</em> <code>length(seq(0,100,by=3.14))</code></p>
+<p><strong>Exercise 6:</strong> Look at the help file for the function <code>rnorm()</code> and use this function to generate 100 random numbers with mean 10 and standard deviation 5.</p>
+<p><em>Solution 6:</em> <code>rnorm(n = 100, mean = 10, sd = 5)</code></p>
+</div>
+</div>
+<div id="module-2" class="section level2 hasAnchor" number="12.2">
+<h2><span class="header-section-number">12.2</span> Module 2<a href="exercise-solutions-by-module.html#module-2" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="general-exercises-1" class="section level3 hasAnchor" number="12.2.1">
+<h3><span class="header-section-number">12.2.1</span> General exercises<a href="exercise-solutions-by-module.html#general-exercises-1" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Exercise:</strong> What are the defaults for the header argument in the functions <code>read.table()</code> and <code>read.csv()</code>?</p>
+<ul>
+<li><p><code>header = T</code> in <code>read.table()</code> and <code>header = T</code> in <code>read.csv()</code></p></li>
+<li><p><code>header = T</code> in <code>read.table()</code> and <code>header = F</code> in <code>read.csv()</code></p></li>
+<li><p><code>header = F</code> in <code>read.table()</code> and <code>header = T</code> in <code>read.csv()</code></p></li>
+<li><p><code>header = F</code> in <code>read.table()</code> and <code>header = F</code> in <code>read.csv()</code></p></li>
+</ul>
+<p><em>Solution:</em> <code>header = F</code> in <code>read.table()</code> and <code>header = T</code> in <code>read.csv()</code></p>
+</div>
+<div id="end-of-module-exercises-4" class="section level3 hasAnchor" number="12.2.2">
+<h3><span class="header-section-number">12.2.2</span> End of module exercises<a href="exercise-solutions-by-module.html#end-of-module-exercises-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Exercise 1:</strong> How many cares have a miles per gallon (<code>mpg</code>) of less than 15 in the <code>mtcars</code> data?</p>
+<p><em>Solution 1:</em></p>
+<p><code>library(datasets)</code></p>
+<p><code>cars &lt;- mtcars</code></p>
+<p><code>sum(cars$mpg&lt;15)</code> = 5</p>
+<p><strong>Exercise 2:</strong> How many cars have exactly 4 cylinders (<code>cyl</code>) in the <code>mtcars</code> data?</p>
+<p><em>Solution 2:</em> <code>sum(cars$cyl==8)</code>=14</p>
+<p><strong>Exercise 3:</strong> What is the mean value of horsepower (<code>hp</code>) to 2 decimal places in the <code>mtcars</code> data?</p>
+<p><em>Solution 3:</em> <code>round(mean(cars$hp), 2)</code>=146.69</p>
+<p><strong>Exercise 4:</strong> What car has the lowest miles per gallon (<code>mpg</code>) value for cars with 8 cylinders (<code>cyl</code>) in the <code>mtcars</code> data?</p>
+<p><em>Solution 4:</em> <code>cars[which.min(cars$mpg),]</code>=Cadillac Fleetwood</p>
+<p><strong>Exercise 5:</strong> What is the median miles per gallon (<code>mpg</code>) value for cars with 8 cylinders (<code>cyl</code>) in the <code>mtcars</code> data?</p>
+<p><em>Solution 5:</em> <code>median(cars$mpg[cars$cyl==8])</code>= 15.2</p>
+<p><strong>Exercise 6:</strong> What car has the highest weight (<code>wt</code>) for each amount of cylinders (<code>cyl</code>) in the <code>mtcars</code> data?</p>
+<p><em>Solution 6:</em></p>
+<p><code>unique(cars$cyl</code></p>
+<p><code>cars[which.max(cars$wt[cars$cyl==4]),]</code>=Mazda RX4 Wag</p>
+<p><code>cars[which.max(cars$wt[cars$cyl==6]),]</code>=Hornet 4 Drive</p>
+<p><code>cars[which.max(cars$wt[cars$cyl==8]),]</code>=Duster 360</p>
+<p><strong>Exercise 7:</strong> Create a bar plot that shows the number of cars with each gear type (<code>gear</code>) in the <code>mtcars</code> data.</p>
+<p><em>Solution 7:</em></p>
+<p><code>gear_types &lt;- table(cars$gear)</code></p>
+<p><code>barplot(gear_types, names.arg=c("Type 3", "Type 4", "Type 5"),</code></p>
+<p><code>xlab = "Gear types", ylab = "Total count",</code></p>
+<p><code>main = "Distribution of gear types")</code></p>
+<p><strong>Exercise 8:</strong> Create a bar plot that shows the number of cars with each gear type (<code>gear</code>) with the distribution of cylinders (<code>cyl</code>) for each type in the <code>mtcars</code> data. Add a legend for the cylinders.</p>
+<p><em>Solution 8:</em></p>
+<p><code>cyl_gear_types &lt;- table(cars$cyl, cars$gear)</code></p>
+<p><code>colours &lt;- c("#004C92", "#FF0000", "#FFC600")</code></p>
+<p><code>barplot(cyl_gear_types, names.arg=c("Type 3", "Type 4", "Type 5"),</code></p>
+<p><code>xlab = "Gear types", ylab = "Total count",</code></p>
+<p><code>main = "Distribution of gear types vs cylinders",</code></p>
+<p><code>col = colours)</code></p>
+<p><code>legend("topright", rownames(cyl_gear_types), cex = 1.3, fill = colours)</code></p>
+<p><strong>Exercise 9:</strong> Create a scatter plot to show the relationship between weight (<code>wt</code>) and miles per gallon (<code>mpg</code>) in the <code>mtcars</code> data.</p>
+<p><em>Solution 9:</em></p>
+<p><code>plot(x = cars$wt,y = cars$mpg,</code></p>
+<p><code>xlab = "Weight",</code></p>
+<p><code>ylab = "Miles per gallon",</code></p>
+<p><code>xlim = c(1,6),</code></p>
+<p><code>ylim = c(10,35),</code></p>
+<p><code>main = "Weight vs miles per gallon")</code></p>
+<p><code>ggplot(cars, aes(x = wt, y = mpg)) +</code></p>
+<p><code>geom_point(col="#004C92")+</code></p>
+<p><code>labs(x="Weight", y="Miles per gallon")+</code></p>
+<p><code>ggtitle("Weight vs miles per gallon")</code></p>
+<p><strong>Exercise 10:</strong> Create a scatter plot to show the relationship between weight (<code>wt</code>) and miles per gallon (<code>mpg</code>) by cylinder (<code>cyl</code>) in the <code>mtcars</code> data.</p>
+<p><em>Solution 10:</em></p>
+<p><code>plot(cars$wt, cars$mpg, col = cars$cyl,</code></p>
+<p><code>xlab="Weight", ylab="Miles per gallon",</code></p>
+<p><code>main="Weight vs miles per gallon by cylinder")</code></p>
+<p><code>lapply(cars$cyl, function(x) {</code></p>
+<p><code>abline(lm(mpg ~ wt, cars, subset = (cyl == x)), col = x)})</code></p>
+<p><code>legend("topright", rownames(cyl_gear_types),</code></p>
+<p><code>col = c(4,6,8), pch = 1, bty = "n")</code></p>
+<p><code>ggplot(cars, aes(x = wt, y = mpg, group=cyl, col=cyl)) +</code></p>
+<p><code>geom_point() +</code></p>
+<p><code>geom_smooth(method="lm", se=FALSE)+</code></p>
+<p><code>labs(x="Weight", y="Miles per gallon")+</code></p>
+<p><code>ggtitle("Weigth vs miles per gallon by cylinder")</code></p>
+</div>
+</div>
+<div id="module-3" class="section level2 hasAnchor" number="12.3">
+<h2><span class="header-section-number">12.3</span> Module 3<a href="exercise-solutions-by-module.html#module-3" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="general-exercises-2" class="section level3 hasAnchor" number="12.3.1">
+<h3><span class="header-section-number">12.3.1</span> General exercises<a href="exercise-solutions-by-module.html#general-exercises-2" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Exercise:</strong> How can you add multiple layers, such as polygons for states and points for health facilities, to a single map using <code>tmap</code>?</p>
+<ol style="list-style-type: decimal">
+<li><p>By using <code>tm_shape()</code> and <code>tm_fill()</code></p></li>
+<li><p>By using <code>tm_shape()</code> and <code>tm_dots()</code></p></li>
+<li><p>By using multiple <code>tm_shape()</code> functions with different elements</p></li>
+<li><p>By using <code>tm_shape()</code> and <code>tm_lines()</code></p></li>
+</ol>
+<p><em>Solution:</em>
+3. By using multiple <code>tm_shape()</code> functions with different elements</p>
+</div>
+<div id="end-of-module-exercises-5" class="section level3 hasAnchor" number="12.3.2">
+<h3><span class="header-section-number">12.3.2</span> End of module exercises<a href="exercise-solutions-by-module.html#end-of-module-exercises-5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Exercise 1:</strong> What is the primary purpose of the <code>.prj</code> file in a shapefile set, and which package is commonly used to handle this file type in R?</p>
+<ol style="list-style-type: decimal">
+<li><p>Stores map projection information, handled by <code>raster</code> package.</p></li>
+<li><p>Stores attribute information, handled by <code>sp</code> package</p></li>
+<li><p>Stores projection information, handled by <code>sf</code> package</p></li>
+<li><p>Stores metadata information, handled by <code>terra</code> package</p></li>
+</ol>
+<p><em>Solution 1:</em> 3. Stores projection information, handled by <code>sf</code> package</p>
+<p><strong>Exercise 2:</strong> Create a map of Nigeria that combines the raster layer for building count and the vector layer for region.</p>
+<p><em>Solution 2:</em></p>
+<div class="sourceCode" id="cb920"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb920-1"><a href="exercise-solutions-by-module.html#cb920-1" tabindex="-1"></a><span class="fu">library</span>(terra)     </span>
+<span id="cb920-2"><a href="exercise-solutions-by-module.html#cb920-2" tabindex="-1"></a><span class="fu">library</span>(sf)       </span>
+<span id="cb920-3"><a href="exercise-solutions-by-module.html#cb920-3" tabindex="-1"></a><span class="fu">library</span>(tmap)     </span>
+<span id="cb920-4"><a href="exercise-solutions-by-module.html#cb920-4" tabindex="-1"></a></span>
+<span id="cb920-5"><a href="exercise-solutions-by-module.html#cb920-5" tabindex="-1"></a><span class="co">#load data</span></span>
+<span id="cb920-6"><a href="exercise-solutions-by-module.html#cb920-6" tabindex="-1"></a>building_raster <span class="ot">&lt;-</span> <span class="fu">rast</span>(nga_building_count.tif) <span class="co">#raster data</span></span>
+<span id="cb920-7"><a href="exercise-solutions-by-module.html#cb920-7" tabindex="-1"></a>regions_vector <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nga_regions.shp) <span class="co">#vector data</span></span>
+<span id="cb920-8"><a href="exercise-solutions-by-module.html#cb920-8" tabindex="-1"></a></span>
+<span id="cb920-9"><a href="exercise-solutions-by-module.html#cb920-9" tabindex="-1"></a><span class="co">#both are in same CRS</span></span>
+<span id="cb920-10"><a href="exercise-solutions-by-module.html#cb920-10" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">st_crs</span>(regions_vector)<span class="sc">$</span>epsg <span class="sc">!=</span> <span class="fu">crs</span>(building_raster, <span class="at">describe=</span><span class="cn">TRUE</span>)<span class="sc">$</span>code) {</span>
+<span id="cb920-11"><a href="exercise-solutions-by-module.html#cb920-11" tabindex="-1"></a> regions_vector <span class="ot">&lt;-</span> <span class="fu">st_transform</span>(regions_vector, <span class="fu">crs</span>(building_raster))</span>
+<span id="cb920-12"><a href="exercise-solutions-by-module.html#cb920-12" tabindex="-1"></a>}</span>
+<span id="cb920-13"><a href="exercise-solutions-by-module.html#cb920-13" tabindex="-1"></a> </span>
+<span id="cb920-14"><a href="exercise-solutions-by-module.html#cb920-14" tabindex="-1"></a><span class="co">#plot tmap</span></span>
+<span id="cb920-15"><a href="exercise-solutions-by-module.html#cb920-15" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">&quot;plot&quot;</span>)</span>
+<span id="cb920-16"><a href="exercise-solutions-by-module.html#cb920-16" tabindex="-1"></a><span class="fu">tm_shape</span>(building_raster) <span class="sc">+</span></span>
+<span id="cb920-17"><a href="exercise-solutions-by-module.html#cb920-17" tabindex="-1"></a> <span class="fu">tm_raster</span>(<span class="at">style =</span> <span class="st">&quot;quantile&quot;</span>, <span class="at">palette =</span> <span class="st">&quot;YlOrRd&quot;</span>, <span class="at">title =</span> <span class="st">&quot;Building Count&quot;</span>) <span class="sc">+</span></span>
+<span id="cb920-18"><a href="exercise-solutions-by-module.html#cb920-18" tabindex="-1"></a><span class="fu">tm_shape</span>(regions_vector) <span class="sc">+</span></span>
+<span id="cb920-19"><a href="exercise-solutions-by-module.html#cb920-19" tabindex="-1"></a> <span class="fu">tm_borders</span>(<span class="at">lwd =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">&quot;black&quot;</span>) </span></code></pre></div>
+<p><strong>Exercise 3:</strong> Create a choropleth map that shows the variation in population density for Nigeria at region level. Export the results as a .png file.</p>
+<p><em>Solution 3:</em></p>
+<div class="sourceCode" id="cb921"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb921-1"><a href="exercise-solutions-by-module.html#cb921-1" tabindex="-1"></a><span class="fu">library</span>(sf)         </span>
+<span id="cb921-2"><a href="exercise-solutions-by-module.html#cb921-2" tabindex="-1"></a><span class="fu">library</span>(tmap)       </span>
+<span id="cb921-3"><a href="exercise-solutions-by-module.html#cb921-3" tabindex="-1"></a><span class="fu">library</span>(dplyr)     </span>
+<span id="cb921-4"><a href="exercise-solutions-by-module.html#cb921-4" tabindex="-1"></a> </span>
+<span id="cb921-5"><a href="exercise-solutions-by-module.html#cb921-5" tabindex="-1"></a><span class="co">#load data</span></span>
+<span id="cb921-6"><a href="exercise-solutions-by-module.html#cb921-6" tabindex="-1"></a>nigeria_regions <span class="ot">&lt;-</span> <span class="fu">st_read</span>(nga_regions.shp)</span>
+<span id="cb921-7"><a href="exercise-solutions-by-module.html#cb921-7" tabindex="-1"></a> </span>
+<span id="cb921-8"><a href="exercise-solutions-by-module.html#cb921-8" tabindex="-1"></a><span class="co">#calculate population density</span></span>
+<span id="cb921-9"><a href="exercise-solutions-by-module.html#cb921-9" tabindex="-1"></a>nigeria_regions <span class="ot">&lt;-</span> nigeria_regions <span class="sc">%&gt;%</span></span>
+<span id="cb921-10"><a href="exercise-solutions-by-module.html#cb921-10" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">pop_density =</span> nga_pop <span class="sc">/</span> nga_area)</span>
+<span id="cb921-11"><a href="exercise-solutions-by-module.html#cb921-11" tabindex="-1"></a> </span>
+<span id="cb921-12"><a href="exercise-solutions-by-module.html#cb921-12" tabindex="-1"></a><span class="co">#create choropleth map</span></span>
+<span id="cb921-13"><a href="exercise-solutions-by-module.html#cb921-13" tabindex="-1"></a><span class="fu">tmap_mode</span>(<span class="st">&quot;plot&quot;</span>)</span>
+<span id="cb921-14"><a href="exercise-solutions-by-module.html#cb921-14" tabindex="-1"></a>choropleth_map <span class="ot">&lt;-</span> <span class="fu">tm_shape</span>(nigeria_regions) <span class="sc">+</span></span>
+<span id="cb921-15"><a href="exercise-solutions-by-module.html#cb921-15" tabindex="-1"></a><span class="fu">tm_polygons</span>(<span class="st">&quot;pop_density&quot;</span>,</span>
+<span id="cb921-16"><a href="exercise-solutions-by-module.html#cb921-16" tabindex="-1"></a>             <span class="at">style =</span> <span class="st">&quot;quantile&quot;</span>,     </span>
+<span id="cb921-17"><a href="exercise-solutions-by-module.html#cb921-17" tabindex="-1"></a>             <span class="at">palette =</span> <span class="st">&quot;Blues&quot;</span>) <span class="sc">+</span></span>
+<span id="cb921-18"><a href="exercise-solutions-by-module.html#cb921-18" tabindex="-1"></a> <span class="fu">tm_layout</span>(<span class="at">title =</span> <span class="st">&quot;Nigeria: Population Density by Region&quot;</span>)</span>
+<span id="cb921-19"><a href="exercise-solutions-by-module.html#cb921-19" tabindex="-1"></a> </span>
+<span id="cb921-20"><a href="exercise-solutions-by-module.html#cb921-20" tabindex="-1"></a><span class="co">#save as PNG</span></span>
+<span id="cb921-21"><a href="exercise-solutions-by-module.html#cb921-21" tabindex="-1"></a><span class="fu">tmap_save</span>(choropleth_map, <span class="at">filename =</span> <span class="st">&quot;nigeria_population_density.png&quot;</span>, </span>
+<span id="cb921-22"><a href="exercise-solutions-by-module.html#cb921-22" tabindex="-1"></a>          <span class="at">width =</span> <span class="dv">2000</span>, <span class="at">height =</span> <span class="dv">1500</span>, <span class="at">dpi =</span> <span class="dv">300</span>)</span></code></pre></div>
+<p><strong>Exercise 4:</strong> How do you plot a raster dataset using <code>tmap</code>, ensuring it can handle large datasets efficiently?</p>
+<ol style="list-style-type: decimal">
+<li><code>tm_shape(raster_data)</code> + <code>tm_fill()</code></li>
+<li><code>tm_shape(raster_data)</code> + <code>tm_raster()</code></li>
+<li><code>tm_shape(raster_data)</code> + <code>tm_polygons()</code></li>
+<li><code>tm_shape(raster_data)</code> + <code>tm_dots()</code></li>
+</ol>
+<p><em>Solution 4:</em>
+2. <code>tm_shape(raster_data)</code> + <code>tm_raster()</code></p>
+</div>
+</div>
+<div id="module-4" class="section level2 hasAnchor" number="12.4">
+<h2><span class="header-section-number">12.4</span> Module 4<a href="exercise-solutions-by-module.html#module-4" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="general-exercises-3" class="section level3 hasAnchor" number="12.4.1">
+<h3><span class="header-section-number">12.4.1</span> General exercises<a href="exercise-solutions-by-module.html#general-exercises-3" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Exercise:</strong> Identify the dependent and independent variables in the following sentence:</p>
+<p>‘A researcher investigates the effects of school density on the grades of its pupils.’</p>
+<p><em>Solution:</em> Dependent variable: the grades of the pupils, independent variable: school density</p>
+<p><strong>Exercise:</strong> Fit a Poisson GLM using the <code>ccancer</code> dataset exploring the relationship between the count of
+cancer deaths and the covariates for the cancer site and region in Canada. Is the relationship between the
+dependent and independent variables significant?</p>
+<p><em>Solution:</em>
+<code>ccancer_glm_exercise &lt;- glm(Count ~ Site + Region, family = "poisson", data = ccancer)</code></p>
+<p><code>summary(ccancer_glm_exercise)</code></p>
+<p>Yes, the relationships are significant.</p>
+<p><strong>Exercise:</strong> What is the expected birth weight for a baby boy at a gestational age of 39.5 weeks?</p>
+<p><em>Solution:</em> <span class="math display">\[Weight = -1447.24 -163.04\times 0+120.89\times 39.5 = 3327.92g\]</span></p>
+</div>
+</div>
+<div id="module-5" class="section level2 hasAnchor" number="12.5">
+<h2><span class="header-section-number">12.5</span> Module 5<a href="exercise-solutions-by-module.html#module-5" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="general-exercises-4" class="section level3 hasAnchor" number="12.5.1">
+<h3><span class="header-section-number">12.5.1</span> General exercises<a href="exercise-solutions-by-module.html#general-exercises-4" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Exercise:</strong> Following on from the example above, what is the probability that an individual that is vaccincated but has a high fever is infected with disease A?</p>
+<p><em>Solution:</em> 0.19</p>
+<p><strong>Exercise:</strong> Following on from the example above, what is the conditional probability of drawing a purple button given that the button drawn is not blue?</p>
+<p><em>Solution:</em></p>
+<p><span class="math display">\[
+\begin{aligned}
+P(A|B)&amp;=\frac{P(A\cap B)}{P(B)}\\
+&amp;= \frac{\text{number of pruple buttons}/\text{total number of buttons}}{\text{blue}/\text{total number of buttons}}\\
+&amp;=\frac{4/10}{6/10}\\
+&amp;=\frac{2}{3}=0.67.
+\end{aligned}
+\]</span></p>
+<p><strong>Exercise:</strong> Following on from the example above, what would the probability be of selecting 2 men from the island without replacement?</p>
+<p><em>Solution:</em>
+<span class="math display">\[
+\begin{aligned}
+P(M_1 \cap M_2)&amp;=P(M_1)P(M_2|M_1)\\
+&amp;= \frac{\text{number of men}}{\text{total number of people}}\times\frac{\text{number of men left}}{\text{total number of people left}}\\
+&amp;=\frac{4}{10}\times\frac{3}{9}\\
+&amp;=\frac{2}{15}.
+\end{aligned}
+\]</span>
+## Module 6</p>
+</div>
+<div id="general-exercises-5" class="section level3 hasAnchor" number="12.5.2">
+<h3><span class="header-section-number">12.5.2</span> General exercises<a href="exercise-solutions-by-module.html#general-exercises-5" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><strong>Exercise:</strong> Following on from the example above, what is the probability that someone who is vaccinated is from region C?</p>
+<p><em>Solution:</em>
+<span class="math display">\[P(A|Vaccinated) = \frac{P(C)P(Vaccinated|C)}{P(Vaccinated)} = \frac{0.3 \times 0.74}{0.728} = 0.305\]</span></p>
+<p><strong>Exercise:</strong> Create a histogram of posterior values for hospital D.</p>
+<p><em>Solution:</em></p>
+<div class="sourceCode" id="cb922"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb922-1"><a href="exercise-solutions-by-module.html#cb922-1" tabindex="-1"></a><span class="co">#histogram of posterior values for hospital D</span></span>
+<span id="cb922-2"><a href="exercise-solutions-by-module.html#cb922-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> predicted_values_df , <span class="fu">aes</span>(<span class="at">x =</span> D)) <span class="sc">+</span></span>
+<span id="cb922-3"><a href="exercise-solutions-by-module.html#cb922-3" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">20</span>, <span class="at">color =</span> <span class="st">&quot;#00b4d8&quot;</span>, <span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">&quot;#1d3557&quot;</span>) <span class="sc">+</span></span>
+<span id="cb922-4"><a href="exercise-solutions-by-module.html#cb922-4" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb922-5"><a href="exercise-solutions-by-module.html#cb922-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Posterior Predicted values for D&quot;</span>,</span>
+<span id="cb922-6"><a href="exercise-solutions-by-module.html#cb922-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Posteriors&quot;</span>,</span>
+<span id="cb922-7"><a href="exercise-solutions-by-module.html#cb922-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Frequency&quot;</span>)</span></code></pre></div>
+<p><strong>Exercise:</strong> Create a density plot of the posterior values for hospital G.</p>
+<p><em>Solution:</em></p>
+<div class="sourceCode" id="cb923"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb923-1"><a href="exercise-solutions-by-module.html#cb923-1" tabindex="-1"></a><span class="co">#density plot of posterior values for hospital G</span></span>
+<span id="cb923-2"><a href="exercise-solutions-by-module.html#cb923-2" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> predicted_values_df , <span class="fu">aes</span>(<span class="at">x =</span> G)) <span class="sc">+</span></span>
+<span id="cb923-3"><a href="exercise-solutions-by-module.html#cb923-3" tabindex="-1"></a>  <span class="fu">geom_density</span>(<span class="at">alpha =</span> <span class="dv">1</span>, <span class="at">fill =</span> <span class="st">&quot;#1d3557&quot;</span>) <span class="sc">+</span></span>
+<span id="cb923-4"><a href="exercise-solutions-by-module.html#cb923-4" tabindex="-1"></a>  <span class="fu">theme_bw</span>() <span class="sc">+</span></span>
+<span id="cb923-5"><a href="exercise-solutions-by-module.html#cb923-5" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">&quot;Posterior predicted Values for G&quot;</span>,</span>
+<span id="cb923-6"><a href="exercise-solutions-by-module.html#cb923-6" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">&quot;Posteriors&quot;</span>,</span>
+<span id="cb923-7"><a href="exercise-solutions-by-module.html#cb923-7" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">&quot;Density&quot;</span>)</span></code></pre></div>
+
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="age-sex-disaggregation.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+  "sharing": {
+    "github": false,
+    "facebook": true,
+    "twitter": true,
+    "linkedin": false,
+    "weibo": false,
+    "instapaper": false,
+    "vk": false,
+    "whatsapp": false,
+    "all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+  },
+  "fontsettings": {
+    "theme": "white",
+    "family": "sans",
+    "size": 2
+  },
+  "edit": {
+    "link": null,
+    "text": null
+  },
+  "history": {
+    "link": null,
+    "text": null
+  },
+  "view": {
+    "link": null,
+    "text": null
+  },
+  "download": null,
+  "search": {
+    "engine": "fuse",
+    "options": null
+  },
+  "toc": {
+    "collapse": "section",
+    "scroll_highlight": true
+  }
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
