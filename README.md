@@ -5,7 +5,9 @@ The manual which was developed by the WorldPop Research Group within the School 
 The manual is licensed under a [Creative Commons Attribution-NoDerivatives 4.0 International (CC BY-ND 4.0) License](https://creativecommons.org/licenses/by-nd/4.0/), and the lead developer and compiler was [Layna Dennett](https://www.southampton.ac.uk/people/5xq75k/miss-layna-dennett), with the support of [Somnath Chaudhuri](https://www.worldpop.org/team/dr-somnath-chaudhuri/), under the coordination and supervision of [Chris Nnanatu](https://www.worldpop.org/team/chris_nnanatu/), while oversight was provided by [Andrew Tatem](https://www.worldpop.org/team/andy_tatem/).
  
 To cite this manual, please use:
-WorldPop. 2025. *WorldPop Population Modelling Training Manual, vol I*. WorldPop, University of Southampton.(2025) (https://wpgp.github.io/pop_training_manual/)[![DOI](https://zenodo.org/badge/1017646085.svg)](https://doi.org/10.5281/zenodo.15862118)
+WorldPop. 2025. *WorldPop Population Modelling Training Manual, vol I*. WorldPop, University of Southampton.(2025) (https://wpgp.github.io/pop_training_manual/)
+
+[![DOI](https://zenodo.org/badge/1017646085.svg)](https://doi.org/10.5281/zenodo.15862118)
 
 # Acknowledgements
 
